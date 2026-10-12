@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-i18n.py — Traducciones de la tabla MMSF Legacy Collection v8 (español / inglés).
+i18n.py — Traducciones de la tabla MMSF Legacy Collection v9 (español / inglés).
 
 Criterio:
   * Se traducen etiquetas genéricas, notas (##), cabeceras de grupo y textos de los scripts.
@@ -48,10 +48,6 @@ DESC_ES = {
     "Triple Deletion": "Triple eliminación",
     "HP Upgrade +10": "Mejora de HP +10",
     "HP Upgrade +20": "Mejora de HP +20",
-    "HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]":
-        "Mejora de HP +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]",
-    "HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]":
-        "Mejora de HP +20  [tope de HP 1000: p. ej. 18/36 o 30/30]",
     "Invincibility Timer": "Temporizador de invencibilidad",
     "Noise Gauge - 0.#%  (Display)": "Barra de Noise - 0.#% (visualización)",
     "Noise Gauge Change - 0.#% (Current Battle)": "Cambio de Noise - 0.#% (batalla actual)",
@@ -81,10 +77,12 @@ DESC_EN = {
     "Noise Gauge  [Script: fijo en batalla — pide valor 500–9999]":
         "Noise Gauge  [Script: locked during battle — asks for a value 500–9999]",
     "[Resolver] Bases SF1/SF2/SF3 — activar primero": "[Resolver] SF1/SF2/SF3 bases — enable first",
-    "HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]":
-        "HP Upgrade +10  [Max HP = 100 + 10×(+10) + 20×(+20); capped at 1000]",
-    "HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]":
-        "HP Upgrade +20  [HP capped at 1000: e.g. 18/36 or 30/30]",
+    "Mejoras de HP  [Script: HP máx. 1000 — fija +10/+20; pide objetivo 100–1000]":
+        "HP Upgrades  [Script: Max HP 1000 — locks +10/+20; asks for a target 100–1000]",
+    "##HP máx. = 100 + 10×(+10) + 20×(+20), tope 1000 (p. ej. 18/36). Para editar a mano, desactiva el script":
+        "##Max HP = 100 + 10×(+10) + 20×(+20), capped at 1000 (e.g. 18/36). Disable the script to edit by hand",
+    "Mejora de HP +10 (cantidad)": "HP Upgrade +10 (count)",
+    "Mejora de HP +20 (cantidad)": "HP Upgrade +20 (count)",
     "Mr Hertzes  [persiste pero NO afecta al juego — en investigación]":
         "Mr Hertzes  [value sticks but does NOT affect the game — under investigation]",
     "Current Charge Level (Vusual Only)": "Current Charge Level (Visual Only)",
@@ -136,6 +134,21 @@ SCRIPT_EN = [
     ('"Valor fijo (500 a 9999):"', '"Locked value (500 to 9999):"'),
     ('"Cancelado por el usuario"', '"Cancelled by the user"'),
     ('"Valor no numérico: "', '"Not a number: "'),
+    # Mejoras de HP (SF3)
+    ("SF3 - Mejoras de HP fijas", "SF3 - HP Upgrades locked"),
+    ("-- HP máx. = 100 + 10×(+10) + 20×(+20); el juego lo limita a 1000.",
+     "-- Max HP = 100 + 10×(+10) + 20×(+20); the game caps it at 1000."),
+    ("-- Pide el HP máximo objetivo (100 a 1000, múltiplos de 10; por defecto 1000 = 18 / 36),",
+     "-- Asks for the target Max HP (100 to 1000, multiples of 10; default 1000 = 18 / 36),"),
+    ("-- calcula las cantidades de +10 y +20 y las MANTIENE FIJAS (revisa cada",
+     "-- works out the +10 and +20 counts and keeps them LOCKED (checks every"),
+    ("-- Al desactivar, las cantidades quedan como estén (se guardan con la partida).",
+     "-- When disabled, the counts stay as they are (they are saved with the game)."),
+    ('"HP máximo objetivo (100 a 1000):"', '"Target Max HP (100 to 1000):"'),
+    ("-- cantidad de Mejora de HP +20", "-- HP Upgrade +20 count"),
+    ("-- cantidad de Mejora de HP +10", "-- HP Upgrade +10 count"),
+    (" (+10) y +171 (+20)  (Byte). Requiere el [Resolver] activo.",
+     " (+10) and +171 (+20)  (Byte). Requires the [Resolver] to be enabled."),
     ('"Aviso: sf3_base no está registrado. Activa primero el [Resolver]."',
      '"Warning: sf3_base is not registered. Enable the [Resolver] first."'),
 ]

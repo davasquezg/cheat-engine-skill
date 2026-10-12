@@ -5,13 +5,14 @@ All credit for this table goes to [b]wepon1984[/b] — every original entry, off
 After the latest game update the static base pointers broke, so I updated the bases and added an AOB resolver so the table should survive future patches.
 
 [b]Game version:[/b] Steam, FileVersion 1.0.2.0 (exe TimeDateStamp 2026-05-18)
-[b]File:[/b] attached below — [i]MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT[/i]
+[b]File:[/b] attached below — [i]MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_FearLess_EN.CT[/i]
 
 [size=120][b]What's added ([Skolleks] header)[/b][/size]
 [list]
 [*][b][Resolver] SF1/SF2/SF3 bases:[/b] finds the SF1/SF2 and SF3 bases by AOB (3 signatures per base) with a static fallback. [color=#FF0000][b]Enable it first[/b][/color] — the original groups use the symbols it registers.
 [*][b]SF3 — Noise Gauge locked in battle:[/b] asks for a value from 500 to 9999 (0.1% units → 50.0% to 999.9%) and keeps it for the whole battle.
 [*][b]SF3 — Delete Time locked at 1:[/b] from the start of each battle until the end.
+[*][b]SF3 — HP Upgrades locked:[/b] asks for a target Max HP (100–1000, default 1000 = 18 × HP+10 / 36 × HP+20) and keeps both counts locked. The two count entries inside allow manual editing (disable the script first). Max HP = 100 + 10×(+10) + 20×(+20), capped at 1000 by the game.
 [*][b]SF1 — Base HP[/b] (+28, starts at 100).
 [*][b]Notes verified in-game:[/b]
 [list]

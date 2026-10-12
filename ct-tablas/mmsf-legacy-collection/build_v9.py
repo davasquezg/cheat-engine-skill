@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-build_v8.py — Reconstruye la tabla "MMSF Legacy Collection v8 (build 1.0.2.0)" a partir
+build_v9.py — Reconstruye la tabla "MMSF Legacy Collection v9 (build 1.0.2.0)" a partir
 de la TABLA ORIGINAL publicada por su autor en FearLess Revolution (t=38738).
 
 Este repositorio NO redistribuye la tabla original ni la derivada: solo contiene las
@@ -9,8 +9,8 @@ transformaciones (obra propia) que se aplican sobre tu copia de la original.
 
 Uso:
   1) Descarga la tabla original desde https://fearlessrevolution.com/viewtopic.php?t=38738
-  2) python build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang es   # español
-     python build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang en   # English
+  2) python build_v9.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang es   # español
+     python build_v9.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang en   # English
 
 Requiere: Python 3.9+ y ../../cheat-engine-tables/scripts/ct_tool.py (incluido en el repo).
 Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz).
@@ -102,6 +102,98 @@ end
 {{$lua}}
 if syntaxcheck then return end
 if {glob} and {glob}.timer then {glob}.timer.destroy(); {glob}.timer = nil end
+{{$asm}}
+'''
+
+
+# --------------------------------------------------------------------------------------
+# Cabecera-script "Mejoras de HP" de SF3 (obra propia, validado en vivo 2026-10-12)
+#   HP máx. = 100 + 10×(+10) + 20×(+20), con tope 1000 en el juego.
+#   Reparto: n = (objetivo-100)/10 unidades de 10 HP; (+20) = floor(2n/5); (+10) = n - 2·(+20).
+#   Para 1000 HP -> 18 / 36 (combinación verificada en el juego).
+# --------------------------------------------------------------------------------------
+HP_OFFS, HP_FIELD10, HP_FIELD20 = [0x1C0, 0xA8], 0x170, 0x171
+
+
+def hp_split(target: int) -> tuple[int, int]:
+    n = max(0, min(1000, target) - 100) // 10
+    b = (2 * n) // 5
+    return n - 2 * b, b
+
+
+def hp_lock_script(interval_ms: int = 250) -> str:
+    offs_lua = ", ".join(f"0x{o:X}" for o in HP_OFFS)
+    return f'''[ENABLE]
+{{$lua}}
+if syntaxcheck then return end
+-- =====================================================================================
+-- SF3 - Mejoras de HP fijas
+-- HP máx. = 100 + 10×(+10) + 20×(+20); el juego lo limita a 1000.
+-- Pide el HP máximo objetivo (100 a 1000, múltiplos de 10; por defecto 1000 = 18 / 36),
+-- calcula las cantidades de +10 y +20 y las MANTIENE FIJAS (revisa cada {interval_ms} ms).
+-- Cadena: [[[sf3_base]+{HP_OFFS[0]:X}]+{HP_OFFS[1]:X}]+{HP_FIELD10:X} (+10) y +{HP_FIELD20:X} (+20)  (Byte). Requiere el [Resolver] activo.
+-- Al desactivar, las cantidades quedan como estén (se guardan con la partida).
+-- =====================================================================================
+local OLD = HPUP_SF3
+if OLD and OLD.timer then OLD.timer.destroy() end
+
+local prev = (OLD and OLD.hp) or 1000
+local txt = inputQuery("SF3 - Mejoras de HP fijas", "HP máximo objetivo (100 a 1000):", tostring(prev))
+if txt == nil then error("Cancelado por el usuario") end
+local hp = tonumber(txt)
+if hp == nil then error("Valor no numérico: " .. tostring(txt)) end
+hp = math.floor(hp / 10) * 10
+if hp < 100 then hp = 100 end
+if hp > 1000 then hp = 1000 end
+local n = (hp - 100) // 10
+local b = (2 * n) // 5          -- cantidad de Mejora de HP +20
+local a = n - 2 * b             -- cantidad de Mejora de HP +10
+
+HPUP_SF3 = {{ hp = hp, mas10 = a, mas20 = b, escrituras = 0 }}
+local OFFS = {{ {offs_lua} }}
+
+local function bloque()
+  local p = getAddressSafe("sf3_base")
+  if not p then return nil end
+  p = readQword(p)
+  if not p or p == 0 then return nil end
+  for _, o in ipairs(OFFS) do
+    p = readQword(p + o)
+    if not p or p == 0 or p < 0x10000 then return nil end
+  end
+  return p
+end
+
+local function fijar(addr, v)
+  local cur = readBytes(addr, 1)
+  if cur ~= nil and cur ~= v then
+    writeBytes(addr, v)
+    HPUP_SF3.escrituras = HPUP_SF3.escrituras + 1
+  end
+end
+
+local t = createTimer(nil, false)
+t.Interval = {interval_ms}
+t.OnTimer = function()
+  local ok, err = pcall(function()
+    local p = bloque()
+    if not p then return end
+    fijar(p + 0x{HP_FIELD10:X}, HPUP_SF3.mas10)
+    fijar(p + 0x{HP_FIELD20:X}, HPUP_SF3.mas20)
+  end)
+  if not ok then print("[SF3 - Mejoras de HP fijas] " .. tostring(err)) end
+end
+HPUP_SF3.timer = t
+t.Enabled = true
+if not getAddressSafe("sf3_base") then
+  showMessage("Aviso: sf3_base no está registrado. Activa primero el [Resolver].")
+end
+{{$asm}}
+
+[DISABLE]
+{{$lua}}
+if syntaxcheck then return end
+if HPUP_SF3 and HPUP_SF3.timer then HPUP_SF3.timer.destroy(); HPUP_SF3.timer = nil end
 {{$asm}}
 '''
 
@@ -210,15 +302,27 @@ def build(original: Path, out: Path, tmp: Path) -> None:
     ET.SubElement(hdr, "CheatEntries").append(dt)
     make_absolute(dt, [0x168, 0x10, 0x60])
 
-    # 5) SF3: mejoras de HP y Mr Hertzes (validado en vivo 2026-10-12)
-    #    HP máx. = 100 + 10*(+10) + 20*(+20), con tope de 1000 en el juego (p. ej. 18/36 o 30/30).
+    # 5) SF3: submenú "Mejoras de HP" (cabecera-script) y Mr Hertzes (validado en vivo 2026-10-12)
+    #    HP máx. = 100 + 10*(+10) + 20*(+20), con tope de 1000 en el juego (p. ej. 18/36).
+    hid = max(int(x.text) for x in ct.root.iter("ID")) + 1      # IDs nuevos tras los del paso 4
+    sf3_ce = by["179"].elem.find("CheatEntries")
+    up10, up20 = by["4314"].elem, by["2291"].elem
+    hdr = ET.fromstring(f'<CheatEntry><ID>{hid}</ID><Description>"x"</Description></CheatEntry>')
+    to_script_header(hdr, "Mejoras de HP  [Script: HP máx. 1000 — fija +10/+20; pide objetivo 100–1000]",
+                     hp_lock_script())
+    pos = list(sf3_ce).index(up10)
+    sf3_ce.remove(up10); sf3_ce.remove(up20)
+    sf3_ce.insert(pos, hdr)
+    up10.find("Description").text = '"Mejora de HP +10 (cantidad)"'
+    up20.find("Description").text = '"Mejora de HP +20 (cantidad)"'
+    make_absolute(up10, HP_OFFS + [HP_FIELD10])
+    make_absolute(up20, HP_OFFS + [HP_FIELD20])
+    ET.SubElement(hdr, "CheatEntries").extend([
+        note_entry(hid + 1, "##HP máx. = 100 + 10×(+10) + 20×(+20), tope 1000 (p. ej. 18/36). "
+                                    "Para editar a mano, desactiva el script", "808080"),
+        up10, up20])
     for el in ct.root.iter("CheatEntry"):
-        eid = el.findtext("ID")
-        if eid == "4314":
-            el.find("Description").text = '"HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]"'
-        elif eid == "2291":
-            el.find("Description").text = '"HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]"'
-        elif eid == "5048":
+        if el.findtext("ID") == "5048":
             el.find("Description").text = '"Mr Hertzes  [persiste pero NO afecta al juego — en investigación]"'
             if el.find("Color") is None:
                 ET.SubElement(el, "Color").text = "808080"
@@ -232,7 +336,7 @@ REFERENCE = {
     "es": {
         "note": f"##Fuente y actualizaciones: {TABLE_URL} — tabla original de wepon1984 (FearLess Revolution)",
         "comments": (
-            "Mega Man Star Force Legacy Collection — tabla v8 (build 1.0.2.0), versión en español\n"
+            "Mega Man Star Force Legacy Collection — tabla v9 (build 1.0.2.0), versión en español\n"
             "Tabla original: wepon1984 — https://fearlessrevolution.com/viewtopic.php?t=38738\n"
             f"Actualización (Resolver AOB, scripts SF3, notas, traducción): davasquezg — {TABLE_URL}\n"
             "Créditos y licencias: " + REPO_URL + "/blob/main/CREDITS.md\n"
@@ -242,7 +346,7 @@ REFERENCE = {
     "en": {
         "note": f"##Source and updates: {TABLE_URL} — original table by wepon1984 (FearLess Revolution)",
         "comments": (
-            "Mega Man Star Force Legacy Collection — v8 table (build 1.0.2.0), English version\n"
+            "Mega Man Star Force Legacy Collection — v9 table (build 1.0.2.0), English version\n"
             "Original table: wepon1984 — https://fearlessrevolution.com/viewtopic.php?t=38738\n"
             f"Update (AOB resolver, SF3 scripts, notes, translation): davasquezg — {TABLE_URL}\n"
             "Credits and licenses: " + REPO_URL + "/blob/main/CREDITS.en.md\n"
@@ -295,7 +399,7 @@ def apply_lang(path: Path, lang: str) -> list[str]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("original", help="tabla original descargada de FearLess Revolution")
-    ap.add_argument("-o", "--out", help="archivo de salida (por defecto ..._v8_AOB_build1.0.2.0_<LANG>.CT)")
+    ap.add_argument("-o", "--out", help="archivo de salida (por defecto ..._v9_AOB_build1.0.2.0_<LANG>.CT)")
     ap.add_argument("--lang", choices=["es", "en", "base"], default="es",
                     help="idioma de la tabla: es (español), en (inglés) o base (mixto, sin traducir)")
     ap.add_argument("--force", action="store_true", help="continuar aunque el SHA-256 no coincida")
@@ -307,7 +411,7 @@ def main() -> None:
         if not a.force:
             sys.exit("Usa --force si sabes que es la misma tabla (o una revisión compatible).")
     suffix = "" if a.lang == "base" else "_" + a.lang.upper()
-    out = Path(a.out or f"MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0{suffix}.CT")
+    out = Path(a.out or f"MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0{suffix}.CT")
     tmp = out.with_suffix(".tmp.CT")
     try:
         build(src, out, tmp)

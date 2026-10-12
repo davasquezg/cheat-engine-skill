@@ -4,7 +4,7 @@
 
 ## Tabla original de Mega Man Star Force Legacy Collection
 
-Las tablas `ct-tablas/mmsf-legacy-collection/MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_ES.CT` y `..._EN.CT` son **obras derivadas** de la tabla publicada por su autor original en FearLess Revolution. Se incluye además `build_v8.py`, que reproduce la v8 a partir de la original, en cualquiera de los dos idiomas.
+Las tablas `ct-tablas/mmsf-legacy-collection/MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT` y `..._EN.CT` (y sus versiones v8 anteriores) son **obras derivadas** de la tabla publicada por su autor original en FearLess Revolution. Se incluye además `build_v9.py`, que reproduce la v9 a partir de la original, en cualquiera de los dos idiomas.
 
 - Hilo: <https://fearlessrevolution.com/viewtopic.php?t=38738>
 
@@ -16,7 +16,7 @@ Todo el mérito por la estructura de entradas, los offsets de cartas, subitems, 
 - anidado de los grupos bajo el resolver;
 - notas de uso: editar desde el mapa, mapa de bytes por borde y avisos de solapamiento de 4 bytes;
 - corrección de etiquetas: HP actual, HP base y el campo `+30`;
-- cabeceras-script de Noise Gauge y Delete Time en SF3;
+- cabeceras-script de Noise Gauge, Delete Time y Mejoras de HP en SF3;
 - traducción de etiquetas, notas y mensajes al español y al inglés.
 
 Las licencias de este repositorio cubren **solo esos aportes**. Los derechos sobre el contenido de la tabla original siguen siendo de su autor y se respetan los términos que él haya establecido. **Si eres el autor y quieres que se modifique, se condicione o se retire la tabla, abre un *issue*: se atenderá de inmediato.**

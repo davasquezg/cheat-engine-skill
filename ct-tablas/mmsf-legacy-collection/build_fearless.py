@@ -31,10 +31,11 @@ sys.path.insert(0, str(HERE.parents[1] / "cheat-engine-tables" / "scripts"))
 sys.path.insert(0, str(HERE))
 import ct_tool    # noqa: E402
 import i18n       # noqa: E402
-from build_v8 import ORIGINAL_SHA256, freeze_script, note_entry  # noqa: E402
+from build_v9 import (ORIGINAL_SHA256, HP_FIELD10, HP_FIELD20, HP_OFFS,  # noqa: E402
+                      freeze_script, hp_lock_script, note_entry)
 
 ORIGINAL_AUTHOR = "wepon1984"
-OUT_DEFAULT = "fearless/MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT"
+OUT_DEFAULT = "fearless/MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_FearLess_EN.CT"
 
 
 def en(text: str) -> str:
@@ -136,8 +137,15 @@ def build(original: Path, out: Path, user: str) -> None:
                      en(freeze_script("SF3 - Delete Time fijo en 1", "DELTIME_SF3", [0x168, 0x10], 0x60,
                                       1, 1, 1, False, 30,
                                       "Delete Time = 1 desde el inicio de la batalla y fijo hasta el final."))))
-    s3.append(note_entry(next_id(), "##Max HP = 100 + 10x(HP Upgrade +10) + 20x(HP Upgrade +20), capped at 1000 "
-                                    "(e.g. 18/36 or 30/30)", "808080"))
+    hp = script(next_id(), "HP Upgrades locked (Max HP 1000; asks for a target 100–1000)", en(hp_lock_script()))
+    hp.insert(2, ET.Element("Options", {"moManualExpandCollapse": "1", "moAllowManualCollapseAndExpand": "1"}))
+    ET.SubElement(hp, "CheatEntries").extend([
+        note_entry(next_id(), "##Max HP = 100 + 10x(HP Upgrade +10) + 20x(HP Upgrade +20), capped at 1000 "
+                              "(e.g. 18/36). Disable the script to edit by hand", "808080"),
+        pointer(next_id(), "HP Upgrade +10 (count)", "Byte", "sf3_base", HP_OFFS + [HP_FIELD10]),
+        pointer(next_id(), "HP Upgrade +20 (count)", "Byte", "sf3_base", HP_OFFS + [HP_FIELD20]),
+    ])
+    s3.append(hp)
     s3.append(note_entry(next_id(), "##'Mr Hertzes' value sticks but does not affect the game (under investigation)",
                          "808080"))
     m.append(sf3)

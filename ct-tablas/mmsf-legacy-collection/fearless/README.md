@@ -1,10 +1,10 @@
 # FearLess-compatible table / Tabla compatible con FearLess
 
-**EN** — `MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT` follows the [FearLess Revolution forum rules](https://fearlessrevolution.com/viewtopic.php?t=20) for modified tables:
+**EN** — `MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_FearLess_EN.CT` follows the [FearLess Revolution forum rules](https://fearlessrevolution.com/viewtopic.php?t=20) for modified tables:
 
 - a `[wepon1984] (original author)` header holds **all original content, unchanged**, except the base anchors, which now point to the resolver symbols;
-- a separate `[Skolleks]` header holds this project's additions: the AOB resolver, the SF3 battle scripts, SF1 Base HP and the in-game notes;
-- English only. `POST_bbcode.txt` is the forum post, with no external links; the `.CT` must be **attached** to the post.
+- a separate `[Skolleks]` header holds this project's additions: the AOB resolver, the SF3 battle scripts, the SF3 HP Upgrades submenu, SF1 Base HP and the in-game notes;
+- English only. `POST_bbcode.txt` is the forum post, with no external links; the `.CT` must be **attached** to the post. The v8 file is kept for reference; post the v9 one.
 
 Before posting, the rules ask you to **PM the original author** and wait 48 h.
 
@@ -16,4 +16,4 @@ Before posting, the rules ask you to **PM the original author** and wait 48 h.
 
 Antes de publicar en el foro hay que enviar un PM al autor original y esperar 48 horas.
 
-Regenerar / Rebuild: `python ../build_fearless.py <original.CT> -o MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT`
+Regenerar / Rebuild: `python ../build_fearless.py <original.CT> -o MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_FearLess_EN.CT`

@@ -27,9 +27,10 @@ cheat-engine-tables/          ← the skill (SKILL.md) and its toolkit
 └── tests/run_tests.sh        ← smoke tests (synthetic PE + simulated CE API)
 ct-tablas/
 └── mmsf-legacy-collection/
-    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_ES.CT   ← Spanish table
-    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_EN.CT   ← English table
-    ├── build_v8.py           ← reproducible patch from the original table (--lang es|en)
+    ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT   ← Spanish table
+    ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_EN.CT   ← English table
+    ├── ..._v8_..._ES.CT / _EN.CT  ← previous version (reference)
+    ├── build_v9.py           ← reproducible patch from the original table (--lang es|en)
     ├── i18n.py               ← table translations
     └── resolvers.json        ← bases and AOB signatures for build 1.0.2.0
 ```
@@ -52,16 +53,16 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requires Lua 5
 |---|---|
 | Build | FileVersion **1.0.2.0**, TimeDateStamp `0x6A0A9BF4` (2026-05-18), Steam |
 | Bases | `sf12_base` (SF1/SF2) and `sf3_base` (SF3), resolved by AOB (3 signatures per base) with a static fallback |
-| Validated in-game | Zenny, HP, cards, sub items and abilities (SF1–SF3); Noise Gauge and Delete Time scripts (SF3) |
+| Validated in-game | Zenny, HP, cards, sub items and abilities (SF1–SF3); Noise Gauge, Delete Time and HP Upgrades scripts (SF3) |
 | Languages | `_ES.CT` (Spanish) and `_EN.CT` (English). Both use the same addresses; only the text differs |
 
-**Get the table:** use the `.CT` in your language directly from `ct-tablas/mmsf-legacy-collection/`. If you prefer, rebuild it from the original on [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738) with `build_v8.py --lang en` or `--lang es`.
+**Get the table:** use the `.CT` in your language directly from `ct-tablas/mmsf-legacy-collection/`. If you prefer, rebuild it from the original on [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738) with `build_v9.py --lang en` or `--lang es`.
 
 **Usage:**
 1. Start the game and attach Cheat Engine (7.5 or later).
 2. Load the table and enable **`[Resolver] SF1/SF2/SF3 bases — enable first`**.
 3. **Edit values only from the field map**, with the Folder and the Library closed. If a menu is open, the game overwrites your changes when you close it.
-4. To lock values in battle (SF3), enable the script headers **Noise Gauge** (asks for a value between 500 and 9999) or **Delete Time** (locks it at 1).
+4. To lock values in battle (SF3), enable the script headers **Noise Gauge** (asks for a value between 500 and 9999) or **Delete Time** (locks it at 1). For max HP, enable **HP Upgrades** (1000 HP by default; disable it to edit by hand).
 
 > In the English version, only the Spanish labels, notes and messages added by this project were translated. The original table was already in English, and **in-game proper names** (cards, abilities, items such as *Unlocker* or *Search Eye*) are kept as they are.
 
@@ -75,7 +76,7 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requires Lua 5
 
 | Part | License | File |
 |---|---|---|
-| Code: `scripts/`, `lua/`, `tests/`, `build_v8.py`, `i18n.py` and the scripts they generate | **PolyForm Noncommercial 1.0.0** | [`LICENSE`](LICENSE) |
+| Code: `scripts/`, `lua/`, `tests/`, `build_v9.py`, `i18n.py` and the scripts they generate | **PolyForm Noncommercial 1.0.0** | [`LICENSE`](LICENSE) |
 | Documentation and data: `SKILL.md`, `references/`, `templates/`, `resolvers.json` and the project's own contributions in the `.CT` tables | **CC BY-NC-SA 4.0** | [`LICENSE-docs`](LICENSE-docs) |
 
 Personal, educational, research and non-profit use is allowed. **Commercial and corporate use is not allowed.** If you need a different license, open an *issue*.

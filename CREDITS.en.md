@@ -4,7 +4,7 @@
 
 ## Original Mega Man Star Force Legacy Collection table
 
-The tables `ct-tablas/mmsf-legacy-collection/MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_ES.CT` and `..._EN.CT` are **derivative works** of the table published by its original author on FearLess Revolution. The repository also includes `build_v8.py`, which rebuilds v8 from the original in either language.
+The tables `ct-tablas/mmsf-legacy-collection/MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT` and `..._EN.CT` (and their earlier v8 versions) are **derivative works** of the table published by its original author on FearLess Revolution. The repository also includes `build_v9.py`, which rebuilds v9 from the original in either language.
 
 - Thread: <https://fearlessrevolution.com/viewtopic.php?t=38738>
 
@@ -16,7 +16,7 @@ All credit for the entry structure, the card, sub item, ability and battle field
 - game groups nested under the resolver;
 - usage notes: edit from the field map, per-border byte map, and 4-byte overlap warnings;
 - label fixes: current HP, base HP and the `+30` field;
-- Noise Gauge and Delete Time script headers in SF3;
+- Noise Gauge, Delete Time and HP Upgrades script headers in SF3;
 - translation of labels, notes and messages into Spanish and English.
 
 The licenses of this repository cover **only those contributions**. The rights to the content of the original table remain with its author, and any terms the author has set are respected. **If you are the author and want the table changed, restricted or removed, please open an *issue*: it will be handled immediately.**
