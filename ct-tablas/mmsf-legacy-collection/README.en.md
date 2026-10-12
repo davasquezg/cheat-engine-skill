@@ -35,4 +35,5 @@ python ../../cheat-engine-tables/scripts/ct_tool.py validate MEGAMAN_STARFORCE_L
 | Cards | "Edit only from the field map" notes, per-border byte map, and a warning on the "5. All" group |
 | SF2 | Duplicate "Gorgon Eye" entry marked as unverified |
 | SF3 Battle | **Noise Gauge** submenu whose header is a script (locked value, 500–9999) and **Delete Time** submenu (locked at 1) |
+| SF3 | Notes on HP Upgrade: formula `100 + 10×(+10) + 20×(+20)` and **1000 HP cap** (validated in-game); "Mr Hertzes" flagged: the value sticks but does not affect the game |
 | Languages | Spanish and English versions generated from `i18n.py` |

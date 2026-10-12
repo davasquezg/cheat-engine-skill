@@ -35,4 +35,5 @@ python ../../cheat-engine-tables/scripts/ct_tool.py validate MEGAMAN_STARFORCE_L
 | Cartas | Notas "editar solo desde el mapa", mapa de bytes por borde y aviso en el grupo "5. All" |
 | SF2 | "Gorgon Eye" duplicado marcado como sin verificar |
 | SF3 Batalla | Submenú **Noise Gauge** cuya cabecera es un script (valor fijo, entre 500 y 9999) y submenú **Delete Time** (fijo en 1) |
+| SF3 | Notas en Mejora de HP: fórmula `100 + 10×(+10) + 20×(+20)` y **tope de 1000 HP** (validado en el juego); "Mr Hertzes" marcado: el valor se mantiene pero no afecta al juego |
 | Idiomas | Versiones en español e inglés generadas desde `i18n.py` |

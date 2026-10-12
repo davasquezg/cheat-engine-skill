@@ -209,6 +209,19 @@ def build(original: Path, out: Path, tmp: Path) -> None:
     battle_ce.remove(dt); battle_ce.insert(idx, hdr)
     ET.SubElement(hdr, "CheatEntries").append(dt)
     make_absolute(dt, [0x168, 0x10, 0x60])
+
+    # 5) SF3: mejoras de HP y Mr Hertzes (validado en vivo 2026-10-12)
+    #    HP máx. = 100 + 10*(+10) + 20*(+20), con tope de 1000 en el juego (p. ej. 18/36 o 30/30).
+    for el in ct.root.iter("CheatEntry"):
+        eid = el.findtext("ID")
+        if eid == "4314":
+            el.find("Description").text = '"HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]"'
+        elif eid == "2291":
+            el.find("Description").text = '"HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]"'
+        elif eid == "5048":
+            el.find("Description").text = '"Mr Hertzes  [persiste pero NO afecta al juego — en investigación]"'
+            if el.find("Color") is None:
+                ET.SubElement(el, "Color").text = "808080"
     ct.save(out)
 
 

@@ -48,6 +48,10 @@ DESC_ES = {
     "Triple Deletion": "Triple eliminación",
     "HP Upgrade +10": "Mejora de HP +10",
     "HP Upgrade +20": "Mejora de HP +20",
+    "HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]":
+        "Mejora de HP +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]",
+    "HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]":
+        "Mejora de HP +20  [tope de HP 1000: p. ej. 18/36 o 30/30]",
     "Invincibility Timer": "Temporizador de invencibilidad",
     "Noise Gauge - 0.#%  (Display)": "Barra de Noise - 0.#% (visualización)",
     "Noise Gauge Change - 0.#% (Current Battle)": "Cambio de Noise - 0.#% (batalla actual)",
@@ -77,6 +81,12 @@ DESC_EN = {
     "Noise Gauge  [Script: fijo en batalla — pide valor 500–9999]":
         "Noise Gauge  [Script: locked during battle — asks for a value 500–9999]",
     "[Resolver] Bases SF1/SF2/SF3 — activar primero": "[Resolver] SF1/SF2/SF3 bases — enable first",
+    "HP Upgrade +10  [HP máx. = 100 + 10×(+10) + 20×(+20); tope 1000]":
+        "HP Upgrade +10  [Max HP = 100 + 10×(+10) + 20×(+20); capped at 1000]",
+    "HP Upgrade +20  [tope de HP 1000: p. ej. 18/36 o 30/30]":
+        "HP Upgrade +20  [HP capped at 1000: e.g. 18/36 or 30/30]",
+    "Mr Hertzes  [persiste pero NO afecta al juego — en investigación]":
+        "Mr Hertzes  [value sticks but does NOT affect the game — under investigation]",
     "Current Charge Level (Vusual Only)": "Current Charge Level (Visual Only)",
     "Max Charge Level  (Vusual Only) (Do not Change)": "Max Charge Level (Visual Only) (Do not Change)",
 }
