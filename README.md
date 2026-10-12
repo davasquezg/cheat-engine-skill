@@ -26,11 +26,11 @@ cheat-engine-tables/          ← la skill (SKILL.md) y su kit
 ├── references/               ← formato .CT, flujo en vivo, plantillas Auto Assembler
 └── tests/run_tests.sh        ← pruebas de humo (PE sintético + API de CE simulada)
 ct-tablas/
-└── mmsf-legacy-collection/   ← PARCHE (no la tabla): build_v8.py + resolvers.json
+└── mmsf-legacy-collection/
+    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0.CT   ← tabla lista para usar
+    ├── build_v8.py           ← parche reproducible desde la tabla original
+    └── resolvers.json        ← bases y firmas AOB de la build 1.0.2.0
 ```
-
-> **Este repositorio no redistribuye tablas de terceros.** Las tablas se generan localmente aplicando
-> el parche sobre tu copia de la tabla original de su autor.
 
 ## Instalación
 
@@ -52,10 +52,7 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requiere Lua 5
 | Bases | `sf12_base` (SF1/SF2) y `sf3_base` (SF3), resueltas por AOB (3 firmas por base) con respaldo estático |
 | Validado en el juego | Zenny, HP, cartas, subitems y habilidades (SF1–SF3); scripts de Noise Gauge y Delete Time (SF3) |
 
-**Generar la tabla:**
-1. Descarga la tabla original desde [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738).
-2. `python ct-tablas/mmsf-legacy-collection/build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT`
-   (verifica el SHA-256 de la original y produce la v8).
+**Obtener la tabla:** usa directamente el `.CT` de `ct-tablas/mmsf-legacy-collection/`. Si lo prefieres, regenérala desde la original de [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738) con `build_v8.py`.
 
 **Uso:**
 1. Abre el juego y adjunta Cheat Engine (7.5 o superior).
@@ -74,7 +71,7 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requiere Lua 5
 | Parte | Licencia | Archivo |
 |---|---|---|
 | Código: `scripts/`, `lua/`, `tests/`, `build_v8.py` y los scripts que genera | **PolyForm Noncommercial 1.0.0** | [`LICENSE`](LICENSE) |
-| Documentación y datos: `SKILL.md`, `references/`, `templates/`, `resolvers.json` | **CC BY-NC-SA 4.0** | [`LICENSE-docs`](LICENSE-docs) |
+| Documentación y datos: `SKILL.md`, `references/`, `templates/`, `resolvers.json` y los aportes propios en las tablas `.CT` | **CC BY-NC-SA 4.0** | [`LICENSE-docs`](LICENSE-docs) |
 
 Se permite el uso personal, educativo, de investigación y de organizaciones sin fines de lucro. **No se permite el uso comercial ni corporativo.** Si necesitas otra licencia, abre un *issue*.
 

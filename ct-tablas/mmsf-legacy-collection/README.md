@@ -1,6 +1,8 @@
-# Parche MMSF Legacy Collection → v8 (build 1.0.2.0)
+# MMSF Legacy Collection — tabla v8 (build 1.0.2.0)
 
-Genera la tabla v8 a partir de la **tabla original** de FearLess Revolution, sin redistribuirla.
+**Tabla lista para usar:** `MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0.CT`.
+
+Opcional: reprodúcela desde la **tabla original** de FearLess Revolution con el parche:
 
 ```bash
 # 1) Descarga la original: https://fearlessrevolution.com/viewtopic.php?t=38738

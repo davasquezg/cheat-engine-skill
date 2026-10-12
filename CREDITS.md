@@ -2,7 +2,7 @@
 
 ## Tabla original de Mega Man Star Force Legacy Collection
 
-`ct-tablas/mmsf-legacy-collection/build_v8.py` es un **parche** que se aplica sobre la tabla publicada por su autor original en FearLess Revolution. **La tabla original y la tabla resultante no se distribuyen en este repositorio**: cada usuario debe obtener la original desde su fuente y generar la v8 en su equipo.
+La tabla `ct-tablas/mmsf-legacy-collection/MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0.CT` es una **obra derivada** de la tabla publicada por su autor original en FearLess Revolution. Se incluye además `build_v8.py`, que reproduce la v8 a partir de la original.
 
 - Hilo: <https://fearlessrevolution.com/viewtopic.php?t=38738>
 
@@ -16,7 +16,7 @@ Todo el mérito por la estructura de entradas, los offsets de cartas, subitems, 
 - corrección de etiquetas: HP actual, HP base y el campo `+30`;
 - cabeceras-script de Noise Gauge y Delete Time en SF3.
 
-Las licencias de este repositorio cubren **solo esos aportes** (el parche y sus scripts). Los derechos sobre la tabla original siguen siendo de su autor, y la tabla que generes queda sujeta también a los términos que él haya establecido. Si eres el autor y quieres que se modifique o retire el parche, abre un *issue*.
+Las licencias de este repositorio cubren **solo esos aportes**. Los derechos sobre el contenido de la tabla original siguen siendo de su autor y se respetan los términos que él haya establecido. **Si eres el autor y quieres que se modifique, se condicione o se retire la tabla, abre un *issue*: se atenderá de inmediato.**
 
 ## Marcas
 

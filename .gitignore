@@ -1,6 +1,5 @@
-# Tablas .CT completas: derivan de obras de terceros, no se publican (usar los parches)
-*.CT
-*.ct
+# Las tablas .CT SÍ se publican (ver ct-tablas/). Se excluyen solo temporales:
+*.tmp.CT
 
 # Volcados y binarios del juego: nunca se publican
 *.dmp
