@@ -1,13 +1,13 @@
 [size=150][b]Mega Man Star Force Legacy Collection — table update for build 1.0.2.0 (AOB resolver)[/b][/size]
 
-All credit for this table goes to [b]wepon1984[/b] — every original entry, offset and script is theirs and is kept intact under the [i][wepon1984] (original author)[/i] header. My additions are in a separate [i][davasquezg][/i] header.
+All credit for this table goes to [b]wepon1984[/b] — every original entry, offset and script is theirs and is kept intact under the [i][wepon1984] (original author)[/i] header. My additions are in a separate [i][Skolleks][/i] header.
 
 After the latest game update the static base pointers broke, so I updated the bases and added an AOB resolver so the table should survive future patches.
 
 [b]Game version:[/b] Steam, FileVersion 1.0.2.0 (exe TimeDateStamp 2026-05-18)
 [b]File:[/b] attached below — [i]MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT[/i]
 
-[size=120][b]What's added ([davasquezg] header)[/b][/size]
+[size=120][b]What's added ([Skolleks] header)[/b][/size]
 [list]
 [*][b][Resolver] SF1/SF2/SF3 bases:[/b] finds the SF1/SF2 and SF3 bases by AOB (3 signatures per base) with a static fallback. [color=#FF0000][b]Enable it first[/b][/color] — the original groups use the symbols it registers.
 [*][b]SF3 — Noise Gauge locked in battle:[/b] asks for a value from 500 to 9999 (0.1% units → 50.0% to 999.9%) and keeps it for the whole battle.
@@ -25,7 +25,7 @@ After the latest game update the static base pointers broke, so I updated the ba
 [size=120][b]How to use[/b][/size]
 [list=1]
 [*]Start the game and attach Cheat Engine (7.5+).
-[*]Load the table and enable [b][davasquezg] > [Resolver] SF1/SF2/SF3 bases — enable first[/b].
+[*]Load the table and enable [b][Skolleks] > [Resolver] SF1/SF2/SF3 bases — enable first[/b].
 [*]Use the entries under [b][wepon1984] (original author)[/b] as usual.
 [*][color=#FF0000][b]Edit values only from the field map[/b][/color] (Folder/Library closed). If a menu is open, the game overwrites your changes when you close it.
 [/list]

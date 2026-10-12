@@ -8,7 +8,7 @@ build_fearless.py — Genera la versión de la tabla compatible con las reglas d
     (nombres, estructura y scripts originales). Lo único que cambia es el ancla de las bases
     (dirección estática antigua -> símbolo sf12_base / sf3_base), imprescindible para que funcione
     con la build 1.0.2.0.
-  * Cabecera "[davasquezg]" con los aportes propios: Resolver AOB, scripts de batalla de SF3,
+  * Cabecera "[Skolleks]" con los aportes propios: Resolver AOB, scripts de batalla de SF3,
     entrada HP base de SF1 y notas verificadas en el juego.
   * Solo inglés.
 
@@ -155,7 +155,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("original")
     ap.add_argument("-o", "--out", default=OUT_DEFAULT)
-    ap.add_argument("--user", default="davasquezg", help="tu nombre de usuario en FearLess")
+    ap.add_argument("--user", default="Skolleks", help="tu nombre de usuario en FearLess")
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
     src = Path(a.original)
