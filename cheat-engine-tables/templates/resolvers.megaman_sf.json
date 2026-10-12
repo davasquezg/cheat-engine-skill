@@ -1,0 +1,53 @@
+{
+  "module": "MEGAMAN_STARFORCE_Legacy_Collection.exe",
+  "description": "[Resolver] Bases SF1/SF2/SF3 — activar primero",
+  "bases": [
+    {
+      "symbol": "sf12_base",
+      "replaces": "\"MEGAMAN_STARFORCE_Legacy_Collection.exe\"+0E120A40",
+      "fallback_offset": "0DEB4850",
+      "note": "SF1/SF2 build 1.0.2.0. Validado 2026-10-10. AOB verificados en volcado 2026-10-11",
+      "aobs": [
+        {
+          "aob": "48 8B 15 ?? ?? ?? ?? 45 8B F1 45 8B 60 08 48 8B D9",
+          "disp_offset": 3,
+          "instr_len": 7
+        },
+        {
+          "aob": "48 8B 15 ?? ?? ?? ?? 48 8B D9 45 8B 70 08 4C 39 78 18",
+          "disp_offset": 3,
+          "instr_len": 7
+        },
+        {
+          "aob": "48 8B 15 ?? ?? ?? ?? 48 89 6C 24 30 40 32 ED 48 39 70 18",
+          "disp_offset": 3,
+          "instr_len": 7
+        }
+      ]
+    },
+    {
+      "symbol": "sf3_base",
+      "replaces": "\"MEGAMAN_STARFORCE_Legacy_Collection.exe\"+0E124218",
+      "fallback_offset": "0DEB7EE0",
+      "note": "SF3 build 1.0.2.0. Validado 2026-10-10. AOB verificados en volcado 2026-10-11",
+      "aobs": [
+        {
+          "aob": "48 8B 0D ?? ?? ?? ?? 49 0F 45 C8 48 85 C9 74 ??",
+          "disp_offset": 3,
+          "instr_len": 7
+        },
+        {
+          "aob": "48 8B 0D ?? ?? ?? ?? 48 89 5C 24 50 0F B7 5C 24 70",
+          "disp_offset": 3,
+          "instr_len": 7
+        },
+        {
+          "aob": "48 8B 0D ?? ?? ?? ?? 0F 85 ?? ?? ?? ?? 4C 39 60 18",
+          "disp_offset": 3,
+          "instr_len": 7
+        }
+      ]
+    }
+  ],
+  "build": "FileVersion 1.0.2.0 | TimeDateStamp 0x6A0A9BF4 (2026-05-18) | SHA-256 3f7a5d84…acbc"
+}
