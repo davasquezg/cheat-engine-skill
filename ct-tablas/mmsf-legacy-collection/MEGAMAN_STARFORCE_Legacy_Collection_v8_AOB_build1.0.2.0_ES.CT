@@ -127,7 +127,7 @@ CT_RESOLVER = nil
           <CheatEntries>
             <CheatEntry>
               <ID>144</ID>
-              <Description>"Battle"</Description>
+              <Description>"Batalla"</Description>
               <Options moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -138,13 +138,13 @@ CT_RESOLVER = nil
               <CheatEntries>
                 <CheatEntry>
                   <ID>228</ID>
-                  <Description>"##Not all pointers will work until battle is started"</Description>
+                  <Description>"##Algunos punteros solo funcionan después de iniciar una batalla"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
                     <CheatEntry>
                       <ID>229</ID>
-                      <Description>"##Chance of pointer breaking and crashing game if locked"</Description>
+                      <Description>"##Si se congela, el puntero puede romperse y cerrar el juego"</Description>
                       <Color>0000FF</Color>
                       <GroupHeader>1</GroupHeader>
                     </CheatEntry>
@@ -163,7 +163,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>147</ID>
-                  <Description>"Custom Gauge"</Description>
+                  <Description>"Barra Custom"</Description>
                   <DropDownListLink>[List] Custom Gauge</DropDownListLink>
                   <ShowAsHex>1</ShowAsHex>
                   <ShowAsSigned>0</ShowAsSigned>
@@ -175,7 +175,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>148</ID>
-                  <Description>"Buster Charge Level"</Description>
+                  <Description>"Nivel de carga del Buster"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>Byte</VariableType>
                   <Address>+10</Address>
@@ -187,7 +187,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>150</ID>
-                  <Description>"Invincibility Timer"</Description>
+                  <Description>"Temporizador de invencibilidad"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>Byte</VariableType>
                   <Address>+18</Address>
@@ -199,7 +199,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>256</ID>
-                  <Description>"Busting Rank Modifier"</Description>
+                  <Description>"Modificador de Busting Rank"</Description>
                   <Options moRecursiveSetValue="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -213,35 +213,35 @@ CT_RESOLVER = nil
                   <CheatEntries>
                     <CheatEntry>
                       <ID>257</ID>
-                      <Description>"Steps Taken"</Description>
+                      <Description>"Pasos dados"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+0</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>258</ID>
-                      <Description>"Times Hit in Battle"</Description>
+                      <Description>"Veces golpeado en batalla"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+1</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>259</ID>
-                      <Description>"Counter Hits"</Description>
+                      <Description>"Golpes de contraataque (Counter)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+2</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>260</ID>
-                      <Description>"Double Deletion"</Description>
+                      <Description>"Doble eliminación"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+4</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>261</ID>
-                      <Description>"Triple Deletion"</Description>
+                      <Description>"Triple eliminación"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+5</Address>
@@ -250,7 +250,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>149</ID>
-                  <Description>"Delete Time"</Description>
+                  <Description>"Tiempo de eliminación (Delete Time)"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>4 Bytes</VariableType>
                   <Address>+10</Address>
@@ -262,7 +262,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>151</ID>
-              <Description>"Sub item"</Description>
+              <Description>"Subobjetos"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -318,7 +318,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>277</ID>
-              <Description>"Cards"</Description>
+              <Description>"Cartas"</Description>
               <Options moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -343,19 +343,19 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>1464</ID>
-                  <Description>"##Do not change quantity if it is not 0 or does not match what you have"</Description>
+                  <Description>"##No cambies la cantidad si no es 0 o no coincide con lo que tienes"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2209</ID>
-                  <Description>"##Will not save if modified while editing Folder"</Description>
+                  <Description>"##No se guarda si se modifica mientras editas la Carpeta"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2934</ID>
-                  <Description>"1. White / Colorless Border"</Description>
+                  <Description>"1. Borde blanco / sin color"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
@@ -2593,7 +2593,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>3383</ID>
-                  <Description>"2. Standard / Yellow Border"</Description>
+                  <Description>"2. Standard / borde amarillo"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
@@ -4101,7 +4101,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>4056</ID>
-                  <Description>"2.1 Mega / Giga / Yellow Border"</Description>
+                  <Description>"2.1 Mega / Giga / borde amarillo"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
@@ -4839,7 +4839,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>3607</ID>
-                  <Description>"3. Mega / Blue Border"</Description>
+                  <Description>"3. Mega / borde azul"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
@@ -5387,7 +5387,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>3832</ID>
-                  <Description>"4. Giga / Red Border"</Description>
+                  <Description>"4. Giga / borde rojo"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
@@ -5587,7 +5587,6 @@ CT_RESOLVER = nil
                   <ID>3831</ID>
                   <Description>"5. All  [⚠ 4 Bytes desde +71: escribe también +72/+73/+74 — puede borrar Mega/Giga]"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
-                  <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
                     <CheatEntry>
@@ -7821,6 +7820,7 @@ CT_RESOLVER = nil
                       </Offsets>
                     </CheatEntry>
                   </CheatEntries>
+                  <Color>0000FF</Color>
                 </CheatEntry>
               </CheatEntries>
             </CheatEntry>
@@ -7852,7 +7852,6 @@ CT_RESOLVER = nil
               <ID>272</ID>
               <Description>"+30 desconocido (NO es Max HP; 710 fijo al recibir daño) — sin verificar"</Description>
               <ShowAsSigned>0</ShowAsSigned>
-              <Color>808080</Color>
               <VariableType>2 Bytes</VariableType>
               <Address>+238</Address>
               <Offsets>
@@ -7860,6 +7859,7 @@ CT_RESOLVER = nil
                 <Offset>28</Offset>
                 <Offset>170</Offset>
               </Offsets>
+              <Color>808080</Color>
             </CheatEntry>
             <CheatEntry>
               <ID>158</ID>
@@ -7874,7 +7874,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>234</ID>
-              <Description>"Cloak Steps Left"</Description>
+              <Description>"Pasos restantes de Cloaker"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>+238</Address>
@@ -7898,7 +7898,7 @@ CT_RESOLVER = nil
           <CheatEntries>
             <CheatEntry>
               <ID>160</ID>
-              <Description>"Battle"</Description>
+              <Description>"Batalla"</Description>
               <Options moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -7909,13 +7909,13 @@ CT_RESOLVER = nil
               <CheatEntries>
                 <CheatEntry>
                   <ID>230</ID>
-                  <Description>"##Not all pointers will work until battle is started"</Description>
+                  <Description>"##Algunos punteros solo funcionan después de iniciar una batalla"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
                     <CheatEntry>
                       <ID>231</ID>
-                      <Description>"##Chance of pointer breaking and crashing game if locked"</Description>
+                      <Description>"##Si se congela, el puntero puede romperse y cerrar el juego"</Description>
                       <Color>0000FF</Color>
                       <GroupHeader>1</GroupHeader>
                     </CheatEntry>
@@ -7934,7 +7934,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>163</ID>
-                  <Description>"Custom Gauge"</Description>
+                  <Description>"Barra Custom"</Description>
                   <DropDownListLink>[List] Custom Gauge</DropDownListLink>
                   <ShowAsHex>1</ShowAsHex>
                   <ShowAsSigned>0</ShowAsSigned>
@@ -7946,7 +7946,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>164</ID>
-                  <Description>"Buster Charge Level"</Description>
+                  <Description>"Nivel de carga del Buster"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>Byte</VariableType>
                   <Address>+298</Address>
@@ -7958,7 +7958,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>165</ID>
-                  <Description>"Invincibility Timer"</Description>
+                  <Description>"Temporizador de invencibilidad"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>Byte</VariableType>
                   <Address>+2B8</Address>
@@ -7970,7 +7970,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>262</ID>
-                  <Description>"Busting Rank Modifier"</Description>
+                  <Description>"Modificador de Busting Rank"</Description>
                   <Options moRecursiveSetValue="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -7983,35 +7983,35 @@ CT_RESOLVER = nil
                   <CheatEntries>
                     <CheatEntry>
                       <ID>263</ID>
-                      <Description>"Steps Taken"</Description>
+                      <Description>"Pasos dados"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+0</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>264</ID>
-                      <Description>"Times Hit in Battle"</Description>
+                      <Description>"Veces golpeado en batalla"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+1</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>265</ID>
-                      <Description>"Counter Hits"</Description>
+                      <Description>"Golpes de contraataque (Counter)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+2</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>266</ID>
-                      <Description>"Double Deletion"</Description>
+                      <Description>"Doble eliminación"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+4</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>267</ID>
-                      <Description>"Triple Deletion"</Description>
+                      <Description>"Triple eliminación"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+5</Address>
@@ -8020,7 +8020,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>166</ID>
-                  <Description>"Delete Time"</Description>
+                  <Description>"Tiempo de eliminación (Delete Time)"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>4 Bytes</VariableType>
                   <Address>+290</Address>
@@ -8032,7 +8032,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>167</ID>
-              <Description>"Sub item"</Description>
+              <Description>"Subobjetos"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -8116,7 +8116,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>658</ID>
-              <Description>"Cards"</Description>
+              <Description>"Cartas"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -8135,19 +8135,19 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>1466</ID>
-                  <Description>"##Do not change quantity if it is not 0 or does not match what you have"</Description>
+                  <Description>"##No cambies la cantidad si no es 0 o no coincide con lo que tienes"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2210</ID>
-                  <Description>"##Will not save if modified while editing Folder"</Description>
+                  <Description>"##No se guarda si se modifica mientras editas la Carpeta"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
                 <CheatEntry>
                   <ID>1785</ID>
-                  <Description>"0 Stars"</Description>
+                  <Description>"0 estrellas"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -10955,12 +10955,12 @@ CT_RESOLVER = nil
                     <CheatEntry>
                       <ID>1780</ID>
                       <Description>"Gorgon Eye (? duplicado de +7A8 en tabla original — sin verificar)"</Description>
-                      <Color>808080</Color>
                       <VariableType>4 Bytes</VariableType>
                       <Address>+B68</Address>
                       <Offsets>
                         <Offset>12</Offset>
                       </Offsets>
+                      <Color>808080</Color>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>1781</ID>
@@ -11002,7 +11002,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>1786</ID>
-                  <Description>"1 Stars"</Description>
+                  <Description>"1 estrella"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -12362,7 +12362,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>1937</ID>
-                  <Description>"2 Stars"</Description>
+                  <Description>"2 estrellas"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -13722,7 +13722,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2088</ID>
-                  <Description>"3 Stars"</Description>
+                  <Description>"3 estrellas"</Description>
                   <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -15084,7 +15084,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>5057</ID>
-              <Description>"Ability"</Description>
+              <Description>"Habilidades"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -15638,7 +15638,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>2223</ID>
-              <Description>"HP Upgrade +10"</Description>
+              <Description>"Mejora de HP +10"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>Byte</VariableType>
               <Address>+240</Address>
@@ -15649,7 +15649,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>2224</ID>
-              <Description>"HP Upgrade +20"</Description>
+              <Description>"Mejora de HP +20"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>Byte</VariableType>
               <Address>+240</Address>
@@ -15671,7 +15671,7 @@ CT_RESOLVER = nil
             </CheatEntry>
             <CheatEntry>
               <ID>198</ID>
-              <Description>"Cloak Steps Left"</Description>
+              <Description>"Pasos restantes de Cloaker"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>+240</Address>
@@ -15695,7 +15695,7 @@ CT_RESOLVER = nil
           <CheatEntries>
             <CheatEntry>
               <ID>238</ID>
-              <Description>"Battle"</Description>
+              <Description>"Batalla"</Description>
               <Options moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -15703,13 +15703,13 @@ CT_RESOLVER = nil
               <CheatEntries>
                 <CheatEntry>
                   <ID>239</ID>
-                  <Description>"##Not all pointers will work until battle is started"</Description>
+                  <Description>"##Algunos punteros solo funcionan después de iniciar una batalla"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                   <CheatEntries>
                     <CheatEntry>
                       <ID>240</ID>
-                      <Description>"##Chance of pointer breaking and crashing game if locked"</Description>
+                      <Description>"##Si se congela, el puntero puede romperse y cerrar el juego"</Description>
                       <Color>0000FF</Color>
                       <GroupHeader>1</GroupHeader>
                     </CheatEntry>
@@ -15730,7 +15730,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>242</ID>
-                  <Description>"Custom Gauge"</Description>
+                  <Description>"Barra Custom"</Description>
                   <DropDownListLink>[List] Custom Gauge</DropDownListLink>
                   <ShowAsHex>1</ShowAsHex>
                   <ShowAsSigned>0</ShowAsSigned>
@@ -15743,7 +15743,7 @@ CT_RESOLVER = nil
                 </CheatEntry>
                 <CheatEntry>
                   <ID>4294</ID>
-                  <Description>"Buster Charge"</Description>
+                  <Description>"Carga del Buster"</Description>
                   <Options moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
                   <ShowAsSigned>0</ShowAsSigned>
                   <GroupHeader>1</GroupHeader>
@@ -15758,21 +15758,21 @@ CT_RESOLVER = nil
                   <CheatEntries>
                     <CheatEntry>
                       <ID>4295</ID>
-                      <Description>"Time Since Last Shot"</Description>
+                      <Description>"Tiempo desde el último disparo"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>4 Bytes</VariableType>
                       <Address>-4</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>4296</ID>
-                      <Description>"Current Charge Level (Vusual Only)"</Description>
+                      <Description>"Nivel de carga actual (solo visual)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+0</Address>
                     </CheatEntry>
                     <CheatEntry>
                       <ID>4297</ID>
-                      <Description>"Max Charge Level  (Vusual Only) (Do not Change)"</Description>
+                      <Description>"Nivel de carga máximo (solo visual) (no cambiar)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>Byte</VariableType>
                       <Address>+1</Address>
@@ -15895,7 +15895,7 @@ if NOISE_SF3 and NOISE_SF3.timer then NOISE_SF3.timer.destroy(); NOISE_SF3.timer
                   <CheatEntries>
                     <CheatEntry>
                       <ID>4310</ID>
-                      <Description>"Noise Gauge Change - 0.#% (Current Battle)"</Description>
+                      <Description>"Cambio de Noise - 0.#% (batalla actual)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>4 Bytes</VariableType>
                       <Address>sf3_base</Address>
@@ -15907,7 +15907,7 @@ if NOISE_SF3 and NOISE_SF3.timer then NOISE_SF3.timer.destroy(); NOISE_SF3.timer
                     </CheatEntry>
                     <CheatEntry>
                       <ID>4312</ID>
-                      <Description>"Noise Gauge - 0.#%  (Display)"</Description>
+                      <Description>"Barra de Noise - 0.#% (visualización)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>4 Bytes</VariableType>
                       <Address>sf3_base</Address>
@@ -15921,7 +15921,7 @@ if NOISE_SF3 and NOISE_SF3.timer then NOISE_SF3.timer.destroy(); NOISE_SF3.timer
                 </CheatEntry>
                 <CheatEntry>
                   <ID>243</ID>
-                  <Description>"Invincibility Timer"</Description>
+                  <Description>"Temporizador de invencibilidad"</Description>
                   <ShowAsSigned>0</ShowAsSigned>
                   <VariableType>Byte</VariableType>
                   <Address>+88</Address>
@@ -15999,7 +15999,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
                   <CheatEntries>
                     <CheatEntry>
                       <ID>244</ID>
-                      <Description>"Delete Time"</Description>
+                      <Description>"Tiempo de eliminación (Delete Time)"</Description>
                       <ShowAsSigned>0</ShowAsSigned>
                       <VariableType>4 Bytes</VariableType>
                       <Address>sf3_base</Address>
@@ -16015,7 +16015,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>187</ID>
-              <Description>"Sub item"</Description>
+              <Description>"Subobjetos"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -16071,7 +16071,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>2287</ID>
-              <Description>"Cards"</Description>
+              <Description>"Cartas"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -16090,13 +16090,13 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2705</ID>
-                  <Description>"##Do not change quantity if it is not 0 or does not match what you have"</Description>
+                  <Description>"##No cambies la cantidad si no es 0 o no coincide con lo que tienes"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
                 <CheatEntry>
                   <ID>2706</ID>
-                  <Description>"##Will not save if modified while editing Folder"</Description>
+                  <Description>"##No se guarda si se modifica mientras editas la Carpeta"</Description>
                   <Color>0000FF</Color>
                   <GroupHeader>1</GroupHeader>
                 </CheatEntry>
@@ -19677,7 +19677,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>4692</ID>
-              <Description>"Ability"</Description>
+              <Description>"Habilidades"</Description>
               <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
               <ShowAsSigned>0</ShowAsSigned>
               <GroupHeader>1</GroupHeader>
@@ -20938,7 +20938,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>4314</ID>
-              <Description>"HP Upgrade +10"</Description>
+              <Description>"Mejora de HP +10"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>Byte</VariableType>
               <Address>+1C0</Address>
@@ -20949,7 +20949,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>2291</ID>
-              <Description>"HP Upgrade +20"</Description>
+              <Description>"Mejora de HP +20"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>Byte</VariableType>
               <Address>+1C0</Address>
@@ -20964,14 +20964,14 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
     </CheatEntry>
     <CheatEntry>
       <ID>41</ID>
-      <Description>"[Backup]"</Description>
+      <Description>"[Respaldo]"</Description>
       <Options moDefaultCollapsed="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
       <Color>C0C0C0</Color>
       <GroupHeader>1</GroupHeader>
       <CheatEntries>
         <CheatEntry>
           <ID>140</ID>
-          <Description>"[WIP]"</Description>
+          <Description>"[En desarrollo]"</Description>
           <Options moDefaultCollapsed="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
           <Color>C0C0C0</Color>
           <GroupHeader>1</GroupHeader>
@@ -20987,9 +20987,9 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
         <CheatEntry>
           <ID>236</ID>
           <Description>"[List] Custom Gauge"</Description>
-          <DropDownList DescriptionOnly="1" DisplayValueAsItem="1">4000:Max
-0000:Empty
-*:Filling
+          <DropDownList DescriptionOnly="1" DisplayValueAsItem="1">4000:Llena
+0000:Vacía
+*:Cargando
 </DropDownList>
           <GroupHeader>1</GroupHeader>
         </CheatEntry>

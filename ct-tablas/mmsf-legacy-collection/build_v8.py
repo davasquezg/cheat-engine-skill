@@ -9,7 +9,8 @@ transformaciones (obra propia) que se aplican sobre tu copia de la original.
 
 Uso:
   1) Descarga la tabla original desde https://fearlessrevolution.com/viewtopic.php?t=38738
-  2) python build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT -o MMSF_LC_v8.CT
+  2) python build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang es   # español
+     python build_v8.py MEGAMAN_STARFORCE_Legacy_Collection.CT --lang en   # English
 
 Requiere: Python 3.9+ y ../../cheat-engine-tables/scripts/ct_tool.py (incluido en el repo).
 Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz).
@@ -26,6 +27,7 @@ from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1] / "cheat-engine-tables" / "scripts"))
+sys.path.insert(0, str(HERE))
 import ct_tool  # noqa: E402
 
 # SHA-256 de la tabla original con la que se validó este parche
@@ -210,10 +212,39 @@ def build(original: Path, out: Path, tmp: Path) -> None:
     ct.save(out)
 
 
+def apply_lang(path: Path, lang: str) -> list[str]:
+    """Traduce descripciones, listas y textos de scripts. Devuelve textos no encontrados."""
+    import i18n
+    desc = {"es": i18n.DESC_ES, "en": i18n.DESC_EN}[lang]
+    dd = {"es": i18n.DROPDOWN_ES, "en": i18n.DROPDOWN_EN}[lang]
+    scr = {"es": i18n.SCRIPT_ES, "en": i18n.SCRIPT_EN}[lang]
+    ct = reload(path)
+    used: set[str] = set()
+    for e in ct.entries:
+        d = e.elem.find("Description")
+        key = e.desc
+        if key in desc:
+            d.text = f'"{desc[key]}"'
+            used.add(key)
+        lst = e.elem.find("DropDownList")
+        if lst is not None and lst.text in dd:
+            lst.text = dd[lst.text]
+        src = e.elem.find("AssemblerScript")
+        if src is not None and src.text:
+            t = src.text
+            for a, b in scr:
+                t = t.replace(a, b)
+            src.text = t
+    ct.save(path)
+    return sorted(set(desc) - used)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("original", help="tabla original descargada de FearLess Revolution")
-    ap.add_argument("-o", "--out", default="MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0.CT")
+    ap.add_argument("-o", "--out", help="archivo de salida (por defecto ..._v8_AOB_build1.0.2.0_<LANG>.CT)")
+    ap.add_argument("--lang", choices=["es", "en", "base"], default="es",
+                    help="idioma de la tabla: es (español), en (inglés) o base (mixto, sin traducir)")
     ap.add_argument("--force", action="store_true", help="continuar aunque el SHA-256 no coincida")
     a = ap.parse_args()
     src = Path(a.original)
@@ -222,10 +253,15 @@ def main() -> None:
         print(f"AVISO: el SHA-256 de la tabla original no coincide.\n  esperado {ORIGINAL_SHA256}\n  recibido {sha}")
         if not a.force:
             sys.exit("Usa --force si sabes que es la misma tabla (o una revisión compatible).")
-    out = Path(a.out)
+    suffix = "" if a.lang == "base" else "_" + a.lang.upper()
+    out = Path(a.out or f"MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0{suffix}.CT")
     tmp = out.with_suffix(".tmp.CT")
     try:
         build(src, out, tmp)
+        if a.lang != "base":
+            missing = apply_lang(out, a.lang)
+            if missing:
+                print("Aviso: textos de traducción sin coincidencia:", *missing, sep="\n  ")
     finally:
         if tmp.exists():
             tmp.unlink()

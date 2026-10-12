@@ -1,8 +1,8 @@
 # cheat-engine-skill
 
-Skill para Claude que sirve para **crear, auditar, reparar y endurecer tablas de Cheat Engine (`.CT`)** en juegos **de un jugador / offline**. Incluye un kit de herramientas (Python + Lua) y una tabla de ejemplo ya reparada y validada en el juego.
+**Español** · [English](README.en.md)
 
-> *A Claude skill and toolkit to build, audit, repair and harden Cheat Engine tables for single-player games. Documentation is in Spanish.*
+Skill para Claude que sirve para **crear, auditar, reparar y endurecer tablas de Cheat Engine (`.CT`)** en juegos **de un jugador / offline**. Incluye un kit de herramientas (Python + Lua) y una tabla de ejemplo ya reparada y validada en el juego, disponible en **español e inglés**.
 
 ## Qué resuelve
 
@@ -27,8 +27,10 @@ cheat-engine-tables/          ← la skill (SKILL.md) y su kit
 └── tests/run_tests.sh        ← pruebas de humo (PE sintético + API de CE simulada)
 ct-tablas/
 └── mmsf-legacy-collection/
-    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0.CT   ← tabla lista para usar
-    ├── build_v8.py           ← parche reproducible desde la tabla original
+    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_ES.CT   ← tabla en español
+    ├── MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_EN.CT   ← tabla en inglés
+    ├── build_v8.py           ← parche reproducible desde la tabla original (--lang es|en)
+    ├── i18n.py               ← traducciones de la tabla
     └── resolvers.json        ← bases y firmas AOB de la build 1.0.2.0
 ```
 
@@ -51,14 +53,17 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requiere Lua 5
 | Build | FileVersion **1.0.2.0**, TimeDateStamp `0x6A0A9BF4` (2026-05-18), Steam |
 | Bases | `sf12_base` (SF1/SF2) y `sf3_base` (SF3), resueltas por AOB (3 firmas por base) con respaldo estático |
 | Validado en el juego | Zenny, HP, cartas, subitems y habilidades (SF1–SF3); scripts de Noise Gauge y Delete Time (SF3) |
+| Idiomas | `_ES.CT` (español) y `_EN.CT` (inglés). Ambas tienen las mismas direcciones; solo cambian los textos |
 
-**Obtener la tabla:** usa directamente el `.CT` de `ct-tablas/mmsf-legacy-collection/`. Si lo prefieres, regenérala desde la original de [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738) con `build_v8.py`.
+**Obtener la tabla:** usa directamente el `.CT` en tu idioma, que está en `ct-tablas/mmsf-legacy-collection/`. Si lo prefieres, regenérala desde la original de [FearLess Revolution (t=38738)](https://fearlessrevolution.com/viewtopic.php?t=38738) con `build_v8.py --lang es` o `--lang en`.
 
 **Uso:**
 1. Abre el juego y adjunta Cheat Engine (7.5 o superior).
 2. Carga la tabla y activa **`[Resolver] Bases SF1/SF2/SF3 — activar primero`**.
 3. **Edita los valores solo desde el mapa**, sin la Carpeta ni la Biblioteca abiertas. Si hay un menú abierto, el juego sobrescribe los cambios al cerrarlo.
 4. Para fijar valores en combate (SF3), activa las cabeceras-script **Noise Gauge** (pide un valor entre 500 y 9999) o **Delete Time** (lo fija en 1).
+
+> En la versión en español se tradujeron las etiquetas, notas y mensajes. Los **nombres propios del juego** (cartas, habilidades y objetos como *Unlocker* o *Search Eye*) se mantienen como en la tabla original, para no inventar nombres oficiales.
 
 ## Alcance
 
@@ -70,12 +75,12 @@ bash cheat-engine-tables/tests/run_tests.sh          # Linux/WSL, requiere Lua 5
 
 | Parte | Licencia | Archivo |
 |---|---|---|
-| Código: `scripts/`, `lua/`, `tests/`, `build_v8.py` y los scripts que genera | **PolyForm Noncommercial 1.0.0** | [`LICENSE`](LICENSE) |
+| Código: `scripts/`, `lua/`, `tests/`, `build_v8.py`, `i18n.py` y los scripts que genera | **PolyForm Noncommercial 1.0.0** | [`LICENSE`](LICENSE) |
 | Documentación y datos: `SKILL.md`, `references/`, `templates/`, `resolvers.json` y los aportes propios en las tablas `.CT` | **CC BY-NC-SA 4.0** | [`LICENSE-docs`](LICENSE-docs) |
 
 Se permite el uso personal, educativo, de investigación y de organizaciones sin fines de lucro. **No se permite el uso comercial ni corporativo.** Si necesitas otra licencia, abre un *issue*.
 
-Ver créditos y obras de terceros en [`CREDITS.md`](CREDITS.md).
+Los textos de licencia en inglés son los oficiales y vinculantes. Ver créditos y obras de terceros en [`CREDITS.md`](CREDITS.md).
 
 ## Autor
 
