@@ -1,0 +1,40 @@
+[size=150][b]Mega Man Star Force Legacy Collection — table update for build 1.0.2.0 (AOB resolver)[/b][/size]
+
+All credit for this table goes to [b]wepon1984[/b] — every original entry, offset and script is theirs and is kept intact under the [i][wepon1984] (original author)[/i] header. My additions are in a separate [i][davasquezg][/i] header.
+
+After the latest game update the static base pointers broke, so I updated the bases and added an AOB resolver so the table should survive future patches.
+
+[b]Game version:[/b] Steam, FileVersion 1.0.2.0 (exe TimeDateStamp 2026-05-18)
+[b]File:[/b] attached below — [i]MEGAMAN_STARFORCE_Legacy_Collection_v8_AOB_build1.0.2.0_FearLess_EN.CT[/i]
+
+[size=120][b]What's added ([davasquezg] header)[/b][/size]
+[list]
+[*][b][Resolver] SF1/SF2/SF3 bases:[/b] finds the SF1/SF2 and SF3 bases by AOB (3 signatures per base) with a static fallback. [color=#FF0000][b]Enable it first[/b][/color] — the original groups use the symbols it registers.
+[*][b]SF3 — Noise Gauge locked in battle:[/b] asks for a value from 500 to 9999 (0.1% units → 50.0% to 999.9%) and keeps it for the whole battle.
+[*][b]SF3 — Delete Time locked at 1:[/b] from the start of each battle until the end.
+[*][b]SF1 — Base HP[/b] (+28, starts at 100).
+[*][b]Notes verified in-game:[/b]
+[list]
+[*]SF1: the original "HP" (+2E) is current HP; "Max HP" (+30) is not max HP.
+[*]SF1 card bytes per border: +70 white | +71 yellow | +72 blue (Mega) | +73 red (Giga).
+[*]SF1 "5. All" entries are 4 bytes from +71, so they also overwrite +72/+73/+74.
+[*]SF3: Max HP = 100 + 10×(HP Upgrade +10) + 20×(HP Upgrade +20), capped at 1000 (e.g. 18/36 or 30/30).
+[/list]
+[/list]
+
+[size=120][b]How to use[/b][/size]
+[list=1]
+[*]Start the game and attach Cheat Engine (7.5+).
+[*]Load the table and enable [b][davasquezg] > [Resolver] SF1/SF2/SF3 bases — enable first[/b].
+[*]Use the entries under [b][wepon1984] (original author)[/b] as usual.
+[*][color=#FF0000][b]Edit values only from the field map[/b][/color] (Folder/Library closed). If a menu is open, the game overwrites your changes when you close it.
+[/list]
+
+[size=120][b]Warnings / known issues[/b][/size]
+[list]
+[*][color=#FF0000][b]Do not use the battle scripts while connected online, in network/Brother battles or trades.[/b][/color] SP boss times are recorded and visible to your Brothers.
+[*][b]Mr Hertzes (SF3):[/b] the value sticks in memory but does not affect the game — still investigating.
+[*]SF2 "0 Stars" has a duplicate [i]Gorgon Eye[/i] entry (+B68) — unverified.
+[/list]
+
+Thanks again to wepon1984 for the original table. Feedback and bug reports are welcome.
