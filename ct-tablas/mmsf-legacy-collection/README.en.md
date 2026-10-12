@@ -40,5 +40,5 @@ python ../../cheat-engine-tables/scripts/ct_tool.py validate MEGAMAN_STARFORCE_L
 | SF2 | Duplicate "Gorgon Eye" entry marked as unverified |
 | SF3 Battle | **Noise Gauge** submenu whose header is a script (locked value, 500–9999) and **Delete Time** submenu (locked at 1) |
 | SF3 HP | **HP Upgrades** submenu whose header is a script: asks for a target Max HP (100–1000, default **1000** = 18 × +10 / 36 × +20) and keeps both counts locked; the manual-edit entries sit inside it. Formula `100 + 10×(+10) + 20×(+20)`, **1000 HP cap** (validated in-game) |
-| SF3 | "Mr Hertzes" flagged: the value sticks but does not affect the game |
+| SF3 | "Mr Hertzes" identified: it is the **Key Item** count, used as currency to buy abilities at the shop (verified). The "Mr. Hertz saved" counter is a different address and is not included |
 | Languages | Spanish and English versions generated from `i18n.py` |

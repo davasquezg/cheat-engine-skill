@@ -428,7 +428,7 @@ if HPUP_SF3 and HPUP_SF3.timer then HPUP_SF3.timer.destroy(); HPUP_SF3.timer = n
             </CheatEntry>
             <CheatEntry>
               <ID>5396</ID>
-              <Description>"##'Mr Hertzes' value sticks but does not affect the game (under investigation)"</Description>
+              <Description>"##Original 'Mr Hertzes' entry = Key Item count, used as currency to buy abilities at the shop (verified); the 'Mr. Hertz saved' counter is a different address"</Description>
               <Color>808080</Color>
               <GroupHeader>1</GroupHeader>
             </CheatEntry>

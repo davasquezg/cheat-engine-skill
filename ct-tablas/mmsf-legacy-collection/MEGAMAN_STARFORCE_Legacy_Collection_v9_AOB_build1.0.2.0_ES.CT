@@ -20920,7 +20920,7 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
             </CheatEntry>
             <CheatEntry>
               <ID>5048</ID>
-              <Description>"Mr Hertzes  [persiste pero NO afecta al juego — en investigación]"</Description>
+              <Description>"Mr Hertzes  [Key Item: moneda para comprar habilidades en la tienda — validado]"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>Byte</VariableType>
               <Address>+1C0</Address>
@@ -20929,7 +20929,6 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
                 <Offset>38</Offset>
                 <Offset>10</Offset>
               </Offsets>
-              <Color>808080</Color>
             </CheatEntry>
             <CheatEntry>
               <ID>5047</ID>

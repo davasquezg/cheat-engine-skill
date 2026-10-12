@@ -302,7 +302,7 @@ def build(original: Path, out: Path, tmp: Path) -> None:
     ET.SubElement(hdr, "CheatEntries").append(dt)
     make_absolute(dt, [0x168, 0x10, 0x60])
 
-    # 5) SF3: submenú "Mejoras de HP" (cabecera-script) y Mr Hertzes (validado en vivo 2026-10-12)
+    # 5) SF3: submenú "Mejoras de HP" (cabecera-script) y Mr Hertzes = Key Item (validado en vivo 2026-10-12)
     #    HP máx. = 100 + 10*(+10) + 20*(+20), con tope de 1000 en el juego (p. ej. 18/36).
     hid = max(int(x.text) for x in ct.root.iter("ID")) + 1      # IDs nuevos tras los del paso 4
     sf3_ce = by["179"].elem.find("CheatEntries")
@@ -323,9 +323,10 @@ def build(original: Path, out: Path, tmp: Path) -> None:
         up10, up20])
     for el in ct.root.iter("CheatEntry"):
         if el.findtext("ID") == "5048":
-            el.find("Description").text = '"Mr Hertzes  [persiste pero NO afecta al juego — en investigación]"'
-            if el.find("Color") is None:
-                ET.SubElement(el, "Color").text = "808080"
+            # Validado 2026-10-12: es la cantidad del Key Item, que sirve de moneda en la tienda de habilidades.
+            # (El contador de Mr. Hertz realmente salvados es otra dirección, no incluida.)
+            el.find("Description").text = ('"Mr Hertzes  [Key Item: moneda para comprar habilidades en la tienda — '
+                                           'validado]"')
     ct.save(out)
 
 

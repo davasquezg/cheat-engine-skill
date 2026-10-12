@@ -20,6 +20,7 @@ After the latest game update the static base pointers broke, so I updated the ba
 [*]SF1 card bytes per border: +70 white | +71 yellow | +72 blue (Mega) | +73 red (Giga).
 [*]SF1 "5. All" entries are 4 bytes from +71, so they also overwrite +72/+73/+74.
 [*]SF3: Max HP = 100 + 10×(HP Upgrade +10) + 20×(HP Upgrade +20), capped at 1000 (e.g. 18/36 or 30/30).
+[*]SF3: the original "Mr Hertzes" entry is the Key Item count, which works as currency to buy abilities at the shop (the "Mr. Hertz saved" counter is a different address).
 [/list]
 [/list]
 
@@ -34,7 +35,6 @@ After the latest game update the static base pointers broke, so I updated the ba
 [size=120][b]Warnings / known issues[/b][/size]
 [list]
 [*][color=#FF0000][b]Do not use the battle scripts while connected online, in network/Brother battles or trades.[/b][/color] SP boss times are recorded and visible to your Brothers.
-[*][b]Mr Hertzes (SF3):[/b] the value sticks in memory but does not affect the game — still investigating.
 [*]SF2 "0 Stars" has a duplicate [i]Gorgon Eye[/i] entry (+B68) — unverified.
 [/list]
 

@@ -83,8 +83,8 @@ DESC_EN = {
         "##Max HP = 100 + 10×(+10) + 20×(+20), capped at 1000 (e.g. 18/36). Disable the script to edit by hand",
     "Mejora de HP +10 (cantidad)": "HP Upgrade +10 (count)",
     "Mejora de HP +20 (cantidad)": "HP Upgrade +20 (count)",
-    "Mr Hertzes  [persiste pero NO afecta al juego — en investigación]":
-        "Mr Hertzes  [value sticks but does NOT affect the game — under investigation]",
+    "Mr Hertzes  [Key Item: moneda para comprar habilidades en la tienda — validado]":
+        "Mr Hertzes  [Key Item: currency to buy abilities at the shop — verified]",
     "Current Charge Level (Vusual Only)": "Current Charge Level (Visual Only)",
     "Max Charge Level  (Vusual Only) (Do not Change)": "Max Charge Level (Visual Only) (Do not Change)",
 }

@@ -146,7 +146,8 @@ def build(original: Path, out: Path, user: str) -> None:
         pointer(next_id(), "HP Upgrade +20 (count)", "Byte", "sf3_base", HP_OFFS + [HP_FIELD20]),
     ])
     s3.append(hp)
-    s3.append(note_entry(next_id(), "##'Mr Hertzes' value sticks but does not affect the game (under investigation)",
+    s3.append(note_entry(next_id(), "##Original 'Mr Hertzes' entry = Key Item count, used as currency to buy abilities "
+                                    "at the shop (verified); the 'Mr. Hertz saved' counter is a different address",
                          "808080"))
     m.append(sf3)
 
