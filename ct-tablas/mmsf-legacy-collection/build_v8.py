@@ -225,6 +225,46 @@ def build(original: Path, out: Path, tmp: Path) -> None:
     ct.save(out)
 
 
+REPO_URL = "https://github.com/davasquezg/cheat-engine-skill"
+TABLE_URL = REPO_URL + "/tree/main/ct-tablas/mmsf-legacy-collection"
+
+REFERENCE = {
+    "es": {
+        "note": f"##Fuente y actualizaciones: {TABLE_URL} — tabla original de wepon1984 (FearLess Revolution)",
+        "comments": (
+            "Mega Man Star Force Legacy Collection — tabla v8 (build 1.0.2.0), versión en español\n"
+            "Tabla original: wepon1984 — https://fearlessrevolution.com/viewtopic.php?t=38738\n"
+            f"Actualización (Resolver AOB, scripts SF3, notas, traducción): davasquezg — {TABLE_URL}\n"
+            "Créditos y licencias: " + REPO_URL + "/blob/main/CREDITS.md\n"
+            "Solo para juego offline / un jugador. Edita los valores solo desde el mapa (sin menús abiertos)."
+        ),
+    },
+    "en": {
+        "note": f"##Source and updates: {TABLE_URL} — original table by wepon1984 (FearLess Revolution)",
+        "comments": (
+            "Mega Man Star Force Legacy Collection — v8 table (build 1.0.2.0), English version\n"
+            "Original table: wepon1984 — https://fearlessrevolution.com/viewtopic.php?t=38738\n"
+            f"Update (AOB resolver, SF3 scripts, notes, translation): davasquezg — {TABLE_URL}\n"
+            "Credits and licenses: " + REPO_URL + "/blob/main/CREDITS.en.md\n"
+            "Offline / single-player use only. Edit values only from the field map (no menus open)."
+        ),
+    },
+}
+
+
+def add_reference(path: Path, lang: str) -> None:
+    """Agrega la referencia al repositorio: nota ## al inicio y comentario de tabla (Table Extras > Comments)."""
+    ref = REFERENCE[lang]
+    ct = reload(path)
+    top = ct.root.find("CheatEntries")
+    top.insert(0, note_entry(ct.max_id() + 1, ref["note"], "008000"))
+    com = ct.root.find("Comments")
+    if com is None:
+        com = ET.SubElement(ct.root, "Comments")
+    com.text = ref["comments"]
+    ct.save(path)
+
+
 def apply_lang(path: Path, lang: str) -> list[str]:
     """Traduce descripciones, listas y textos de scripts. Devuelve textos no encontrados."""
     import i18n
@@ -273,6 +313,7 @@ def main() -> None:
         build(src, out, tmp)
         if a.lang != "base":
             missing = apply_lang(out, a.lang)
+            add_reference(out, a.lang)
             if missing:
                 print("Aviso: textos de traducción sin coincidencia:", *missing, sep="\n  ")
     finally:

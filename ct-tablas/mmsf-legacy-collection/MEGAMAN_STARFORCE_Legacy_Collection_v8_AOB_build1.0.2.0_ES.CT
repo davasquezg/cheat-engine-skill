@@ -2,6 +2,12 @@
 <CheatTable CheatEngineTableVersion="52">
   <CheatEntries>
     <CheatEntry>
+      <ID>5385</ID>
+      <Description>"##Fuente y actualizaciones: https://github.com/davasquezg/cheat-engine-skill/tree/main/ct-tablas/mmsf-legacy-collection — tabla original de wepon1984 (FearLess Revolution)"</Description>
+      <Color>008000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
       <ID>0</ID>
       <Description>"CompactMode"</Description>
       <VariableType>Auto Assembler Script</VariableType>
@@ -20998,4 +21004,9 @@ if DELTIME_SF3 and DELTIME_SF3.timer then DELTIME_SF3.timer.destroy(); DELTIME_S
     </CheatEntry>
   </CheatEntries>
   <UserdefinedSymbols />
+  <Comments>Mega Man Star Force Legacy Collection — tabla v8 (build 1.0.2.0), versión en español
+Tabla original: wepon1984 — https://fearlessrevolution.com/viewtopic.php?t=38738
+Actualización (Resolver AOB, scripts SF3, notas, traducción): davasquezg — https://github.com/davasquezg/cheat-engine-skill/tree/main/ct-tablas/mmsf-legacy-collection
+Créditos y licencias: https://github.com/davasquezg/cheat-engine-skill/blob/main/CREDITS.md
+Solo para juego offline / un jugador. Edita los valores solo desde el mapa (sin menús abiertos).</Comments>
 </CheatTable>

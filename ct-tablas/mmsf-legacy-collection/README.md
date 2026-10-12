@@ -26,6 +26,8 @@ python ../../cheat-engine-tables/scripts/ct_tool.py validate MEGAMAN_STARFORCE_L
 - **`resolvers.json`:** contiene las bases y firmas AOB de la build 1.0.2.0. Si el juego se actualiza y las firmas fallan, regenera las firmas con `sigmaker.py` (ver la skill) y vuelve a ejecutar el parche.
 - **`i18n.py`:** contiene las traducciones. Para corregir o agregar un texto, edítalo ahí y vuelve a generar las tablas.
 
+- **Referencia:** cada tabla trae el enlace al repositorio y el crédito a wepon1984 en una nota `##` al inicio y en *Table Extras → Comments* de Cheat Engine. La versión para FearLess (`fearless/`) no incluye enlaces externos, como piden las reglas del foro.
+
 ## Qué cambia respecto de la original
 
 | Área | Cambio |
