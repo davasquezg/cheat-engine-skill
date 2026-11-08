@@ -13,6 +13,7 @@ Carpeta de trabajo donde los scripts Lua escriben sus resultados (ruta absoluta
 | `verificar_candidatas_gv1_v2_2026-11-08.txt` | Corrida v2 (punteros tras recargar, PV máx., pistas de Tiempo/Kudos) | Sí |
 | `verificar_candidatas_gv1_v1_2026-11-08.txt` | Corrida v1 + observaciones del usuario (ANALISIS §8.4) | Sí |
 | `verificar_candidatas_gv1_v1b_2026-11-08.txt` | Segunda corrida v1 (Prestigio 1902 → 2620) | Sí |
+| `diag_gv3_<fecha>_<hora>.txt` | `../sondas/diag_gv3.lua` (GV3, un archivo por corrida) | Sí |
 | `kudos_diag.txt` | `../sondas/kudos_diag_gv1.lua` (se va agregando cada paso) | Sí |
 
 ## Regenerar el volcado de `game1.exe`

@@ -370,3 +370,25 @@ Informe: `dumps/verificar_candidatas_gv1_v3_2026-11-08_0404.txt` (con las observ
 | Otras medallas | `Créditos+0x44C` (+7B3AB4), `+8C1764`, `+8C2DBC`: 1 → 2 | copias (¿medallas guardadas?) sin confirmar |
 
 Con esto el Δ con la build de wepon1984 queda así: **+0x9078** en el bloque de partida (Créditos, materiales), **+0x9060** en el puntero al jugador, **+0x8FF0** en el bloque de combate y **+0x9000** en la zona del nivel en curso (Tiempo, Medallas).
+
+## 9. GV3 (`game3.exe`) — plan: como mínimo, los mismos cheats que GV1 (2026-11-08)
+
+Fuentes: `gv3.CT` de RTX_XXXX (GV3 suelto, `game.exe`, 5 AOB; §4) y el grupo de GV3 de wepon1984 (`trilogy.CT`: base `game3.exe+1E2CE98` con cadenas de punteros + la misma AOB de vida). Nada verificado aún en nuestra build.
+
+| Cheat de GV1 (mínimo) | Pista en GV3 | Fuente | Estado |
+|---|---|---|---|
+| Captura del jugador / HP actual y máx. | AOB `F3 0F 11 41 08 83 49 18 01 C3 0F` (`movss [rcx+08],xmm0`): HP *float* `+08`, máx. `+0C`, jugador si `[rcx+20]==1` | RTX + wepon1984 | ⏳ diag B |
+| Invencibilidad | AOB `F3 0F 10 86 10 05 00 00 45` (`[rsi+510]` float) · cadena `[[[base]+10]+10]+592` (temporizador) / `+594` (on/off) | RTX · wepon1984 | ⏳ diag B / C |
+| Prestigio ×N / mantener | `[base]+264` *float* | wepon1984 | ⏳ diag C |
+| EXP ×N / EXP / Nivel | `[[[base]+20]+110]+2A80` / `+2A86` (byte) | wepon1984 | ⏳ diag C |
+| PH / habilidades / cooldowns | Talismanes: AOB `88 91 9A 06 00 00` (`mov [rcx+69A],dl` → 8) | RTX | ⏳ diag B |
+| PE | «Fetters Gauge» `[base]+478` *float* | wepon1984 | ⏳ diag C |
+| Tiempo de nivel | `[base]+354` *float* | wepon1984 | ⏳ diag C |
+| Score (GV1 no lo tiene fijo) | `[base]+44` · AOB HighScore `F3 0F 11 83 F8 00 00 00 40` (`[rbx+F8]` float) | wepon1984 · RTX | ⏳ |
+| Créditos, materiales, medallas, tiempo total, PV máx. | **sin datos** en las referencias | — | por buscar (si existen en GV3) |
+| 🎁 Extra: One Hit Kill | en el mismo hook de vida (enemigo → HP 0) | RTX | ⏳ |
+| 🎁 Extra: Image Chips | `[base]+198` (bits) | wepon1984 | ⏳ |
+
+Riesgos conocidos: «Invencible ambos» de RTX usa un `call` relativo (`E8 AC 17 DF FF`), casi seguro roto; congelar talismanes **cierra el juego al cambiar a Gunvolt** (wepon1984); el depurador cierra GV3 (Algester) → todo sin depurador.
+
+Primer paso: `sondas/diag_gv3.lua` (solo lectura): build, unicidad de las 5 AOB, cadenas desde la base de wepon1984 y, si no sirve, barrido de ±0x80000 usando el Nivel y el Prestigio de pantalla; muestreo de 5 min.

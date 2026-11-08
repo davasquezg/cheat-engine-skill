@@ -1,13 +1,15 @@
-# Azure Striker Gunvolt Trilogy Enhanced — table in progress
+# Azure Striker Gunvolt Trilogy Enhanced — table in development (alpha)
 
 [Español](README.md) · **English**
 
-> 🚧 **Work in progress.** No table has been published in this folder yet.
+> 🚧 **Alpha.** `Gunvolt_Trilogy_Enhanced_v0.3-alpha_ES.CT` (Spanish): GV1 verified in-game; GV2, GV3 and Connect iX ported unverified from wepon1984's table. Changes and comparison with the reference tables: [`CHANGELOG.md`](CHANGELOG.md) (Spanish).
 
 Project to build a Cheat Engine table for *Azure Striker Gunvolt Trilogy Enhanced* (Steam) covering all three games. It starts from the table by **ndck1** (signed "ndck76" in the script) published on [FearLess Revolution (t=35891)](https://fearlessrevolution.com/viewtopic.php?t=35891).
 
 | File | Contents |
 |---|---|
+| `CHANGELOG.md` | Alpha version history and comparison with gv1.CT (WarCOzes) and wepon1984's table (Spanish) |
+| `build_trilogia_alpha.py` | Alpha table generator (`Gunvolt_Trilogy_Enhanced_<version>_ES.CT`) |
 | `NOTAS_analisis.md` | Audit of the original table and work plan (Spanish) |
 | `ANALISIS_tablas_referencia.md` | Patterns from the standalone GV1, GV2 and GV3 tables (Spanish) |
 | `diag_asgte.lua` | Diagnostic script for Cheat Engine's Lua console (read-only) |

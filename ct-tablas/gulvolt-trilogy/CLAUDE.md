@@ -41,6 +41,7 @@ Estado: 🧪 **investigación de GV1** (`game1.exe`). Tabla **alfa** `Gunvolt_Tr
 |---|---|
 | `diag_asgte.lua` | Diagnóstico inicial: procesos, AOB de ndck1, volcado del módulo a `dumps/` |
 | `build_trilogia_alpha.py` | **Genera `Gunvolt_Trilogy_Enhanced_<VERSION>_ES.CT`** (hoy v0.3-alpha). **Cada regeneración con cambios sube `VERSION`** y se conserva el `.CT` anterior; historial en el docstring: reutiliza `gv1_trucos()`/`gv1_sondas()` de la multisonda, agrega las candidatas de GV1 y porta GV2/GV3/Connect iX desde `original/trilogy.CT` (verifica su SHA-256). Un grupo por exe: activarlo adjunta CE a ese exe. Verde = verificado, gris = candidato, naranja = wepon1984 |
+| `sondas/diag_gv3.lua` | **GV3**, primer diagnóstico (solo lectura): build, unicidad de las AOB de RTX_XXXX/wepon1984, cadenas desde la base de wepon1984, barrido de bases con Nivel/Prestigio de pantalla y 5 min de muestreo → `dumps/diag_gv3_<fecha>_<hora>.txt` |
 | `sondas/verificar_candidatas_gv1.lua` | Verificación de solo lectura de las candidatas de wepon1984 (§8.1): bloque de partida, puntero estático al jugador, bloque de combate y su copia, Tiempo/Medallas/Score/Kudos con los dos Δ y 2 min de muestreo (EXP y Kudos frente a la pantalla) |
 | `sondas/build_multisonda.py` | **Genera `multisonda_gv1.CT`** incrustando los `.lua` de la carpeta. Editar los `.lua` o este script y regenerar; no editar el `.CT` a mano. Expone `gv1_trucos()` y `gv1_sondas()` |
 | `sondas/multisonda_gv1.CT` | Tabla de trabajo: grupo **▶ GV1 — Trucos** (captura, invencibilidad, Prestigio ×N, materiales, valores) + **🔧 Sondas** |
@@ -65,7 +66,22 @@ python ../../cheat-engine-tables/scripts/ct_tool.py validate Gunvolt_Trilogy_Enh
 
 ## Próximos pasos
 
-1. GV1: ejecutar `🔎 Verificar candidatas` v2 (tras reiniciar el juego: confirma el puntero `[+7B3220]`; busca Kudos, Medallas y Tiempo) y pasar a verde lo que acierte en `build_trilogia_alpha.py`; resultados del contador de daño → One Hit Kill.
-2. Construir la tabla definitiva de GV1 (ES/EN) con `build_*.py`, resolviendo las direcciones estáticas por AOB (como `sf3_base` en MMSF).
-3. Mapear `game2.exe` / `game3.exe` / `game4.exe` y repetir para GV2 y GV3.
-4. Versión FearLess: cabecera `[ndck1] (original author)` + `[Skolleks]`, PM a ndck1 y 48 h de espera. Si se usan datos de `trilogy.CT`, acreditar y avisar también a wepon1984.
+Historial de versiones y comparación con gv1.CT / wepon1984: [`CHANGELOG.md`](CHANGELOG.md).
+
+1. **GV3 (`game3.exe`) — objetivo actual** (el usuario saltó GV2): llegar como mínimo a los cheats de GV1. Plan y matriz de paridad en `ANALISIS_tablas_referencia.md` §9; primer paso `sondas/diag_gv3.lua`. Método general abajo (los pasos de GV2 se aplican igual). GV1 quedó en v0.3-alpha (commit `89fac92`).
+1b. GV2 (`game2.exe`): después de GV3, con el método de abajo.
+2. GV1, pendientes menores: confirmar el puntero `[+7B3220]` tras **reiniciar el exe**; One Hit Kill e HP infinito como script (resultados del contador de daño); resolver las direcciones fijas por AOB (como `sf3_base` en MMSF); versión EN.
+3. Connect iX (`game4.exe`) con el mismo método.
+4. Versión FearLess: cabecera `[ndck1] (original author)` + `[Skolleks]`, PM a ndck1 y 48 h de espera. Como se usan datos de `trilogy.CT`, acreditar y avisar también a wepon1984.
+
+## Método para pasar al siguiente Gunvolt (aprendido en GV1)
+
+Punto de partida para GV2: el grupo de wepon1984 ya está en la alfa (🟠) y `ANALISIS_tablas_referencia.md` §3 tiene la tabla de Shinkansen (dos AOB que capturan las estructuras, todo lo demás relativo a ellas).
+
+1. **Huella y volcado.** Adjuntar CE a `game2.exe` (confirmar que es GV2) y correr `diag_asgte.lua` para el volcado (SteamStub). Anotar la build (TimeDateStamp, SHA-256) en este archivo. Suponer que el depurador también lo cierra: trabajar sin él.
+2. **Probar primero las AOB de Shinkansen** (getter `8B 41 58 99 0F B6 D2 03 C2 C1 F8 08 C3` y suma del Score `01 03 8B 03 3B C1 0F 4F C1 89 03`): si siguen siendo únicas en el volcado (`sigmaker.py check --dump`), dan las dos estructuras sin depender de la build.
+3. **Ancla por valor.** Buscar los Créditos de Gunvolt con un escaneo normal y comparar con wepon1984 (`game2.exe+923158`): eso da el Δ del **bloque de partida**. No usar ese Δ para el resto: en GV1 cada zona se corrió distinto (+0x9078, +0x9060, +0x8FF0, +0x9000).
+4. **Verificador para GV2.** Copiar `sondas/verificar_candidatas_gv1.lua` como `verificar_candidatas_gv2.lua`: cambiar `MOD`, las anclas y la lista `C` (direcciones de wepon1984 + Δ por zona y los Δ relativos de Shinkansen en §3). Mantener las búsquedas por valor (Kudos ×1/×160/×256, Medallas, Totales del menú), el escaneo «aumentó» para el Tiempo y la búsqueda de punteros al objeto jugador. Muestreo de 5 min jugando, con valores de pantalla al inicio y al final.
+5. **Particularidades de GV2** (de las referencias, por confirmar): dos personajes (Gunvolt y Copen) con Créditos, EXP, Nivel y materiales **separados**; materiales de **1 byte** (24, con otro orden que GV1); HP y Kudos ×160; EP en punto fijo 24.8; objeto jugador con HP en `+420` e invencibilidad en `+598` (wepon1984), no `+398`/`+518` como GV1. El SP de Gunvolt solo se escribe jugando con Gunvolt (si no, el juego se cuelga, según Shinkansen).
+6. **Tabla.** Crear `sondas/build_multisonda_gv2.py` (o funciones `gv2_trucos()` / `gv2_sondas()`), reemplazar en `build_trilogia_alpha.py` el grupo 🟠 de GV2 por el verificado, **subir la versión** de la alfa y anotar el cambio en `CHANGELOG.md`.
+7. **Reglas que se mantienen:** editar desde el mapa sin menús abiertos; desactivar los scripts antes de recargar la tabla; guardar cada informe en `dumps/` con versión y fecha, junto con lo que el usuario vio en pantalla.
