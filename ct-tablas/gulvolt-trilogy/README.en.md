@@ -11,7 +11,8 @@ Project to build a Cheat Engine table for *Azure Striker Gunvolt Trilogy Enhance
 | `NOTAS_analisis.md` | Audit of the original table and work plan (Spanish) |
 | `ANALISIS_tablas_referencia.md` | Patterns from the standalone GV1, GV2 and GV3 tables (Spanish) |
 | `diag_asgte.lua` | Diagnostic script for Cheat Engine's Lua console (read-only) |
-| `sondas/` | Debugger-free GV1 multi-probe (`multisonda_gv1.CT`, Lua scripts and generator) |
+| `sondas/` | Debugger-free GV1 multi-probe (`multisonda_gv1.CT`, Lua scripts and generator). **▶ GV1 — Trucos** group: invincibility, Prestige (Kudos) ×N / keep, max materials, credits, EP, SP and cooldowns |
+| `CLAUDE.md` | Project status, verified memory map and next steps (for Claude Code / Cowork; Spanish) |
 
 The original table is **not included** in the repository. Download it from its thread.
 

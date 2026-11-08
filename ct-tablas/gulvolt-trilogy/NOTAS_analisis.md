@@ -77,17 +77,17 @@ Es decir, **solo hay una trampa (HP) y solo para Gunvolt 1**. *Gunvolt 2* y *Gun
 | Fase | Tarea | Estado |
 |---|---|---|
 | 0 | Carpeta, análisis, script de diagnóstico | ✅ |
-| 1 | Conectar la carpeta de instalación del juego (versión del exe, nombres `game*.exe`) | ✅ (falta mapear exe ↔ juego) |
+| 1 | Conectar la carpeta de instalación del juego (versión del exe, nombres `game*.exe`) | ✅ GV1 = `game1.exe`; falta GV2/GV3 |
 | 1b | Análisis de las tablas individuales de GV1/GV2/GV3 → `ANALISIS_tablas_referencia.md` | ✅ |
-| 2 | En vivo (GV1): ejecutar `diag_asgte.lua` → unicidad del AOB, desensamblado, valores en `[data]+0..+10` | ⏳ |
-| 2b | Multisonda sin depurador (`sondas/multisonda_gv1.CT`): captura del jugador, contador de daño, bloques de partida/combate de gv1.CT, invencibilidad | 🟡 en curso: invencibilidad ✅, combate encontrado |
-| 3 | Mapear campos de GV1 (HP actual / máx., EP/prevasión, Kudos, Credits, etc.) | ⏳ |
+| 2 | En vivo (GV1): ejecutar `diag_asgte.lua` → unicidad del AOB, desensamblado, valores en `[data]+0..+10` | ✅ volcado + estructura de vida |
+| 2b | Multisonda sin depurador (`sondas/multisonda_gv1.CT`): captura del jugador, contador de daño, bloques de partida/combate de gv1.CT, invencibilidad | ✅ |
+| 3 | Mapear campos de GV1 (HP actual / máx., EP/prevasión, Kudos, Credits, etc.) | 🟡 HP, invencibilidad, créditos, materiales, PE/SP/cooldowns y Prestigio ✅; faltan EXP, score, tiempo, copia del bloque de combate y One Hit Kill |
 | 4 | Repetir para GV2 y GV3 | ⏳ |
 | 5 | Construir la tabla propia (ES/EN) con la skill: inyecciones por AOB robustas, scripts de valor fijo, sin Lua publicitario | ⏳ |
-| 6 | Versión compatible con FearLess (cabecera `[ndck76] (original author)` + `[Skolleks]`), PM al autor y espera de 48 h | ⏳ |
+| 6 | Versión compatible con FearLess (cabecera `[ndck1] (original author)` + `[Skolleks]`), PM al autor y espera de 48 h | ⏳ |
 
 ## Pendiente de confirmar con el usuario / en el juego
 
 - Qué `gameN.exe` corresponde a GV2 y GV3 (y qué es el quinto). GV1 = `game1.exe` ✅.
-- Descargar las tablas de referencia (sobre todo la de wepon1984) a `original/` para comparar patrones.
+- Descargar la tabla de wepon1984 (t=35866) a `original/` para comparar patrones (las de GV1/GV2/GV3 individuales ya se analizaron).
 - Qué trampas se quieren por juego.

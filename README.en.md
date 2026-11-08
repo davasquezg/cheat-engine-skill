@@ -26,13 +26,18 @@ cheat-engine-tables/          ← the skill (SKILL.md) and its toolkit
 ├── references/               ← .CT format, live workflow, Auto Assembler templates
 └── tests/run_tests.sh        ← smoke tests (synthetic PE + simulated CE API)
 ct-tablas/
-└── mmsf-legacy-collection/
-    ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT   ← Spanish table
-    ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_EN.CT   ← English table
-    ├── ..._v8_..._ES.CT / _EN.CT  ← previous version (reference)
-    ├── build_v9.py           ← reproducible patch from the original table (--lang es|en)
-    ├── i18n.py               ← table translations
-    └── resolvers.json        ← bases and AOB signatures for build 1.0.2.0
+├── mmsf-legacy-collection/
+│   ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT   ← Spanish table
+│   ├── MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_EN.CT   ← English table
+│   ├── ..._v8_..._ES.CT / _EN.CT  ← previous version (reference)
+│   ├── build_v9.py           ← reproducible patch from the original table (--lang es|en)
+│   ├── i18n.py               ← table translations
+│   ├── resolvers.json        ← bases and AOB signatures for build 1.0.2.0
+│   └── fearless/             ← FearLess Revolution version + BBCode post
+└── gulvolt-trilogy/          ← Azure Striker Gunvolt Trilogy Enhanced (WORK IN PROGRESS)
+    ├── NOTAS_analisis.md / ANALISIS_tablas_referencia.md   (Spanish)
+    └── sondas/               ← debugger-free GV1 multi-probe (multisonda_gv1.CT + Lua scripts)
+CLAUDE.md                     ← guide for Claude Code / Cowork (each project has its own)
 ```
 
 ## Installation

@@ -11,7 +11,8 @@ Proyecto para crear una tabla de Cheat Engine para *Azure Striker Gunvolt Trilog
 | `NOTAS_analisis.md` | Auditoría de la tabla original y plan de trabajo |
 | `ANALISIS_tablas_referencia.md` | Patrones de las tablas de GV1, GV2 y GV3 individuales |
 | `diag_asgte.lua` | Script de diagnóstico para la consola Lua de Cheat Engine (solo lectura) |
-| `sondas/` | Multisonda de GV1 sin depurador (`multisonda_gv1.CT`, scripts Lua y generador) |
+| `sondas/` | Multisonda de GV1 sin depurador (`multisonda_gv1.CT`, scripts Lua y generador). Grupo **▶ GV1 — Trucos**: invencibilidad, Prestigio ×N / mantener, materiales al máximo, créditos, PE, PH y cooldowns |
+| `CLAUDE.md` | Estado del proyecto, mapa de memoria verificado y próximos pasos (para Claude Code / Cowork) |
 
 La tabla original **no se incluye** en el repositorio. Descárgala desde su hilo.
 
