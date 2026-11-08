@@ -1,0 +1,6 @@
+# Tabla original de terceros (ndck1): no se redistribuye, solo se usa localmente como base
+original/
+# Volcados y binarios del juego
+*.dmp
+*.exe
+dumps/
