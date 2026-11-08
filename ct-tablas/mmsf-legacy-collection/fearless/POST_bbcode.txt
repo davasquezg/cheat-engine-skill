@@ -2,6 +2,8 @@
 
 All credit for this table goes to [b]wepon1984[/b] — every original entry, offset and script is theirs and is kept intact under the [i][wepon1984] (original author)[/i] header. My additions are in a separate [i][Skolleks][/i] header.
 
+[b]Posted with wepon1984's permission[/b] (asked via PM, per the forum rules for modified tables) — thank you!
+
 After the latest game update the static base pointers broke, so I updated the bases and added an AOB resolver so the table should survive future patches.
 
 [b]Game version:[/b] Steam, FileVersion 1.0.2.0 (exe TimeDateStamp 2026-05-18)
@@ -19,7 +21,6 @@ After the latest game update the static base pointers broke, so I updated the ba
 [*]SF1: the original "HP" (+2E) is current HP; "Max HP" (+30) is not max HP.
 [*]SF1 card bytes per border: +70 white | +71 yellow | +72 blue (Mega) | +73 red (Giga).
 [*]SF1 "5. All" entries are 4 bytes from +71, so they also overwrite +72/+73/+74.
-[*]SF3: Max HP = 100 + 10×(HP Upgrade +10) + 20×(HP Upgrade +20), capped at 1000 (e.g. 18/36 or 30/30).
 [*]SF3: the original "Mr Hertzes" entry is the Key Item count, which works as currency to buy abilities at the shop (the "Mr. Hertz saved" counter is a different address).
 [/list]
 [/list]
