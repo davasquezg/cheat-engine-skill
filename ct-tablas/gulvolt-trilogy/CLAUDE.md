@@ -42,7 +42,7 @@ Estado: 🧪 **investigación de GV1** (`game1.exe`). Aún no hay tabla publicad
 | `sondas/invencible_*.lua` · `sonda_invencibilidad_gv1.lua` | Interruptor de invencibilidad / sonda que la descubrió |
 | `sondas/obsoletos/` | Buscadores de valores descartados (no sirven para el Prestigio escalado) |
 
-Los scripts Lua escriben informes en `D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\` (ruta absoluta; `dumps/` está en `.gitignore`).
+Los scripts Lua escriben informes en `D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\` (ruta absoluta). Los informes `.txt` se versionan; los volcados `*.dmp` no (ver `dumps/README.md` para regenerarlos). Las tablas de referencia van en `original/` y no se versionan: `original/FUENTES.md` dice de dónde bajarlas y su SHA-256.
 
 ```bash
 cd ct-tablas/gulvolt-trilogy/sondas

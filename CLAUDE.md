@@ -52,7 +52,7 @@ Revisar sintaxis de Lua antes de entregar: `luac5.3 -p archivo.lua` (CE usa Lua 
 
 ## Reglas del proyecto
 
-- **Legal / alcance:** solo juegos offline. No se publican ejecutables, volcados (`*.dmp`, `dumps/`) ni recursos del juego. Las tablas **originales de terceros** se guardan solo en local (`original/`, ignorado por git) y nunca se suben.
+- **Legal / alcance:** solo juegos offline. No se publican ejecutables, volcados (`*.dmp`, `dumps/`) ni recursos del juego. Las tablas **originales de terceros** se guardan solo en local en `ct-tablas/<juego>/original/` (los `.CT` están en `.gitignore`); lo que sí se versiona es `original/FUENTES.md` con el hilo, el nombre y el SHA-256 para volver a descargarlas. En `dumps/` se versionan los informes `.txt` de las sondas, nunca los `.dmp`.
 - **Licencias:** código = PolyForm Noncommercial 1.0.0 (`LICENSE`); docs y datos = CC BY-NC-SA 4.0 (`LICENSE-docs`). Cabecera de licencia en cada script nuevo.
 - **Créditos:** toda tabla derivada acredita al autor original (`CREDITS.md`, nota `##` y *Table Extras → Comments*).
 - **FearLess Revolution** (<https://fearlessrevolution.com/viewtopic.php?t=20>): tablas modificadas → PM al autor y esperar 48 h; cabecera `[Autor] (original author)` intacta + cabecera propia `[Skolleks]`; sin enlaces externos en el post; el `.CT` se adjunta en el foro. En GitHub estas reglas no aplican, pero se respetan los créditos.

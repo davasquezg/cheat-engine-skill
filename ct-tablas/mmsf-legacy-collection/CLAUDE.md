@@ -13,16 +13,17 @@ Estado: ✅ **publicada (v9)**. Tabla original de **wepon1984** ([FearLess t=387
 | `*_v9_*_ES.CT`, `*_v9_*_EN.CT` | Tablas publicadas (generadas; no editar a mano) |
 | `*_v8_*.CT` | Versión anterior, solo referencia |
 | `fearless/` | Tabla para el foro + `POST_bbcode.txt` (sin enlaces externos) |
+| `original/FUENTES.md` | De dónde bajar la tabla original y su SHA-256 (el `.CT` original no se versiona) |
 
-La tabla original (SHA-256 `9b1b11a1…59c8`) **no está en el repo**; el usuario la guarda en `H:\SteamLibrary\steamapps\common\MegaMan StarForce LegacyCollection\Claude outputs\`.
+La tabla original (SHA-256 `9b1b11a1…59c8`) **no se versiona**: va en `original/MEGAMAN_STARFORCE_Legacy_Collection.CT` (ignorado por git). Restaurada y verificada el 2026-11-08: `build_v9.py` reproduce las v9 ES/EN byte a byte.
 
 ## Regenerar
 
 ```bash
 cd ct-tablas/mmsf-legacy-collection
-python build_v9.py <original.CT> --lang es -o MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT
-python build_v9.py <original.CT> --lang en -o MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_EN.CT
-python build_fearless.py <original.CT>
+python build_v9.py original/MEGAMAN_STARFORCE_Legacy_Collection.CT --lang es -o MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_ES.CT
+python build_v9.py original/MEGAMAN_STARFORCE_Legacy_Collection.CT --lang en -o MEGAMAN_STARFORCE_Legacy_Collection_v9_AOB_build1.0.2.0_EN.CT
+python build_fearless.py original/MEGAMAN_STARFORCE_Legacy_Collection.CT
 python ../../cheat-engine-tables/scripts/ct_tool.py validate <cada .CT>
 ```
 

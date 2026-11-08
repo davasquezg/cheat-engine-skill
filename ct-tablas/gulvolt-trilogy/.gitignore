@@ -1,6 +1,12 @@
-# Tabla original de terceros (ndck1): no se redistribuye, solo se usa localmente como base
-original/
-# Volcados y binarios del juego
+# Tablas originales de terceros (ndck1, WarCOzes, Shinkansen, RTX_XXXX…): NO se redistribuyen.
+# Se versiona solo original/FUENTES.md (de dónde bajarlas y su SHA-256) para poder recuperarlas.
+original/*.CT
+original/*.ct
+original/*.rar
+original/*.zip
+
+# Volcados de memoria del juego (contienen código de CAPCOM/Inti Creates): nunca se publican.
+# Los informes de texto de dumps/ (resultados de las sondas) SÍ se versionan.
 *.dmp
 *.exe
-dumps/
+*.bin

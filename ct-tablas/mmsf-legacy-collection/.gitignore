@@ -1,0 +1,5 @@
+# Tabla original de wepon1984: NO se redistribuye. Solo se versiona original/FUENTES.md.
+original/*.CT
+original/*.ct
+# Volcados de memoria del juego: nunca se publican
+dumps/*.dmp
