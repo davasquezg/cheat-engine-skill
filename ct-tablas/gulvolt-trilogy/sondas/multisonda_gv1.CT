@@ -1,0 +1,1382 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"##GV1 (game1.exe) — los trucos activan solos lo que necesitan. Entra a un nivel antes."</Description>
+      <Color>0000FF</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"▶ GV1 — Trucos"</Description>
+      <Color>008000</Color>
+      <Options moManualExpandCollapse="1" />
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>"Captura jugador (base de los trucos; se activa sola)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Sonda 1 — Captura del jugador (sin depurador)
+  Engancha la rutina que recalcula HP/HP máx. (la misma zona que usa ndck1, 7 bytes antes,
+  así que pueden convivir). Guarda:
+    gv1_player = objeto del personaje (rdi)   gv1_hp = su componente de vida ([rdi+3D8])
+    gv1_last   = último componente visto (cualquier personaje)
+  Solo guarda gv1_player/gv1_hp cuando el byte +18 del componente vale 1 (jugador).
+  El AOB tolera que la zona ya esté parchada (por esta sonda tras recargar la tabla, o por ndck1). }
+[ENABLE]
+aobscanmodule(gv1cap,game1.exe,F6 47 26 04 74 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 45 8B C8 44 0F 4E CD)
+alloc(gv1cap_mem,$200,gv1cap)
+label(gv1cap_ret)
+label(gv1_player)
+label(gv1_hp)
+label(gv1_last)
+registersymbol(gv1cap)
+registersymbol(gv1_player)
+registersymbol(gv1_hp)
+registersymbol(gv1_last)
+
+gv1cap_mem:
+  mov rcx,[rdi+3D8]
+  test rcx,rcx
+  je @f
+  mov [gv1_last],rcx
+  cmp byte ptr [rcx+18],1
+  jne @f
+  mov [gv1_player],rdi
+  mov [gv1_hp],rcx
+@@:
+  jmp gv1cap_ret
+align 8
+gv1_player:
+  dq 0
+gv1_hp:
+  dq 0
+gv1_last:
+  dq 0
+
+gv1cap+6:
+  jmp gv1cap_mem
+  nop 2
+gv1cap_ret:
+
+[DISABLE]
+gv1cap+6:
+  db 48 8B 8F D8 03 00 00
+unregistersymbol(gv1cap)
+unregistersymbol(gv1_player)
+unregistersymbol(gv1_hp)
+unregistersymbol(gv1_last)
+dealloc(gv1cap_mem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>4</ID>
+              <Description>"HP actual (×16)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_hp</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>5</ID>
+              <Description>"HP máximo (×16)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_hp</Address>
+              <Offsets>
+                <Offset>4</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>6</ID>
+              <Description>"Daño del golpe en curso (+08)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_hp</Address>
+              <Offsets>
+                <Offset>8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>7</ID>
+              <Description>"Flag jugador (+18)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>gv1_hp</Address>
+              <Offsets>
+                <Offset>18</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>8</ID>
+              <Description>"Temporizador de invencibilidad (obj+518; 11520 = recién golpeado)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_player</Address>
+              <Offsets>
+                <Offset>518</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>9</ID>
+              <Description>"Flag de golpe? (obj+528)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_player</Address>
+              <Offsets>
+                <Offset>528</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>10</ID>
+              <Description>"Estado? (obj+3D0)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_player</Address>
+              <Offsets>
+                <Offset>3D0</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Invencibilidad (Sí/No)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- invencible_gv1.lua — Invencibilidad de GV1 como interruptor (activar = Sí, desactivar = No).
+-- Mantiene el temporizador de invencibilidad del jugador ([gv1_player]+0x518) en 11520
+-- (valor que el juego pone tras un golpe; confirmado 2026-11-01). Requiere la sonda 1.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if INV_GV1 and INV_GV1.timer then INV_GV1.timer.destroy() end
+if not getAddressSafe("gv1_player") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_player") then
+  error("No se pudo activar 'Captura jugador'. Entra a un nivel y vuelve a intentar.")
+end
+INV_GV1 = {}
+local t = createTimer(nil, false)
+t.Interval = 50
+t.OnTimer = function()
+  pcall(function()
+    local pp = getAddressSafe("gv1_player")
+    local P = pp and readQword(pp)
+    if P and P &gt; 0x10000 then
+      local a = P + 0x518
+      local v = readInteger(a)
+      if v ~= nil and v &lt; 11520 then writeInteger(a, 11520) end
+    end
+  end)
+end
+INV_GV1.timer = t
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if INV_GV1 and INV_GV1.timer then INV_GV1.timer.destroy(); INV_GV1.timer = nil end
+
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>"Prestigio y EXP ×N / mantener Prestigio (localiza el Prestigio solo)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+KUDOS_SILENCIO = true
+local okK, errK = pcall(function()
+-- =====================================================================================
+-- kudos_gv1.lua — Localiza el Prestigio (Kudos) de GV1 en el heap por FIRMA DE MEMORIA,
+-- sin depurador ni punteros estáticos (no hay de 1-2 niveles). Hallado el 2026-11-01:
+--   K+0x0 = Prestigio en pantalla      K+0x4 = Prestigio interno ×256 (punto fijo 24.8)
+--   K+0x34, K+0x3C = punteros a código de game1.exe (+234130, +4C470) — ESTABLES entre corridas
+--   (K+0xC también apunta a código pero CAMBIA según el estado: +B2500 / +B6640; no se usa)
+-- Registra:  gv1_kudos     = K+0x4 (interno; es el que hay que modificar)
+--            gv1_kudos_vis = K+0x0 (pantalla; el juego lo recalcula desde el interno)
+-- Un temporizador re-localiza la estructura si cambia (p. ej. al cambiar de nivel).
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if KUDOS_GV1 and KUDOS_GV1.timer then KUDOS_GV1.timer.destroy() end
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local F2, F3 = base + 0x234130, base + 0x4C470
+
+local function valido(K)
+  return K and readQword(K + 0x34) == F2 and readQword(K + 0x3C) == F3
+end
+
+-- La firma (+34/+3C) la comparten ~200 objetos del mismo tipo (diagnóstico 2026-11-01: 214).
+-- Se elige el del Prestigio así: 1) campo K-0x14 = 1662 (constante en las 4 corridas observadas),
+-- 2) interno = pantalla × 256, 3) pantalla &gt; 0, 4) si aún hay dudas, el que CAMBIE (ver temporizador).
+local ID_KUDOS = 1662
+
+local function localizar()
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtQword, rtRounded, string.format("%X", F2), "", 0x10000, 0x7FFFFFFFFFFF,
+               "+W", fsmAligned, "4", true, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local cands = {}
+  for i = 0, math.min(fl.Count, 5000) - 1 do
+    local K = tonumber(fl.Address[i], 16) - 0x34
+    if valido(K) then
+      local vis, raw = readInteger(K), readInteger(K + 4)
+      if raw ~= nil and vis ~= nil and raw // 256 == vis then
+        cands[#cands + 1] = { K = K, vis = vis, id = readInteger(K - 0x14) }
+      end
+    end
+  end
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  local function primero(f) for _, c in ipairs(cands) do if f(c) then return c.K end end end
+  local K = primero(function(c) return c.id == ID_KUDOS and c.vis &gt; 0 end)
+         or primero(function(c) return c.id == ID_KUDOS end)
+         or primero(function(c) return c.vis &gt; 0 end)
+  return K, #cands, cands
+end
+
+local function registrar(K)
+  registerSymbol("gv1_kudos", K + 4, true)
+  registerSymbol("gv1_kudos_vis", K, true)
+  KUDOS_GV1.K = K
+end
+
+KUDOS_GV1 = { K = nil }
+local K, n = localizar()
+if K then registrar(K) end
+
+local t = createTimer(nil, false)
+t.Interval = 3000
+t.OnTimer = function()
+  pcall(function()
+    local K = KUDOS_GV1.K
+    if not valido(K) or (readInteger(K - 0x14) ~= ID_KUDOS and (readInteger(K) or 0) == 0) then
+      local K2 = localizar()
+      if K2 then registrar(K2) end
+    end
+  end)
+end
+KUDOS_GV1.timer = t
+t.Enabled = true
+if not KUDOS_SILENCIO then
+  if K then
+    showMessage(string.format("Prestigio localizado en %X (candidatos con la firma: %d).\n" ..
+      "gv1_kudos = interno ×256 · gv1_kudos_vis = pantalla.\nSe re-localiza solo si cambia de nivel.", K, n))
+  else
+    showMessage("Prestigio aún no localizado (¿fuera de un nivel?). Se buscará automáticamente cada 3 s.")
+  end
+end
+
+end)
+KUDOS_SILENCIO = nil
+if not okK then print('[Prestigio] ' .. tostring(errK)) end
+-- =====================================================================================
+-- multiplicador_gv1.lua — Multiplica las GANANCIAS de Prestigio (gv1_kudos) y EXP (gv1_exp)
+-- y, opcionalmente, impide que el Prestigio BAJE al recibir golpes. Sin inyectar código:
+-- un temporizador compara el valor con el anterior y suma (ganancia × (k − 1)).
+-- Requiere los símbolos registrados con el buscador (script 7). Si falta uno, se omite.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy() end
+local t = inputQuery("Multiplicador GV1", "Multiplicador de ganancias (1 a 10):", "2")
+if not t then error("Cancelado por el usuario") end
+local k = math.floor(tonumber(t) or 2)
+if k &lt; 1 then k = 1 end
+if k &gt; 10 then k = 10 end
+local m = inputQuery("Multiplicador GV1",
+  "Mantener el Prestigio (no dejar que baje al recibir golpes)? S/N\n" ..
+  "Ojo: el juego también lo baja a 0 al canjearlo al final del nivel; con S se quedará fijo.", "S")
+if not m then error("Cancelado por el usuario") end
+local mantener = m:upper():sub(1, 1) == "S"
+
+local vars = { { nombre = "gv1_kudos" }, { nombre = "gv1_exp" } }
+MULTI_GV1 = { k = k, mantener = mantener, vars = vars }
+local tm = createTimer(nil, false)
+tm.Interval = 50
+tm.OnTimer = function()
+  pcall(function()
+    for _, x in ipairs(MULTI_GV1.vars) do
+      local a2 = getAddressSafe(x.nombre)
+      if not a2 then x.a = nil; x.last = nil; goto siguiente end
+      if a2 ~= x.a then x.a = a2; x.last = readInteger(a2) end
+      local v = readInteger(x.a)
+      if v and x.last then
+        if v &gt; x.last and MULTI_GV1.k &gt; 1 then
+          v = v + (v - x.last) * (MULTI_GV1.k - 1)
+          writeInteger(x.a, v)
+        elseif v &lt; x.last and MULTI_GV1.mantener and x.nombre == "gv1_kudos" then
+          writeInteger(x.a, x.last); v = x.last
+        end
+      end
+      x.last = v
+      ::siguiente::
+    end
+  end)
+end
+MULTI_GV1.timer = tm
+tm.Enabled = true
+showMessage(string.format("Multiplicador ×%d activo sobre el Prestigio%s.%s", k,
+  getAddressSafe("gv1_exp") and " y la EXP" or " (EXP aún sin localizar)",
+  mantener and "\nPrestigio protegido contra bajadas." or ""))
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy(); MULTI_GV1.timer = nil end
+
+if KUDOS_GV1 and KUDOS_GV1.timer then KUDOS_GV1.timer.destroy(); KUDOS_GV1.timer = nil end
+unregisterSymbol("gv1_kudos"); unregisterSymbol("gv1_kudos_vis")
+
+{$asm}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>13</ID>
+              <Description>"Prestigio en pantalla (solo lectura)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_kudos_vis</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>14</ID>
+              <Description>"Prestigio interno ×256 (editar este: pantalla × 256)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_kudos</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>15</ID>
+          <Description>"Materiales al máximo (pide cantidad; desactivar = restaurar)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- materiales_max_gv1.lua — Sube los 28 materiales de GV1 (game1.exe) a una cantidad fija.
+-- Bloque de partida hallado por la multisonda: Créditos = game1.exe+7B3668 (build 2026-10-07),
+-- materiales = Créditos + 0x3B0 (gv1.CT: +0x3A8; en la Trilogy hay 2 DWORD extra antes), 28 DWORD.
+-- Al DESACTIVAR restaura las cantidades que había antes (deshacer).
+-- Usar desde el mapa / menú fuera de combate y GUARDAR la partida para que persista.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local SAVE = base + 0x7B3668
+local MAT  = SAVE + 0x3B0   -- confirmado con etiquetado (2026-11-01)
+
+-- Comprobación de forma antes de escribir (evita escribir en memoria equivocada)
+for i = 0, 27 do
+  local v = readInteger(MAT + 4 * i)
+  if v == nil or v &lt; 0 or v &gt; 9999 then
+    error(string.format("El bloque de materiales no tiene la forma esperada (slot %d = %s). ¿Otra build?", i, tostring(v)))
+  end
+end
+
+local t = inputQuery("Materiales GV1", "Cantidad para cada material (1 a 999; 99 recomendado):", "99")
+if not t then error("Cancelado por el usuario") end
+local n = math.floor(tonumber(t) or 99)
+if n &lt; 1 then n = 1 end
+if n &gt; 999 then n = 999 end
+
+local modo = inputQuery("Materiales GV1",
+  "O = solo los materiales que ya tienes (cantidad &gt; 0)\nT = los 28 (incluye únicos que aún no consigues)", "O")
+if not modo then error("Cancelado por el usuario") end
+local todos = modo:upper():sub(1, 1) == "T"
+
+MATS_GV1_BACKUP = {}
+local cambiados = 0
+for i = 0, 27 do
+  local a = MAT + 4 * i
+  local v = readInteger(a)
+  MATS_GV1_BACKUP[i] = v
+  if todos or v &gt; 0 then
+    writeInteger(a, n); cambiados = cambiados + 1
+  end
+end
+showMessage(string.format("Materiales: %d de 28 puestos en %d.\nDesactiva el script para restaurar las cantidades anteriores.", cambiados, n))
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+-- Restaura las cantidades de materiales guardadas por materiales_max_gv1.lua
+local base = getAddressSafe("game1.exe")
+if base and MATS_GV1_BACKUP then
+  local MAT = base + 0x7B3668 + 0x3B0
+  for i = 0, 27 do
+    if MATS_GV1_BACKUP[i] then writeInteger(MAT + 4 * i, MATS_GV1_BACKUP[i]) end
+  end
+  MATS_GV1_BACKUP = nil
+end
+
+{$asm}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>16</ID>
+              <Description>"¿? Créditos+0x3A8 (NO es material)"</Description>
+              <Color>808080</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A10</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>17</ID>
+              <Description>"¿? Créditos+0x3AC (NO es material)"</Description>
+              <Color>808080</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A14</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>18</ID>
+              <Description>"Microantigenerador [★★★] (Microdegenerator)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A18</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>19</ID>
+              <Description>"Servocarga fotónica [★★★] (Custom Servophoton)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A1C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>20</ID>
+              <Description>"Cuasicristal espinela [★★★] (Spinel Quasicrystal)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A20</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>21</ID>
+              <Description>"Imán ultradenso [★★★] (Ultradense Magnet)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A24</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>22</ID>
+              <Description>"Resonador genómico [★★★] (Genomic Resonator)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A28</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>23</ID>
+              <Description>"Metal líquido en fase [★★★] (Phased Fluid Metal)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A2C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>24</ID>
+              <Description>"Calcedonia amarilla [★★★] (Yellow Chalcedony)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A30</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>25</ID>
+              <Description>"Pieza de Hihirogane [★★★] (Hihirogane Shard)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A34</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>26</ID>
+              <Description>"Motor de antigravedad [único] (Antigravity Engine)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A38</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>27</ID>
+              <Description>"Mecanismo de propulsión [único] (Propulsion Mechanism)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A3C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>28</ID>
+              <Description>"Mineral Fénix [único] (Phoenix Ore)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A40</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>29</ID>
+              <Description>"Coraza de onda corta [único] (Shock Response Plate)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A44</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>30</ID>
+              <Description>"Graym de 6 milagros [único] (Six-miracle Graym)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A48</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>31</ID>
+              <Description>"Apoitagara [único] (Apoitagara)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A4C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>32</ID>
+              <Description>"Extracto de graym 239 [único] (Graym Extract 239)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A50</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>33</ID>
+              <Description>"Graym electromotriz [único] (Electromotive Graym)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A54</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>34</ID>
+              <Description>"Aleación Kripp [0★] (Kripp Alloy)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A58</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>35</ID>
+              <Description>"Xiwidia [★] (Xiwidia)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A5C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>36</ID>
+              <Description>"Acero bambú [★★] (Faraging Steel)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A60</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>37</ID>
+              <Description>"Nanochip 98 [0★] (Nanochip 98)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A64</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>38</ID>
+              <Description>"Protoinfraestructura [★] (Proto Infrastructure)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A68</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>39</ID>
+              <Description>"NcGbx de alto grado [★★] (High-end NcGbx)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A6C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>40</ID>
+              <Description>"Granado [0★] (Garnet)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A70</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"Cuarcita [★] (Quartzite)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A74</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>42</ID>
+              <Description>"Electrum [★★] (Electrum)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A78</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>43</ID>
+              <Description>"Cultivo de graym [0★] (Graym Culture)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A7C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>44</ID>
+              <Description>"Polímero Gm238 [★] (Polymer Gm238)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A80</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"Cristal de uranio 235 (?) [★★] (Uranium-235 Crystal)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3A84</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>46</ID>
+          <Description>"Valores (estáticos en game1.exe, build 2026-10-07)"</Description>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>47</ID>
+              <Description>"Créditos (vig) — persiste al guardar"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3668</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>48</ID>
+              <Description>"Nivel? (Créditos+0x474, 2 B — verificar)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game1.exe+7B3ADC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>49</ID>
+              <Description>"Energía / PE (llena = 5000000; congelar = infinita)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED64C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>50</ID>
+              <Description>"Skill Points / PH (1 = 20000000; 3 = 60000000)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED650</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>51</ID>
+              <Description>"Cooldown habilidad 1 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED658</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>52</ID>
+              <Description>"Cooldown habilidad 2 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED65C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>53</ID>
+              <Description>"Cooldown habilidad 3 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED660</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>54</ID>
+              <Description>"Cooldown habilidad 4 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED664</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>55</ID>
+              <Description>"Copia del bloque de combate (+7ED67C) — ¿cuál manda? verificar"</Description>
+              <Color>808080</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED67C</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>56</ID>
+      <Description>"🔧 Sondas y herramientas de búsqueda"</Description>
+      <Color>808080</Color>
+      <Options moManualExpandCollapse="1" />
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>57</ID>
+          <Description>"Contador de daño (7 sitios)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Sonda 2 — Contador de daño: 7 sitios que restan HP. 'jugador' = víctima es [gv1_hp].
+  Activa sola la Captura jugador si hace falta. Aborta si los bytes no son los originales (build 2026-10-07) ni un jmp de una activación anterior. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if not getAddressSafe("gv1_hp") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_hp") then error("No se pudo activar 'Captura jugador'. Entra a un nivel.") end
+local base = getAddress('game1.exe')
+local SITES = {
+  {0x90D41, '4C 8B 83 D8 03 00 00'},
+  {0x91494, '4C 8B 81 D8 03 00 00'},
+  {0x915FA, '4C 8B 81 D8 03 00 00'},
+  {0x91899, '4C 8B 81 D8 03 00 00'},
+  {0x91A8E, '4C 8B 89 D8 03 00 00'},
+  {0x1A2729, '4C 8B 80 D8 03 00 00'},
+  {0x1AAB62, '4C 8B 87 D8 03 00 00'},
+}
+for _, st in ipairs(SITES) do
+  local t = readBytes(base + st[1], 7, true) or {}
+  local h = {}
+  for i = 1, #t do h[i] = string.format('%02X', t[i]) end
+  local hs = table.concat(h, ' ')
+  if hs ~= st[2] and t[1] ~= 0xE9 then
+    error(string.format('Bytes inesperados en game1.exe+%X: %s (¿otra build?)', st[1], hs))
+  end
+end
+{$asm}
+alloc(sonda_mem,$1000,game1.exe)
+label(cnt_tab)
+registersymbol(cnt_tab)
+label(hook_0)
+label(hook_1)
+label(hook_2)
+label(hook_3)
+label(hook_4)
+label(hook_5)
+label(hook_6)
+
+sonda_mem:
+hook_0:
+  mov r8,[rbx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+4]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+0]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+90D48
+
+hook_1:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+8]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+9149B
+
+hook_2:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+14]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+10]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+91601
+
+hook_3:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+1C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+18]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+918A0
+
+hook_4:
+  mov r9,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+24]
+  mov rax,[gv1_hp]
+  cmp r9,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+20]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+91A95
+
+hook_5:
+  mov r8,[rax+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+2C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+28]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+1A2730
+
+hook_6:
+  mov r8,[rdi+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+34]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+30]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+1AAB69
+
+align 10
+cnt_tab:
+  dd 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+game1.exe+90D41:
+  jmp hook_0
+  nop 2
+
+game1.exe+91494:
+  jmp hook_1
+  nop 2
+
+game1.exe+915FA:
+  jmp hook_2
+  nop 2
+
+game1.exe+91899:
+  jmp hook_3
+  nop 2
+
+game1.exe+91A8E:
+  jmp hook_4
+  nop 2
+
+game1.exe+1A2729:
+  jmp hook_5
+  nop 2
+
+game1.exe+1AAB62:
+  jmp hook_6
+  nop 2
+
+[DISABLE]
+game1.exe+90D41:
+  db 4C 8B 83 D8 03 00 00
+game1.exe+91494:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+915FA:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+91899:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+91A8E:
+  db 4C 8B 89 D8 03 00 00
+game1.exe+1A2729:
+  db 4C 8B 80 D8 03 00 00
+game1.exe+1AAB62:
+  db 4C 8B 87 D8 03 00 00
+unregistersymbol(cnt_tab)
+dealloc(sonda_mem)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>58</ID>
+              <Description>"Sitio 0 (game1.exe+90D41) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>59</ID>
+              <Description>"Sitio 0 (game1.exe+90D41) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>60</ID>
+              <Description>"Sitio 1 (game1.exe+91494) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>61</ID>
+              <Description>"Sitio 1 (game1.exe+91494) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>62</ID>
+              <Description>"Sitio 2 (game1.exe+915FA) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+10</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>63</ID>
+              <Description>"Sitio 2 (game1.exe+915FA) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+14</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>64</ID>
+              <Description>"Sitio 3 (game1.exe+91899) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+18</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>65</ID>
+              <Description>"Sitio 3 (game1.exe+91899) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+1C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>66</ID>
+              <Description>"Sitio 4 (game1.exe+91A8E) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+20</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>67</ID>
+              <Description>"Sitio 4 (game1.exe+91A8E) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+24</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>68</ID>
+              <Description>"Sitio 5 (game1.exe+1A2729) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+28</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>69</ID>
+              <Description>"Sitio 5 (game1.exe+1A2729) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+2C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>70</ID>
+              <Description>"Sitio 6 (game1.exe+1AAB62) — jugador"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+30</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>71</ID>
+              <Description>"Sitio 6 (game1.exe+1AAB62) — total"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>cnt_tab+34</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>72</ID>
+          <Description>"Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)"</Description>
+          <Color>FF0000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- multisonda_gv1.lua — Porta los datos de gv1.CT (WarCOzes, GV1 32 bits) a la Trilogy
+--                      (game1.exe, 64 bits) SIN usar el depurador.
+--
+-- Qué hace (en este orden):
+--   A) Bloque de PARTIDA: busca tus Créditos dentro de game1.exe y verifica la forma del bloque
+--      de gv1.CT: 28 materiales en +0x3B0 (gv1.CT: +0x3A8), EXP en +0x470, nivel (2 B) en +0x474.
+--   B) Bloque de COMBATE: busca la Energía llena (5 000 000) y verifica Skill Points en +4
+--      (múltiplo de 20 000 000) y 4 cooldowns en +0xC…+0x18 (0…76 800).
+--   C) Crea en la tabla un grupo "GV1 portado" con las entradas de gv1.CT apuntando a
+--      game1.exe+RVA (sobreviven a reinicios mientras no cambie la build).
+--   D) Informe: ventana + portapapeles + archivo resultados_multisonda_gv1.txt (carpeta dumps).
+--
+-- Requisitos: CE adjunto a game1.exe, DENTRO de un nivel, con la Energía (campo eléctrico)
+-- LLENA y sabiendo cuántos Créditos tienes (menú). No escribe memoria del juego.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local MOD     = "game1.exe"
+local OUTFILE = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\resultados_multisonda_gv1.txt]]
+
+local out = {}
+local function p(fmt, ...) out[#out + 1] = string.format(fmt, ...) end
+local function hx(n) return string.format("%X", n) end
+
+local base = getAddressSafe(MOD)
+if not base then showMessage("Adjunta Cheat Engine a " .. MOD .. " primero."); return end
+local size = getModuleSize(MOD)
+p("Módulo %s  base=%X  tamaño=%X", MOD, base, size)
+
+-- Escaneo exacto de un DWORD dentro del módulo (memoria escribible)
+local function scanDword(value, maxHits)
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtDword, rtRounded, hx(value), "", base, base + size,
+               "+W", fsmAligned, "4", true, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local res, n = {}, math.min(fl.Count, maxHits or 5000)
+  for i = 0, n - 1 do res[#res + 1] = tonumber(fl.Address[i], 16) end
+  local total = fl.Count
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  return res, total
+end
+local function rd(a) return readInteger(a) end
+local function rw(a) return readSmallInteger(a) end
+
+-- Nombres de materiales en el orden del arreglo de gv1.CT (índice = posición, paso 4 B)
+local MATS = {
+  "Microdegenerator","Custom Servophoton","Spinel Quasicrystal","Ultradense Magnet",
+  "Genomic Resonator","Phased Fluid Metal","Yellow Chalcedony","Hihirogane Shard",
+  "Antigravity Engine","Propulsion Mechanism","Phoenix Ore","Shock Response Plate",
+  "Six-miracle Graym","Apoitagara","Graym Extract 239","Electromotive Graym",
+  "Kripp Alloy","Xiwidia","Faraging Steel","Nanochip 98","Proto Infrastructure",
+  "High-end NcGbx","Garnet","Quartzite","Electrum","Graym Culture","Polymer Gm238",
+  "Uranium-235 Crystal" }
+
+-- ---------------------------------------------------------------- A) PARTIDA
+-- Dos pasadas: la 1.ª escanea; si cambias los Créditos en el juego (gana o gasta) y vuelves a
+-- ejecutar, se FILTRA la lista anterior (como "Next Scan"). Escribe r para reiniciar.
+local credits = nil
+local txt = inputQuery("Multisonda GV1",
+  "Créditos actuales (vig).\n- 1.ª vez: escanea.\n- Siguientes: filtra la lista anterior (cambia tus Créditos entre medio).\n- r = reiniciar   - vacío = omitir", "")
+if txt == "r" then MSGV1_PREV = nil; txt = inputQuery("Multisonda GV1", "Créditos actuales (vig):", "") end
+if txt and txt ~= "" then credits = tonumber(txt) end
+local SAVE = nil
+SAVE_SOLO = nil
+
+-- Busca cerca de 'c' una racha de 28 DWORD en 0..999 (no todos 0) = arreglo de materiales
+local function buscarMateriales(c)
+  local res, d = {}, -0x1000
+  while d &lt;= 0x1000 and #res &lt; 6 do
+    local ok, nz = true, 0
+    for i = 0, 27 do
+      local v = rd(c + d + 4 * i)
+      if not v or v &lt; 0 or v &gt; 999 then ok = false; break end
+      if v &gt; 0 then nz = nz + 1 end
+    end
+    if ok and nz &gt;= 3 then
+      res[#res + 1] = string.format("%s0x%X (no-cero: %d)", d &lt; 0 and "-" or "+", math.abs(d), nz)
+      d = d + 28 * 4                      -- saltar la racha encontrada
+    else
+      d = d + 4
+    end
+  end
+  return res
+end
+
+if credits then
+  local hits, total
+  if MSGV1_PREV and #MSGV1_PREV &gt; 0 then
+    hits = {}
+    for _, a in ipairs(MSGV1_PREV) do if rd(a) == credits then hits[#hits + 1] = a end end
+    total = #hits
+    p("\n== A) Partida: FILTRO Créditos = %d -&gt; quedan %d de %d ==", credits, total, #MSGV1_PREV)
+  else
+    hits, total = scanDword(credits)
+    p("\n== A) Partida: Créditos = %d -&gt; %d coincidencias en el módulo ==", credits, total)
+  end
+  MSGV1_PREV = hits
+  for _, c in ipairs(hits) do
+    local okMats, sum = 0, 0
+    for i = 0, 27 do
+      local v = rd(c + 0x3B0 + 4 * i)
+      if v and v &gt;= 0 and v &lt;= 9999 then okMats = okMats + 1; sum = sum + v end
+    end
+    local lvl, exp = rw(c + 0x474), rd(c + 0x470)
+    if okMats == 28 and lvl and lvl &gt;= 1 and lvl &lt;= 99 and exp and exp &gt;= 0 then
+      p("  CANDIDATO (forma de gv1.CT) game1.exe+%X  materiales suma %d  EXP=%d  Nivel=%d  TotalTime=%s",
+        c - base, sum, exp, lvl, tostring(rd(c - 0xE0)))
+      if not SAVE then SAVE = c end
+    end
+  end
+  if not SAVE then
+    if #hits &lt;= 5 then
+      p("  Sin la forma exacta de gv1.CT. Análisis flexible de cada coincidencia:")
+      for _, c in ipairs(hits) do
+        local m = buscarMateriales(c)
+        p("    game1.exe+%X : posibles arreglos de materiales en %s", c - base,
+          #m &gt; 0 and table.concat(m, ", ") or "(ninguno a ±0x1000)")
+      end
+      if #hits == 1 then SAVE_SOLO = hits[1] end
+    else
+      p("  Demasiadas coincidencias: cambia tus Créditos en el juego y vuelve a ejecutar la sonda 3 (filtra).")
+      for i = 1, math.min(#hits, 10) do p("    game1.exe+%X", hits[i] - base) end
+    end
+  end
+end
+
+-- ---------------------------------------------------------------- B) COMBATE
+local BAT = nil
+do
+  local hits, total = scanDword(5000000)
+  p("\n== B) Combate: Energía llena 5000000 -&gt; %d coincidencias en el módulo ==", total)
+  for _, e in ipairs(hits) do
+    local sp = rd(e + 4)
+    local ok = sp and sp &gt;= 0 and sp &lt;= 60000000 and sp % 20000000 == 0
+    local cds = {}
+    for i = 0, 3 do
+      local v = rd(e + 0xC + 4 * i); cds[#cds + 1] = tostring(v)
+      if not v or v &lt; 0 or v &gt; 76800 then ok = false end
+    end
+    if ok then
+      p("  CANDIDATO game1.exe+%X  SP=%d (%d pts)  cooldowns=%s", e - base, sp, sp // 20000000, table.concat(cds, "/"))
+      if not BAT then BAT = e end
+    end
+  end
+  if not BAT then
+    p("  Ningún candidato. Puede que la escala cambió (p. ej. punto fijo 24.8 como GV2).")
+    for i = 1, math.min(#hits, 10) do p("    game1.exe+%X", hits[i] - base) end
+  end
+end
+
+-- ---------------------------------------------------------------- C) ENTRADAS EN LA TABLA
+local function addr(a) return string.format("%s+%X", MOD, a - base) end
+if SAVE or BAT or SAVE_SOLO then
+  local al = getAddressList()
+  local g = al.createMemoryRecord()
+  g.Description = "GV1 portado de gv1.CT (multisonda " .. os.date("%Y-%m-%d") .. ")"
+  g.IsGroupHeader = true
+  local function rec(desc, a, vt, parent)
+    local m = al.createMemoryRecord()
+    m.Description = desc; m.Address = addr(a); m.Type = vt or vtDword
+    m.appendToEntry(parent or g)
+    return m
+  end
+  local function grp(desc)
+    local m = al.createMemoryRecord(); m.Description = desc; m.IsGroupHeader = true
+    m.appendToEntry(g); return m
+  end
+  if BAT and not al.getMemoryRecordByDescription("Energy Bar / Electric Field (llena = 5000000; congelar = Inf.)") then
+    rec("Energy Bar / Electric Field (llena = 5000000; congelar = Inf.)", BAT)
+    rec("Skill Points (1 pt = 20000000; 3 = 60000000)", BAT + 4)
+    local cd = grp("[ Skills Cooldown ] (lleno = 76800; congelar = sin cooldown)")
+    for i = 0, 3 do rec(string.format("Slot %d Cooldown", i + 1), BAT + 0xC + 4 * i, vtDword, cd) end
+  end
+  if SAVE then
+    local st = grp("[ Stats ]")
+    rec("Credits (vig)", SAVE, vtDword, st)
+    rec("Total Time", SAVE - 0xE0, vtDword, st)
+    rec("Time (? -0x3CD0 — verificar)", SAVE - 0x3CD0, vtDword, st)
+    rec("Medals (? -0x3CC8 — verificar)", SAVE - 0x3CC8, vtDword, st)
+    rec("Exp", SAVE + 0x470, vtDword, st)
+    rec("Level (no modificar)", SAVE + 0x474, vtWord, st)
+    local mt = grp("[ Materials ]")
+    for i = 0, 27 do rec(MATS[i + 1], SAVE + 0x3B0 + 4 * i, vtDword, mt) end
+  end
+  if SAVE_SOLO and not SAVE then rec("Credits (vig)", SAVE_SOLO) end
+  p("\nEntradas creadas en la tabla: grupo '%s'", g.Description)
+end
+
+-- ---------------------------------------------------------------- D) INFORME
+local report = table.concat(out, "\n")
+local f = io.open(OUTFILE, "w"); if f then f:write(report); f:close() end
+writeToClipboard(report)
+showMessage(report .. "\n\n(Copiado al portapapeles y guardado en " .. OUTFILE .. ")")
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>73</ID>
+          <Description>"Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)"</Description>
+          <Color>0000FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- materiales_etiquetar_gv1.lua — Pone a cada material un valor distinto para identificarlo
+-- en el inventario: slot #00 = 99, #01 = 98, … #27 = 72.  =&gt;  slot = 99 - cantidad.
+-- Al DESACTIVAR restaura las cantidades originales. NO guardes la partida con esto activo.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local MAT = base + 0x7B3668 + 0x3B0
+for i = 0, 27 do
+  local v = readInteger(MAT + 4 * i)
+  if v == nil or v &lt; 0 or v &gt; 9999 then
+    error(string.format("El bloque de materiales no tiene la forma esperada (slot %d = %s).", i, tostring(v)))
+  end
+end
+MATS_GV1_ETIQ = {}
+for i = 0, 27 do
+  MATS_GV1_ETIQ[i] = readInteger(MAT + 4 * i)
+  writeInteger(MAT + 4 * i, 99 - i)
+end
+showMessage("Materiales etiquetados: slot #00 = 99 … slot #27 = 72.\n" ..
+            "En el inventario: slot = 99 − cantidad.\n" ..
+            "Anota nombre y cantidad de cada material y DESACTIVA el script antes de guardar.")
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+local base = getAddressSafe("game1.exe")
+if base and MATS_GV1_ETIQ then
+  local MAT = base + 0x7B3668 + 0x3B0
+  for i = 0, 27 do
+    if MATS_GV1_ETIQ[i] then writeInteger(MAT + 4 * i, MATS_GV1_ETIQ[i]) end
+  end
+  MATS_GV1_ETIQ = nil
+end
+
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>74</ID>
+          <Description>"Sonda de invencibilidad (10 s de muestreo)"</Description>
+          <Color>FF0000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if not getAddressSafe("gv1_hp") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_hp") then error("No se pudo activar 'Captura jugador'. Entra a un nivel.") end
+-- =====================================================================================
+-- sonda_invencibilidad_gv1.lua — Busca el temporizador de invencibilidad de GV1 (game1.exe)
+-- SIN depurador: muestrea el objeto del jugador cada 50 ms durante 10 s mientras recibes
+-- golpes y busca campos que pasan de 0 a &gt;0 justo tras perder HP y luego bajan a 0.
+-- Requisito: sonda "Captura jugador" activa (símbolos gv1_player y gv1_hp).
+-- Resultado: ventana + portapapeles + archivo en la carpeta dumps. No escribe memoria.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local OUTFILE = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\resultados_invencibilidad_gv1.txt]]
+local SIZE, TICKS, MS = 0x800, 200, 50
+
+local pp, ph = getAddressSafe("gv1_player"), getAddressSafe("gv1_hp")
+if not pp or not ph then showMessage("Activa primero la sonda 'Captura jugador' y entra a un nivel."); return end
+local P, H = readQword(pp), readQword(ph)
+if not P or P == 0 or not H or H == 0 then
+  showMessage("Aún no se capturó el jugador: muévete o recibe un golpe y vuelve a intentar."); return
+end
+
+local snaps, hps = {}, {}
+showMessage("Al cerrar este aviso empiezan 10 s de muestreo.\nRecibe 1 o 2 golpes en ese tiempo.")
+
+local function u32(b, o) return b[o+1] + b[o+2]*256 + b[o+3]*65536 + b[o+4]*16777216 end
+
+local function analizar()
+  local hits = {}
+  for k = 2, #hps do if hps[k] &lt; hps[k-1] then hits[#hits+1] = k end end
+  local out = { string.format("Objeto jugador = %X  componente HP = %X  muestras = %d  golpes detectados = %d",
+                               P, H, #snaps, #hits) }
+  for k = 1, #hits do out[#out+1] = string.format("  golpe en t=%d ms: HP %d -&gt; %d", (hits[k]-1)*MS, hps[hits[k]-1], hps[hits[k]]) end
+  if #hits == 0 then out[#out+1] = "No se detectó pérdida de HP: repite recibiendo un golpe." end
+  local cands = {}
+  for o = 0, SIZE - 4, 4 do
+    local score, ejemplo = 0, nil
+    for _, k in ipairs(hits) do
+      local antes = u32(snaps[k-1], o)
+      local pico, kp = 0, nil
+      for j = k, math.min(k + 3, #snaps) do local v = u32(snaps[j], o); if v &gt; pico then pico, kp = v, j end end
+      if antes == 0 and pico &gt; 0 and pico &lt; 100000 then
+        local mono, vuelve = true, false
+        local prev = pico
+        for j = kp + 1, #snaps do
+          local v = u32(snaps[j], o)
+          if v &gt; prev then mono = false; break end
+          prev = v
+          if v == 0 then vuelve = true; break end
+        end
+        if mono then
+          score = score + (vuelve and 2 or 1)
+          if not ejemplo then
+            local s = {}
+            for j = k - 1, math.min(k + 12, #snaps) do s[#s+1] = tostring(u32(snaps[j], o)) end
+            ejemplo = table.concat(s, ",")
+          end
+        end
+      end
+    end
+    if score &gt; 0 then cands[#cands+1] = { o = o, s = score, e = ejemplo } end
+  end
+  table.sort(cands, function(a, b) return a.s &gt; b.s end)
+  out[#out+1] = "\nCandidatos a temporizador de invencibilidad (offset en el objeto del jugador):"
+  for i = 1, math.min(#cands, 15) do
+    out[#out+1] = string.format("  +%03X  puntaje %d  valores: %s", cands[i].o, cands[i].s, cands[i].e)
+  end
+  if #cands == 0 then out[#out+1] = "  (ninguno)" end
+  local rep = table.concat(out, "\n")
+  local f = io.open(OUTFILE, "w"); if f then f:write(rep); f:close() end
+  writeToClipboard(rep)
+  showMessage(rep .. "\n\n(Copiado al portapapeles)")
+end
+
+local t = createTimer(nil, false)
+t.Interval = MS
+t.OnTimer = function(tm)
+  local ok = pcall(function()
+    snaps[#snaps+1] = readBytes(P, SIZE, true)
+    hps[#hps+1] = readInteger(H)
+  end)
+  if not ok or #snaps &gt;= TICKS then tm.destroy(); analizar() end
+end
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+</CheatTable>
