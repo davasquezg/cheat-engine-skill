@@ -13,7 +13,13 @@ Carpeta de trabajo donde los scripts Lua escriben sus resultados (ruta absoluta
 | `verificar_candidatas_gv1_v2_2026-11-08.txt` | Corrida v2 (punteros tras recargar, PV máx., pistas de Tiempo/Kudos) | Sí |
 | `verificar_candidatas_gv1_v1_2026-11-08.txt` | Corrida v1 + observaciones del usuario (ANALISIS §8.4) | Sí |
 | `verificar_candidatas_gv1_v1b_2026-11-08.txt` | Segunda corrida v1 (Prestigio 1902 → 2620) | Sí |
-| `diag_gv3_<fecha>_<hora>.txt` | `../sondas/diag_gv3.lua` (GV3, un archivo por corrida) | Sí |
+| `diag_gv3_v1_2026-11-08_0509.txt` | Diagnóstico GV3 v1 (AOB y base de wepon1984) | Sí |
+| `diag_gv3_v1_…`, `diag_gv3_v2_…` | Corridas v1 (05:09, 05:17) y v2 (05:26, 05:27, 05:32); la de 05:32 halló la base de wepon1984 en +1F02FE8 | Sí |
+| `diag_gv3_v3_2026-11-08_0536.txt` | v3: cadenas de wepon1984 verificadas desde +1F02FE8 (+ observaciones del usuario) | Sí |
+| `diag_gv3_v3_<fecha>_<hora>.txt` | `../sondas/diag_gv3.lua` v3 (cadenas de wepon1984 + mapas de campos + captura; un archivo por corrida) | Sí |
+| `sonda_invencibilidad_gv3_<fecha>_<hora>.txt` | `../sondas/sonda_invencibilidad_gv3.lua` | Sí |
+| `sonda_exp_gv3_<fecha>_<hora>.txt` | `../sondas/sonda_exp_gv3.lua` (EXP real de GV3) | Sí |
+| `sonda_kudos_bloqueados_gv3_<fecha>_<hora>.txt` | `../sondas/sonda_kudos_bloqueados_gv3.lua` | Sí |
 | `kudos_diag.txt` | `../sondas/kudos_diag_gv1.lua` (se va agregando cada paso) | Sí |
 
 ## Regenerar el volcado de `game1.exe`

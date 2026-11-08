@@ -1251,7 +1251,7 @@ dealloc(sonda_mem)
         <CheatEntry>
           <ID>87</ID>
           <Description>"🔎 Verificar candidatas v3: jugador, Kudos, medallas, tiempo y totales del menú (solo lectura; 5 min)"</Description>
-          <Color>FF0000</Color>
+          <Color>FFCC66</Color>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
 {$lua}
@@ -1619,7 +1619,7 @@ t.Enabled = true
         <CheatEntry>
           <ID>88</ID>
           <Description>"Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)"</Description>
-          <Color>FF0000</Color>
+          <Color>FFCC66</Color>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
 {$lua}
@@ -1874,7 +1874,7 @@ end
         <CheatEntry>
           <ID>90</ID>
           <Description>"Sonda de invencibilidad (10 s de muestreo)"</Description>
-          <Color>FF0000</Color>
+          <Color>FFCC66</Color>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
 {$lua}

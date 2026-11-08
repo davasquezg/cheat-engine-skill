@@ -2,7 +2,7 @@
 
 [Español](README.md) · **English**
 
-> 🚧 **Alpha.** `Gunvolt_Trilogy_Enhanced_v0.3-alpha_ES.CT` (Spanish): GV1 verified in-game; GV2, GV3 and Connect iX ported unverified from wepon1984's table. Changes and comparison with the reference tables: [`CHANGELOG.md`](CHANGELOG.md) (Spanish).
+> 🚧 **Alpha.** `Gunvolt_Trilogy_Enhanced_v0.8-alpha_ES.CT` (Spanish): GV1 verified in-game; GV3 in progress (own group, data verified, cheats to be tested); GV2 and Connect iX ported unverified from wepon1984's table. Changes and comparison with the reference tables: [`CHANGELOG.md`](CHANGELOG.md) (Spanish).
 
 Project to build a Cheat Engine table for *Azure Striker Gunvolt Trilogy Enhanced* (Steam) covering all three games. It starts from the table by **ndck1** (signed "ndck76" in the script) published on [FearLess Revolution (t=35891)](https://fearlessrevolution.com/viewtopic.php?t=35891).
 

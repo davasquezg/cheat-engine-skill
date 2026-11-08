@@ -1,0 +1,25 @@
+== Sonda de Kudos bloqueados GV3 — 2026-11-08 06:17 ==
+[B] = 1EB84B92720 · jugador = 1EBE32D1A90 · bloque EXP = 1EB965A1D84 · Kudos [B]+264 = 8672.0 · castigo en pantalla = −680
+
+== A) Direcciones ==
+  1EB84B92A1C  entero 1143607459 · float 680.25994873047 · 2 B 4259  ([B]+0x2FC)  ← = pantalla como FLOAT
+  1EC087719D0  entero 680 · float 9.5288295574088e-43 · 2 B 680  (fuera de los objetos conocidos)  ← = pantalla como ENTERO
+
+== B) Punteros estáticos de 1 nivel en game3.exe (offset ≤ 0x2000) ==
+  1EB84B92A1C → 2: [game3.exe+1F02FD8]+0x12AC · [game3.exe+1F02FE8]+0x2FC
+  1EC087719D0 → 0
+
+== C) Muestreo de 300 s (601 lecturas) ==
+  Dirección 1 (1EB84B92A1C)   1143607459 → 0  (mín. 0, máx. 1143828643, 93 cambios)  · float 680.25994873047 → 0.0 · bajó mientras subían los Kudos: 1
+  Dirección 2 (1EC087719D0)   680 → 680  (mín. 680, máx. 680, 0 cambios)  · float 9.5288295574088e-43 → 9.5288295574088e-43 · bajó mientras subían los Kudos: 0
+  [B]+0x2F8                    1 → 1  (mín. 1, máx. 1, 0 cambios)  · float 1.4012984643248e-45 → 1.4012984643248e-45 · bajó mientras subían los Kudos: 0
+  [B]+0x2FC                    1143607459 → 0  (mín. 0, máx. 1143828643, 93 cambios)  · float 680.25994873047 → 0.0 · bajó mientras subían los Kudos: 1
+  [B]+0x300                    168289096 → 168289096  (mín. 168289096, máx. 168289096, 0 cambios)  · float 6.5427604143746e-33 → 6.5427604143746e-33 · bajó mientras subían los Kudos: 0
+  Kudos [B]+0x264              8672.0 → 8978.240234375  (mín. 8672.0, máx. 8978.240234375, 1 cambios)
+  [B]+0x268 (compañero)       327.05325317383 → 327.05325317383  (mín. 327.05325317383, máx. 327.05325317383, 0 cambios)
+
+Anota el castigo y los Kudos que ves al final en pantalla y pásalos con este informe.
+
+== Observaciones del usuario ==
+  El castigo bajó a 0 al terminar la etapa; no alcanzó a ver los Kudos finales.
+  Antes: 1EC07DA7578 descartada (cayó a 0 al pasar a otra fase).

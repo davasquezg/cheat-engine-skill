@@ -392,3 +392,67 @@ Fuentes: `gv3.CT` de RTX_XXXX (GV3 suelto, `game.exe`, 5 AOB; §4) y el grupo de
 Riesgos conocidos: «Invencible ambos» de RTX usa un `call` relativo (`E8 AC 17 DF FF`), casi seguro roto; congelar talismanes **cierra el juego al cambiar a Gunvolt** (wepon1984); el depurador cierra GV3 (Algester) → todo sin depurador.
 
 Primer paso: `sondas/diag_gv3.lua` (solo lectura): build, unicidad de las 5 AOB, cadenas desde la base de wepon1984 y, si no sirve, barrido de ±0x80000 usando el Nivel y el Prestigio de pantalla; muestreo de 5 min.
+
+### 9.1 Diagnóstico v1 (2026-11-08 05:09; `dumps/diag_gv3_v1_2026-11-08_0509.txt`)
+
+- Build de `game3.exe`: TimeDateStamp `6ACDDCD4` = **2026-10-13** (base `7FF708690000`, tamaño `0x2130000`).
+- AOB de vida `F3 0F 11 41 08 83 49 18 01 C3 0F` → **única** en `game3.exe+8B5B62` ✅.
+- Las otras 4 AOB de RTX_XXXX → 0 coincidencias: su tabla es del GV3 suelto (`game.exe`), otro binario.
+- Base de wepon1984 `+1E2CE98` → contiene texto («oLocalIm»): la zona se movió; el barrido ±0x80000 con Nivel 32 / Prestigio 5 no encontró la base.
+
+**¿Qué aporta `gv3.CT` (RTX_XXXX)?** Solo la AOB de vida funciona tal cual, pero sus **offsets de campo** pueden seguir valiendo aunque el código cambie: `+510` temporizador de invencibilidad (float) en el objeto jugador, `+69A` talismanes (byte), `+F8` Score (float); y la lógica de vida (jugador si `[rcx+20]==1`, HP máx. en `+0C`, 1HK poniendo a 0 el HP de los enemigos). La v2 del diagnóstico los busca con AOB flexibles y con un mapa de campos alrededor del componente de vida capturado.
+
+### 9.2 Diagnóstico v2 (2026-11-08 05:26 y 05:32; `dumps/diag_gv3_v2_2026-11-08_0526/0527/0532.txt`)
+
+- **Base de wepon1984 hallada en `game3.exe+1F02FE8`** (Δ **+0xD6150** respecto a su build). Desde ahí sus cadenas leen EXP 35 708, **Kudos 4108,46 (pantalla 4108)**, Score 911 858 y Tiempo 6,97 → con esta base salen EXP, Nivel, Prestigio (*float*), Score, Tiempo, Fetters, invencibilidad e Image Chips **sin inyección**. Pendiente: confirmar cada campo por comportamiento (v3).
+- AOB flexibles de RTX_XXXX: `+510` aparece en 14 sitios, todos `[rbp+510]` → ambigua; `+69A` no aparece (el campo de talismanes se movió); `+F8` 29 sitios → inútil como firma.
+- La captura no se pudo instalar: la zona de vida ya estaba parchada por otro script (el «Health» de GV3 portado de wepon1984 en la tabla alfa). La v3 informa el destino del salto y sigue sin captura.
+
+### 9.3 Diagnóstico v3 (2026-11-08 05:36, 5 min; `dumps/diag_gv3_v3_2026-11-08_0536.txt`)
+
+Base `game3.exe+1F02FE8` encaja otra vez (estable entre corridas de la misma sesión). Pantalla al final: Nivel 37, HP lleno, Prestigio 2446.
+
+| Campo (cadena de wepon1984) | Muestreo 5 min | Conclusión |
+|---|---|---|
+| EXP `[[[B]+20]+110]+2A80` | 36 863 → 40 313 (51 cambios) | ✅ EXP |
+| Nivel `…+2A86` (byte) | 34 → 36 (pantalla 37 poco después) | ✅ Nivel |
+| Prestigio `[B]+264` (float) | 579 → 1899,86 (59 cambios) | ✅ (en la v2: 4108,46 con 4108 en pantalla). `[B]+268` float sube a la par (¿ritmo/multiplicador?) |
+| Score `[B]+44` | 2800 → 204 025 (4 cambios) | ✅; `[B]+348` es la misma cifra en float |
+| Fetters `[B]+478` (float) | 126 → 180,5 (44 cambios) | ✅ cambia (significado exacto por confirmar) |
+| Tiempo `[B]+354` (float) | 5,59 → 6,56 (274 cambios) | ⚠️ cambia, pero ~1 unidad en 300 s: unidad por confirmar |
+| Image Chips `[B]+198` (byte, bits) | 1 → 31 (4 cambios) | ✅ máscara de chips del nivel (31 = 5 chips); `[B]+0xA0` también 0 → 31 |
+| Invencibilidad `[[[B]+10]+10]+592` (2 B) | 0 → 0 con **39 cambios** | ✅ sube con cada golpe y vuelve a 0 → temporizador |
+| `…+594` (2 B) | 255 → 255 con 26 cambios | cambia durante los golpes (¿estado?) |
+
+No hubo captura del jugador: el «Health» de GV3 de la tabla estaba activo (el parche salta a `7FF708680000`).
+
+**Image Chips (fuentes):** según el resumen de la wiki de la saga obtenido en la búsqueda (no se pudo abrir la página: HTTP 402; Steam devolvió 429), los Image Chips son la forma principal de conseguir **Image Pulses**: cada **par** de chips da 1 Image Pulse y completar todos los del nivel da 1 más; reintentar desde un punto de control no borra los chips ya recogidos. La tabla de wepon1984 agrupa los niveles en 0, 3, 5 y 7 chips (World Moebius 0; Sunrise Throne 3; Futures Institute / Ballistic Missiles 5; el resto 7). Por eso la tabla ofrece una lista «todos» = 7 / 31 / 127. **Por probar:** si al terminar el nivel cuenta `+198` o `+0xA0`, y que no rompa nada marcar chips en un nivel con menos.
+
+Con esto la alfa **v0.4** arma el grupo de GV3: invencibilidad (Lua, aprende el valor del temporizador), EXP ×N, Prestigio ×N / mantener (float), Image Chips, valores y el «Health» de wepon1984 (vida máx. / One Hit Kill), cuya AOB es única en esta build.
+
+### 9.4 Pruebas del usuario con la v0.4 (2026-11-08)
+
+- **Prestigio ×N / mantener ✅** funciona.
+- **«Invencibilidad» ❌**: mantener alto `jugador+0x592` (el «Invincibility Timer» de wepon1984) pone el juego en **cámara lenta**: es el temporizador del efecto de golpe (*hitstop*), no la invencibilidad. Se conserva como «Cámara lenta» y se usa como **marca de golpe** en `sonda_invencibilidad_gv3.lua`, que busca temporizadores y banderas en el objeto jugador (0x1000 bytes) y en el objeto base (0x800). El mapa de la v3 se cortó en 80 filas (hasta `jugador+0x5E8`), así que la invencibilidad puede estar más adelante; pista de RTX_XXXX: float en `+0x510` de algún objeto.
+- **Kudos bloqueados** (castigo; negativo en pantalla, positivo en memoria): el usuario lo redujo a `1EB84B92A1C`, `1EC07DA7578`, `1EC087719D0`. La primera es **`[B]+0x2FC`** (`[B]` = `1EB84B92720` en esa sesión), en el mismo objeto que los Kudos (`+0x264`); en el mapa de la v3, `[B]+0x2FC` cambió 26 veces. Las otras dos están en el heap, fuera de los objetos conocidos. **`1EC07DA7578` descartada**: cayó a 0 al pasar a otra fase del nivel (copia temporal); queda `1EC087719D0` por aclarar. `sonda_kudos_bloqueados_gv3.lua` confirma el tipo (entero/float) y cómo se paga; mientras tanto, el script «quitar ×N / anular» usa `[B]+0x2FC` y detecta el tipo solo.
+
+### 9.5 Sonda de Kudos bloqueados (2026-11-08 06:17; `dumps/sonda_kudos_bloqueados_gv3_2026-11-08_*.txt`)
+
+Pantalla al empezar: castigo −680, Kudos 8672.
+
+| Dirección | Lectura | Conclusión |
+|---|---|---|
+| `[B]+0x2FC` (`1EB84B92A1C`) | **float 680,26** (= pantalla); 680 → 0 con 93 cambios en 5 min | ✅ **castigo vivo** (*float*, positivo en memoria) |
+| `1EC087719D0` | entero 680, sin cambios | ❌ copia fija del castigo inicial |
+| `[B]+0x2F8` / `+0x300` | 1 / constante | sin relación |
+| Kudos `[B]+0x264` | 8672 → 8978,24 (1 cambio) | el castigo baja **solo**, no al ganar Kudos (solo 1 de 93 bajadas coincidió con una subida de Kudos) |
+
+Punteros estáticos al castigo: `[game3.exe+1F02FE8]+0x2FC` y `[game3.exe+1F02FD8]+0x12AC` (respaldo: otro objeto que contiene al base a −0xFB0).
+
+### 9.6 Diagnóstico v3, segunda corrida (2026-11-08 06:47) y prueba de EXP ×N
+
+Pantalla al final: HP ~60 %, Prestigio 14 556, Nivel 37. Cadenas: EXP 371 228 → 373 733 (52 cambios), Nivel 37 fijo, Score 0 → 7 051 047, Kudos 0 → 9741,17, Fetters 100 → 140,89, Image Chips 127 fijo (puesto con la lista «7 de 7»).
+
+- **EXP ×N ❌:** entre la corrida de 05:36 (EXP 40 313, Nv 36) y esta (EXP 371 228, Nv 37) el multiplicador infló la EXP de la cadena, pero el nivel casi no se movió → `[[[B]+20]+110]+2A80` es una copia o un acumulador, **no** la EXP que decide el nivel. Siguiente paso: `sonda_exp_gv3.lua` (EXP del menú buscada en toda la memoria + muestreo).
+- El objeto jugador cambió 2 veces durante el muestreo (cambio de fase): los trucos que lo usan deben volver a resolverlo en cada lectura (ya lo hacen).
+- En el objeto base, `[B]+0x2AC` (0 → 1, 97 cambios) y `[B]+0x5E0` (0 → 15, 53 cambios) son nuevos candidatos sin significado aún.

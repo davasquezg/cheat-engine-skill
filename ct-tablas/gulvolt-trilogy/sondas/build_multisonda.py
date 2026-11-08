@@ -190,6 +190,7 @@ def dword(parent, desc, addr, color=None, vt="4 Bytes"):
     return e
 
 
+CELESTE = "FFCC66"   # celeste claro (BGR): legible con la interfaz oscura de CE (el azul FF0000 no se veía)
 MULT = [(2 ** i, f"×{2 ** i}") for i in range(11)]        # 1, 2, 4 … 1024
 SINO = [(0, "No"), (1, "Sí")]
 
@@ -292,11 +293,11 @@ def gv1_sondas(top):
         for k, lbl in ((0, "jugador"), (4, "total")):
             dword(ch2, f"Sitio {i} (game1.exe+{sa:X}) — {lbl}", f"cnt_tab+{i*8+k:X}")
     script(H, "🔎 Verificar candidatas v3: jugador, Kudos, medallas, tiempo y totales del menú (solo lectura; 5 min)",
-           lua_wrap(HERE / "verificar_candidatas_gv1.lua"), "FF0000")
-    script(H, "Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)", lua_wrap(HERE / "multisonda_gv1.lua"), "FF0000")
+           lua_wrap(HERE / "verificar_candidatas_gv1.lua"), CELESTE)
+    script(H, "Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)", lua_wrap(HERE / "multisonda_gv1.lua"), CELESTE)
     script(H, "Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)",
            lua_onoff(rd("materiales_etiquetar_gv1.lua"), rd("materiales_etiquetar_restaurar_gv1.lua")), "0000FF")
-    script(H, "Sonda de invencibilidad (10 s de muestreo)", "[ENABLE]\n{$lua}\nif syntaxcheck then return end\n" + ENSURE + rd("sonda_invencibilidad_gv1.lua") + "\n{$asm}\n[DISABLE]\n", "FF0000")
+    script(H, "Sonda de invencibilidad (10 s de muestreo)", "[ENABLE]\n{$lua}\nif syntaxcheck then return end\n" + ENSURE + rd("sonda_invencibilidad_gv1.lua") + "\n{$asm}\n[DISABLE]\n", CELESTE)
     return H
 
 

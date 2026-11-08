@@ -1,0 +1,37 @@
+== Diagnóstico GV3 — 2026-11-08 05:17 ==
+game3.exe base 7FF708690000  tamaño 2130000  TimeDateStamp 6ACDDCD4 (2026-10-13 07:25 UTC)
+
+== B) Firmas AOB de las referencias en game3.exe ==
+  Vida (Health / 1HK)          F3 0F 11 41 08 83 49 18 01 C3 0F   → 1  ✅ única
+      game3.exe+8B5B62
+      (RTX_XXXX y wepon1984: movss [rcx+08],xmm0 — HP float)
+  Invencible jugador           F3 0F 10 86 10 05 00 00 45         → 0  ❌ no está
+      (RTX_XXXX: movss xmm0,[rsi+510] — temporizador float)
+  Invencible ambos (rel32)     E8 AC 17 DF FF                     → 0  ❌ no está
+      (RTX_XXXX: call relativo, casi seguro que cambió)
+  Talismán infinito           88 91 9A 06 00 00                  → 0  ❌ no está
+      (RTX_XXXX: mov [rcx+69A],dl)
+  High Score                   F3 0F 11 83 F8 00 00 00 40         → 0  ❌ no está
+      (RTX_XXXX: movss [rbx+F8],xmm0 — Score float)
+
+== C) Base de wepon1984 [game3.exe+1E2CE98] ==
+  puntero = 6D496C61636F4C6F (no válido)
+    Invencibilidad: temporizador   —                = nil
+    Invencibilidad: on/off         —                = nil
+    EXP                            —                = nil
+    Nivel                          —                = nil
+    Tiempo de nivel                —                = nil
+    Score                          —                = nil
+    Fetters Gauge                  —                = nil
+    Kudos (Prestigio)              —                = nil
+    Image Chips (bits)             —                = nil
+
+== D) Barrido de bases: game3.exe+1E2CE98 ±0x80000 (Nivel = 34, Prestigio = 2313) ==
+  0 base(s) candidata(s)
+
+  Base usada en el muestreo: ninguna
+
+== E) Muestreo de 0 s (0 lecturas) con la base — ==
+  (sin base: no hay muestreo)
+
+Anota lo que ves en pantalla al final (Nivel, EXP, Prestigio, Score, tiempo) y pásalo con este informe.

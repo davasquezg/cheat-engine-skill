@@ -1,0 +1,41 @@
+== Diagnóstico GV3 v2 — 2026-11-08 05:26 ==
+game3.exe base 7FF708690000  tamaño 2130000  TimeDateStamp 6ACDDCD4 (2026-10-13 07:25 UTC)
+
+== B) AOB flexibles con los offsets de RTX_XXXX ==
+  +510 lectura float (invencib.)     F3 0F 10 ?? 10 05 00 00      → 9
+      game3.exe+3E6D94     F3 0F 10 85 10 05 00 00 0F 14 FA 0F
+      game3.exe+41AB18     F3 0F 10 85 10 05 00 00 0F 14 E2 0F
+      game3.exe+85C60D     F3 0F 10 85 10 05 00 00 0F 14 DA 0F
+      game3.exe+EA38D9     F3 0F 10 85 10 05 00 00 F3 0F 11 85
+      game3.exe+EA3AB4     F3 0F 10 85 10 05 00 00 F3 0F 11 45
+      game3.exe+EABBE2     F3 0F 10 85 10 05 00 00 F3 0F 11 85
+      game3.exe+EABDC7     F3 0F 10 85 10 05 00 00 F3 0F 11 85
+      game3.exe+EB405D     F3 0F 10 85 10 05 00 00 F3 0F 11 85
+  +510 escritura float (invencib.)   F3 0F 11 ?? 10 05 00 00      → 5
+      game3.exe+3E6D72     F3 0F 11 A5 10 05 00 00 0F 57 FF F3
+      game3.exe+41AAF3     F3 0F 11 B5 10 05 00 00 0F 57 E4 F3
+      game3.exe+6BBE60     F3 0F 11 BD 10 05 00 00 F3 0F 11 3D
+      game3.exe+998A18     F3 0F 11 A5 10 05 00 00 F3 0F 11 8D
+      game3.exe+106E8EA    F3 0F 11 9D 10 05 00 00 0F 14 E2 0F
+  +510 lectura float (REX)           F3 ?? 0F 10 ?? 10 05 00 00   → 0
+  +69A escritura byte (talismán)    88 ?? 9A 06 00 00            → 0
+  +69A escritura byte (REX)          ?? 88 ?? 9A 06 00 00         → 0
+  +F8 escritura float (Score)        F3 0F 11 ?? F8 00 00 00      → 29
+      game3.exe+2ED0E4     F3 0F 11 8D F8 00 00 00 0F 2E E6 7A
+      game3.exe+2EE372     F3 0F 11 9D F8 00 00 00 89 8D FC 00
+      game3.exe+2F1AE8     F3 0F 11 99 F8 00 00 00 48 8B 44 24
+      game3.exe+34F2D6     F3 0F 11 95 F8 00 00 00 F3 0F 11 55
+      game3.exe+3D304E     F3 0F 11 A5 F8 00 00 00 0F 28 CC E8
+      game3.exe+3D76C9     F3 0F 11 95 F8 00 00 00 4C 89 BD 00
+      game3.exe+404547     F3 0F 11 B5 F8 00 00 00 F3 0F 10 F1
+      game3.exe+49A16D     F3 0F 11 95 F8 00 00 00 0F 57 E4 F3
+
+== C) Base de wepon1984 en todas las secciones escribibles (Nivel = 34, Prestigio = 2524) ==
+  sección .data    game3.exe+1D61000 … game3.exe+1F8AF84 (0x229F84 bytes)
+  sección .fptable game3.exe+2012000 … game3.exe+2012100 (0x100 bytes)
+  0 candidata(s) en 1.0 s
+
+== D) Captura del jugador (gancho en la AOB de vida) ==
+  ERROR: [string "-- ==========================================..."]:178: La zona de vida ya está parchada por otro script (¿«Health» de wepon1984/RTX activo?). Desactívalo y repite.
+
+Gancho de captura quitado. Anota lo que ves en pantalla al final (HP, Nivel, EXP, Prestigio, Score, talismanes) y pásalo con el informe.

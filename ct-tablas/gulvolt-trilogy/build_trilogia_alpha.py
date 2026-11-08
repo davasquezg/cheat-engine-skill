@@ -17,6 +17,17 @@ Versiones: cada vez que cambia el contenido se sube VERSION y el .CT anterior se
   v0.3-alpha (2026-11-08) Verificación v3: Medallas (+7E10DC), Tiempo de nivel (+7E10D4) y Tiempo total
                           (Créditos−0xE0) en verde; fuera Score y Kudos estáticos (no existen en game1.exe).
                           EXP ×N y Prestigio ×N separados, con listas desplegables ×1, ×2, ×4 … ×1024.
+  v0.4-alpha (2026-11-08) GV3: grupo propio con la base de wepon1984 hallada en la build 2026-10-13
+                          (game3.exe+1F02FE8): invencibilidad, EXP ×N, Prestigio ×N / mantener, Image Chips
+                          (lista «todos»), valores; «Health» de wepon1984 (vida máx. / 1HK; AOB única).
+                          Fuera las entradas de GV3 de wepon1984 con la base vieja.
+  v0.5-alpha (2026-11-08) GV3: Prestigio ×N probado; «Invencibilidad» (jugador+0x592) era cámara lenta → se
+                          renombra; Kudos bloqueados ([B]+0x2FC) quitar ×N / anular; sondas de invencibilidad
+                          y de Kudos bloqueados.
+  v0.6-alpha (2026-11-08) Sonda de Kudos bloqueados sin 1EC07DA7578 (cayó a 0 al cambiar de fase).
+  v0.7-alpha (2026-11-08) Kudos bloqueados confirmado: [B]+0x2FC es FLOAT (680,26 = −680 en pantalla).
+  v0.8-alpha (2026-11-08) Notas y sondas en celeste claro (el azul no se veía con tema oscuro). GV3: EXP ×N
+                          marcado como no funcional (la EXP de wepon1984 no decide el nivel); sonda de EXP real.
 
 Uso:  python build_trilogia_alpha.py [original/trilogy.CT] [-o salida.CT] [--force]
 Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz).
@@ -31,13 +42,14 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "sondas"))
 import build_multisonda as bm  # noqa: E402  (gv1_trucos, gv1_sondas y utilidades de la multisonda)
+import gv3 as gv3m  # noqa: E402  (gv3_trucos, gv3_sondas)
 
 # SHA-256 de la tabla de wepon1984 analizada (original/FUENTES.md)
 ORIGINAL_SHA256 = "395928fcaeaf2241b414dc706a7d9d7e8d926af0f59f6cdf3d6898a0c3bab0fd"
-VERSION = "v0.3-alpha"
+VERSION = "v0.8-alpha"
 SALIDA = HERE / f"Gunvolt_Trilogy_Enhanced_{VERSION}_ES.CT"
 
-VERDE, GRIS, NARANJA, AZUL = "008000", "808080", "0080FF", "FF0000"   # CE usa BGR
+VERDE, GRIS, NARANJA, AZUL = "008000", "808080", "0080FF", bm.CELESTE   # CE usa BGR; «AZUL» = celeste claro
 
 CRED = 0x7B3668        # Créditos GV1 (verificado)
 COMB = 0x7ED64C        # Energía, inicio del bloque de combate GV1 (verificado)
@@ -144,7 +156,26 @@ def gv1(top):
     bm.gv1_sondas(G)
 
 
-# ================================ GV2 / GV3 / Connect iX ================================
+# ================================ GV3 ================================
+def gv3(top, por_id, listas):
+    """GV3: trucos propios con la base de wepon1984 hallada en la build 2026-10-13 + su script de vida
+    (AOB verificada única en game3.exe+8B5B62). Las demás entradas de wepon1984 usaban la base vieja (+1E2CE98)."""
+    G = adjuntar(top, "▶ Azure Striker Gunvolt 3 (game3.exe) — activar para adjuntar", "game3.exe", VERDE)
+    nota(G, "GV3: entra a un nivel. «Health» = vida máx. del jugador / 1HK a enemigos (wepon1984 / RTX_XXXX).")
+    vida = renumerar(copy.deepcopy(por_id["6"]))
+    vida.find("Description").text = '"Health (wepon1984 / RTX_XXXX; AOB verificada) — activar y elegir abajo"'
+    G.append(vida)
+    for x in vida.iter("CheatEntry"):
+        d = (x.findtext("Description") or "").strip('"')
+        if d == "PlayerMaxHealth":
+            x.find("Description").text = '"Vida del jugador siempre al máximo"'
+        elif d == "Enemy1HitKill":
+            x.find("Description").text = '"One Hit Kill (enemigos con 0 HP al recibir daño)"'
+    gv3m.gv3_trucos(G)
+    gv3m.gv3_sondas(G)
+
+
+# ================================ GV2 / Connect iX ================================
 JUEGOS = [("126151", "▶ Azure Striker Gunvolt 2 (game2.exe) — activar para adjuntar", "game2.exe"),
           ("126152", "▶ Azure Striker Gunvolt 3 (game3.exe) — activar para adjuntar", "game3.exe"),
           ("126153", "▶ Azure Striker Gunvolt Connect iX (game4.exe) — activar para adjuntar", "game4.exe")]
@@ -178,6 +209,9 @@ def main() -> None:
 
     gv1(top)
     for wid, desc, exe in JUEGOS:
+        if exe == "game3.exe":
+            gv3(top, por_id, listas)
+            continue
         G = adjuntar(top, desc, exe, NARANJA)
         nota(G, f"Grupo de wepon1984 portado sin cambios (nombres originales). Sin verificar en nuestra build de {exe}.",
              NARANJA)

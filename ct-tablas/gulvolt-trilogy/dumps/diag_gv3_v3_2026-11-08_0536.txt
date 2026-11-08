@@ -1,0 +1,180 @@
+== Diagnóstico GV3 v3 — 2026-11-08 05:36 ==
+game3.exe base 7FF708690000  tamaño 2130000  TimeDateStamp 6ACDDCD4 (2026-10-13 07:25 UTC)
+
+== B) Base de wepon1984 ==
+  [game3.exe+1F02FE8] encaja ✅ (misma posición que en la v2)
+
+== C) Cadenas de wepon1984 desde game3.exe+1F02FE8 ==
+  [B] = 1EB84B92720   objeto jugador [[[B]+10]+10] = 1EBD2286030
+    Invencibilidad: temporizador   1EBD22865C2    = 0
+    Invencibilidad: on/off         1EBD22865C4    = 255
+    EXP                            1EB965A4804    = 36863
+    Nivel                          1EB965A480A    = 34
+    Tiempo de nivel                1EB84B92A74    = 5.59
+    Score                          1EB84B92764    = 2800
+    Fetters Gauge                  1EB84B92B98    = 126.0
+    Kudos (Prestigio)              1EB84B92984    = 579.0
+    Image Chips (bits)             1EB84B928B8    = 1
+
+== D) Captura del jugador (gancho en la AOB de vida) ==
+  ⚠️ La zona de vida (game3.exe+8B5B62) ya está parchada: salta a 7FF708680000. Otro script la usa
+     (¿«Health» de GV3 en la tabla?). Se sigue SIN captura; desactívalo para la próxima corrida.
+
+== E) Muestreo de 300 s ==
+  Cadenas de wepon1984 (301 lecturas):
+    Invencibilidad: temporizador   0 → 0  (39 cambios)
+    Invencibilidad: on/off         255 → 255  (26 cambios)
+    EXP                            36863 → 40313  (51 cambios)
+    Nivel                          34 → 36  (2 cambios)
+    Tiempo de nivel                5.59 → 6.56  (97 cambios)
+    Score                          2800 → 204025  (4 cambios)
+    Fetters Gauge                  126.0 → 180.5  (44 cambios)
+    Kudos (Prestigio)              579.0 → 1899.86  (59 cambios)
+    Image Chips (bits)             1 → 31  (4 cambios)
+  (sin captura del jugador: gancho no instalado)
+
+  -- Objeto base [B]: objeto 1EB84B92720, 301 lecturas, el objeto cambió 0 vez/veces --
+    +0x020  120876560 → 2541319712  (1 cambios)
+    +0x024  492 → 491  (1 cambios)
+    +0x028  129974528 → 140412336  (1 cambios)
+    +0x030  6 → 7  (1 cambios)
+    +0x034  1160413184 → 1167687680  (4 cambios)  | float 2728.000 → 4912.000
+    +0x038  1141899264 → 1142161408  (3 cambios)  | float 576.000 → 592.000
+    +0x044  2800 → 204025  (4 cambios)
+    +0x048  3097 → 18036  (4 cambios)
+    +0x050  0 → 4  (4 cambios)
+    +0x054  1115684864 → 1107296256  (2 cambios)  | float 64.000 → 32.000
+    +0x060  1158479872 → 3212836864  (1 cambios)  | float 2256.000 → -1.000
+    +0x0A0  0 → 31  (3 cambios)
+    +0x0B0  57 → 51  (4 cambios)
+    +0x0BC  1984 → 65472  (2 cambios)
+    +0x0C0  1024 → 66560  (1 cambios)
+    +0x170  0 → 0  (2 cambios)
+    +0x180  1538 → 1794  (1 cambios)
+    +0x198  1 → 31  (4 cambios)
+    +0x1C0  1 → 1  (2 cambios)
+    +0x1E8  33 → 16  (48 cambios)
+    +0x1F0  2166297168 → 2166297168  (2 cambios)
+    +0x210  2 → 0  (62 cambios)
+    +0x238  0 → 0  (14 cambios)
+    +0x264  1141948416 → 1156414361  (59 cambios)  | float 579.000 → 1899.862
+    +0x268  1101833175 → 1115028242  (59 cambios)  | float 21.580 → 61.495
+    +0x2AC  0 → 0  (95 cambios)
+    +0x2B0  0 → 0  (2 cambios)
+    +0x2C0  0 → 0  (4 cambios)
+    +0x2F8  0 → 0  (16 cambios)
+    +0x2FC  0 → 0  (26 cambios)
+    +0x308  0 → 0  (70 cambios)
+    +0x30C  0 → 0  (70 cambios)
+    +0x318  0 → 0  (48 cambios)
+    +0x31C  0 → 0  (50 cambios)
+    +0x340  1065353216 → 1065353216  (70 cambios)  | float 1.000 → 1.000
+    +0x348  1160708096 → 1212628588  (4 cambios)  | float 2800.000 → 204025.688
+    +0x350  1065169280 → 1924160128  (89 cambios)
+    +0x354  1085460053 → 1087494888  (274 cambios)  | float 5.588 → 6.558
+    +0x478  1123811328 → 1127514112  (44 cambios)  | float 126.000 → 180.500
+    +0x49C  256 → 65793  (11 cambios)
+    +0x4B4  1136033792 → 1136361472  (6 cambios)  | float 365.000 → 375.000
+    +0x4C4  1136033792 → 1136361472  (2 cambios)  | float 365.000 → 375.000
+    +0x4D4  0 → 0  (2 cambios)
+    +0x4F0  1165627360 → 1169650074  (183 cambios)  | float 4000.992 → 5870.200
+    +0x4F4  1152385024 → 1142161408  (72 cambios)  | float 1408.000 → 592.000
+    +0x50C  1142768160 → 3205349376  (84 cambios)  | float 629.033 → -0.554
+    +0x518  0 → 0  (2 cambios)
+    +0x524  0 → 0  (2 cambios)
+    +0x5B4  1085644032 → 1087671168  (272 cambios)  | float 5.675 → 6.642
+    +0x5B8  257 → 257  (4 cambios)
+    +0x5D0  0 → 0  (2 cambios)
+    +0x5D4  1 → 0  (1 cambios)
+    +0x5E0  98 → 100  (53 cambios)
+    +0x5EC  16320 → 131008  (3 cambios)
+    +0x5F0  1024 → 66560  (1 cambios)
+
+  -- Objeto jugador [[[B]+10]+10]: objeto 1EBD2286030, 295 lecturas, el objeto cambió 0 vez/veces --
+    +0x010  3525849488 → 139511936  (1 cambios)
+    +0x014  491 → 492  (1 cambios)
+    +0x018  120876808 → 2541319960  (37 cambios)
+    +0x01C  492 → 491  (21 cambios)
+    +0x028  3 → 3  (2 cambios)
+    +0x038  120469216 → 127033856  (1 cambios)
+    +0x040  120469216 → 127033856  (1 cambios)
+    +0x050  118293664 → 3529155728  (204 cambios)
+    +0x054  492 → 491  (109 cambios)
+    +0x058  3531191984 → 3820927712  (1 cambios)
+    +0x060  1 → 4  (172 cambios)
+    +0x068  3531192112 → 3820928672  (1 cambios)
+    +0x080  136211952 → 140511632  (3 cambios)
+    +0x084  492 → 492  (2 cambios)
+    +0x088  136212344 → 140511704  (223 cambios)
+    +0x08C  492 → 492  (20 cambios)
+    +0x090  136212472 → 140512152  (9 cambios)
+    +0x094  492 → 492  (2 cambios)
+    +0x098  136212472 → 140512152  (3 cambios)
+    +0x09C  492 → 492  (2 cambios)
+    +0x0A0  3520950352 → 140429136  (1 cambios)
+    +0x0A4  491 → 492  (1 cambios)
+    +0x0A8  13 → 13  (3 cambios)
+    +0x0B0  22 → 25  (230 cambios)
+    +0x0C0  2541277968 → 3816901328  (1 cambios)
+    +0x0D0  2541275984 → 3816904784  (1 cambios)
+    +0x0F0  3531192624 → 3820928160  (1 cambios)
+    +0x110  120469408 → 127034048  (1 cambios)
+    +0x120  1065353216 → 1065353216  (80 cambios)  | float 1.000 → 1.000
+    +0x150  1165627360 → 1169650074  (238 cambios)  | float 4000.992 → 5870.200
+    +0x154  1152385024 → 1142161408  (199 cambios)  | float 1408.000 → 592.000
+    +0x160  20226 → 18746  (273 cambios)
+    +0x168  20229 → 18749  (293 cambios)
+    +0x170  1065353216 → 1065353216  (80 cambios)  | float 1.000 → 1.000
+    +0x1A0  3262908416 → 3254674944  (196 cambios)  | float -63.008 → -31.800
+    +0x1A4  3250585600 → 3266183168  (190 cambios)  | float -24.000 → -87.000
+    +0x1B8  8918 → 4917  (294 cambios)
+    +0x1C0  1065353216 → 1065353216  (80 cambios)  | float 1.000 → 1.000
+    +0x1F0  3262908416 → 3254674944  (196 cambios)  | float -63.008 → -31.800
+    +0x1F4  3250585600 → 3266183168  (190 cambios)  | float -24.000 → -87.000
+    +0x208  8918 → 4917  (294 cambios)
+    +0x21C  1065353216 → 1065353216  (26 cambios)  | float 1.000 → 1.000
+    +0x22C  1065353216 → 1065353216  (26 cambios)  | float 1.000 → 1.000
+    +0x270  1065353216 → 1065353216  (82 cambios)  | float 1.000 → 1.000
+    +0x274  524287 → 524287  (26 cambios)
+    +0x278  102387 → 119768  (294 cambios)
+    +0x27C  102387 → 119768  (294 cambios)
+    +0x280  102387 → 119768  (294 cambios)
+    +0x298  102387 → 119768  (294 cambios)
+    +0x29C  99035 → 119767  (293 cambios)
+    +0x2A0  20229 → 18749  (293 cambios)
+    +0x2A4  9044 → 4998  (294 cambios)
+    +0x2B4  0 → 2  (1 cambios)
+    +0x2C8  3531192240 → 3820929248  (1 cambios)
+    +0x2F0  3525849344 → 139514000  (1 cambios)
+    +0x2F4  491 → 492  (1 cambios)
+    +0x308  3520950912 → 140428976  (1 cambios)
+    +0x30C  491 → 492  (1 cambios)
+    +0x360  0 → 0  (137 cambios)
+    +0x364  0 → 0  (148 cambios)
+    +0x36C  1165627360 → 1169650074  (238 cambios)  | float 4000.992 → 5870.200
+    +0x370  1152385024 → 1142161408  (199 cambios)  | float 1408.000 → 592.000
+    +0x378  1165627360 → 1169650074  (238 cambios)  | float 4000.992 → 5870.200
+    +0x37C  1152385024 → 1142161408  (199 cambios)  | float 1408.000 → 592.000
+    +0x384  1065353216 → 1065353216  (80 cambios)  | float 1.000 → 1.000
+    +0x3A8  1065353216 → 1065353216  (26 cambios)  | float 1.000 → 1.000
+    +0x4D0  2541277008 → 3816901968  (1 cambios)
+    +0x4D8  0 → 0  (117 cambios)
+    +0x530  2542967536 → 140256336  (1 cambios)
+    +0x534  491 → 492  (1 cambios)
+    +0x590  0 → 0  (37 cambios)
+    +0x594  255 → 255  (24 cambios)
+    +0x598  0 → 2  (212 cambios)
+    +0x5B8  0 → 2  (3 cambios)
+    +0x5C4  1 → 1  (77 cambios)
+    +0x5D0  3525850064 → 139510016  (1 cambios)
+    +0x5D4  491 → 492  (1 cambios)
+    +0x5D8  3533592240 → 2646193856  (1 cambios)
+    +0x5E0  3533592224 → 2646193840  (1 cambios)
+    +0x5E8  0 → 0  (3 cambios)
+    …
+
+Anota lo que ves en pantalla al final (HP, Nivel, EXP, Prestigio, Score, talismanes, tiempo) y pásalo con el informe.
+
+== Observaciones del usuario (al terminar) ==
+  Pantalla: Nivel 37 · HP lleno · Prestigio 2446 · tiempo 06:50:48.
+  El script «Health» de GV3 (wepon1984) estaba activo: por eso no hubo captura.

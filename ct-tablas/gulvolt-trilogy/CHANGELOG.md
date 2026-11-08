@@ -3,6 +3,42 @@
 Tabla en desarrollo: `Gunvolt_Trilogy_Enhanced_<versión>_ES.CT`, generada por `build_trilogia_alpha.py` (no se edita a mano). Cada versión anterior se conserva en esta carpeta como referencia.
 Build del juego: `game1.exe` del 2026-10-07 (SHA-256 `8502cad08098…`). Leyenda de la tabla: 🟢 verificado en vivo · ⚪ candidato · 🟠 portado de wepon1984 sin verificar.
 
+## [v0.8-alpha] — 2026-11-08
+
+- **Cambiado:** las notas `##` y las sondas pasan de azul a **celeste claro** (`FFCC66` en BGR); con la interfaz oscura de Cheat Engine el azul no se leía.
+- **GV3 — EXP ×N ❌:** no sube el nivel. La EXP de la cadena de wepon1984 (`[[[B]+20]+110]+2A80`) pasó de 40 313 a 371 228 entre dos corridas con el multiplicador, pero el nivel solo subió de 36 a 37: no es la EXP que decide el nivel. Se marca como no funcional y se agrega la **sonda de EXP real** (busca la EXP del menú en toda la memoria y sigue las coincidencias que suben).
+
+## [v0.7-alpha] — 2026-11-08
+
+- **Confirmado:** el castigo de Kudos bloqueados es **`[game3.exe+1F02FE8]+0x2FC` como *float*** (680,26 con −680 en pantalla). Se paga solo con el tiempo (93 bajadas en 5 min) hasta 0. La tabla lo muestra como *float* y el script ya no tiene que adivinar el tipo.
+- **Descartado:** `1EC087719D0` (entero 680 fijo durante 5 min: copia del castigo inicial, no editable).
+
+## [v0.6-alpha] — 2026-11-08
+
+- **Cambiado:** la sonda de Kudos bloqueados ya no propone `1EC07DA7578`: el usuario vio que cae a 0 al pasar a otra fase del nivel (copia temporal). Quedan `[B]+0x2FC` (`1EB84B92A1C` en esa sesión) y `1EC087719D0`.
+
+## [v0.5-alpha] — 2026-11-08
+
+GV3, primeras pruebas del usuario en el juego.
+
+- **Probado ✅:** Prestigio ×N / mantener («funciona genial»).
+- **Corregido:** el campo `jugador+0x592` que wepon1984 llamaba «Invincibility Timer» es el temporizador de **cámara lenta** del golpe: al mantenerlo, el juego va lento y no da invencibilidad. El script pasa a llamarse «Cámara lenta (Sí/No)».
+- **Agregado (🧪):** **Kudos bloqueados** (el castigo que en pantalla sale negativo): «quitar ×N» multiplica cada pago del castigo (×1 … ×1024) y «anular» lo deja en 0. Dirección `[game3.exe+1F02FE8]+0x2FC`, hallada por el usuario (`1EB84B92A1C` = objeto base + 0x2FC); falta confirmarla con la sonda.
+- **Sondas nuevas:** invencibilidad de GV3 (método de GV1: temporizadores y banderas que se encienden con cada golpe) y Kudos bloqueados (tipo del valor, punteros estáticos, relación con los Kudos durante 5 min).
+
+## [v0.4-alpha] — 2026-11-08
+
+GV3 (`game3.exe`, build 2026-10-13). Diagnósticos v1–v3 en `dumps/diag_gv3_*.txt`; ANALISIS §9.
+
+- **Agregado — grupo de GV3 propio:** base de wepon1984 hallada en `game3.exe+1F02FE8` (Δ +0xD6150 respecto a su build).
+  - 🟢 Vida máx. del jugador y **One Hit Kill** (script «Health» de wepon1984 / RTX_XXXX; su AOB es única en `game3.exe+8B5B62`).
+  - 🧪 **Invencibilidad** Sí/No (mantiene el temporizador `jugador+0x592`; aprende su valor tras el primer golpe).
+  - 🧪 **EXP ×N** y **Prestigio ×N / mantener** con listas ×1 … ×1024 (el Prestigio de GV3 es *float*).
+  - 🟢 **Image Chips** del nivel con lista «todos» (3 / 5 / 7 chips).
+  - 🟢 Valores: EXP, Nivel, Prestigio, Score, barra Fetters; ⚪ Tiempo de nivel, copias de Score e Image Chips.
+- **Quitado:** las entradas de GV3 de wepon1984 que usaban la base vieja (`+1E2CE98`, que en esta build es texto).
+- 🧪 = verificado el dato, falta probar el truco en el juego.
+
 ## [v0.3-alpha] — 2026-11-08
 
 Verificación v3 (5 min de muestreo; informe `dumps/verificar_candidatas_gv1_v3_2026-11-08_0404.txt`).
