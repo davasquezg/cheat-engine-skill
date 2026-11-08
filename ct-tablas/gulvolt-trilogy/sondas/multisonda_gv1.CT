@@ -194,7 +194,7 @@ if INV_GV1 and INV_GV1.timer then INV_GV1.timer.destroy(); INV_GV1.timer = nil e
         </CheatEntry>
         <CheatEntry>
           <ID>12</ID>
-          <Description>"Prestigio y EXP ×N / mantener Prestigio (localiza el Prestigio solo)"</Description>
+          <Description>"Prestigio ×N / mantener (localiza el Prestigio solo; elegir ×N abajo)"</Description>
           <Color>008000</Color>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>[ENABLE]
@@ -287,59 +287,69 @@ end)
 KUDOS_SILENCIO = nil
 if not okK then print('[Prestigio] ' .. tostring(errK)) end
 -- =====================================================================================
--- multiplicador_gv1.lua — Multiplica las GANANCIAS de Prestigio (gv1_kudos) y EXP (gv1_exp)
--- y, opcionalmente, impide que el Prestigio BAJE al recibir golpes. Sin inyectar código:
--- un temporizador compara el valor con el anterior y suma (ganancia × (k − 1)).
--- Requiere los símbolos registrados con el buscador (script 7). Si falta uno, se omite.
+-- prestigio_mult_gv1.lua — Multiplica las GANANCIAS de Prestigio (gv1_kudos, interno ×256) y,
+-- opcionalmente, impide que BAJE al recibir golpes. Sin inyectar código: un temporizador compara
+-- el valor con el anterior y suma (ganancia × (k − 1)).
+-- El factor y el «mantener» se eligen en las listas desplegables de la tabla, que leen/escriben:
+--   gv1_kudos_mult = factor 1, 2, 4 … 1024 (por defecto 2)   gv1_kudos_keep = 0 No / 1 Sí (por defecto 0)
+-- (4 bytes cada uno en memoria reservada dentro del juego; se pueden cambiar en vivo).
+-- Requiere gv1_kudos (kudos_gv1.lua). Tope: 9999 en pantalla (= 9999 × 256 interno).
+-- Ojo: el juego baja el Prestigio a 0 al canjearlo al final del nivel; con «mantener» se quedará fijo.
 -- Licencia: PolyForm Noncommercial 1.0.0.
 -- =====================================================================================
-if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy() end
-local t = inputQuery("Multiplicador GV1", "Multiplicador de ganancias (1 a 10):", "2")
-if not t then error("Cancelado por el usuario") end
-local k = math.floor(tonumber(t) or 2)
-if k &lt; 1 then k = 1 end
-if k &gt; 10 then k = 10 end
-local m = inputQuery("Multiplicador GV1",
-  "Mantener el Prestigio (no dejar que baje al recibir golpes)? S/N\n" ..
-  "Ojo: el juego también lo baja a 0 al canjearlo al final del nivel; con S se quedará fijo.", "S")
-if not m then error("Cancelado por el usuario") end
-local mantener = m:upper():sub(1, 1) == "S"
+if MULTI_KUDOS and MULTI_KUDOS.timer then MULTI_KUDOS.timer.destroy() end
+local TOPE = 9999 * 256
 
-local vars = { { nombre = "gv1_kudos" }, { nombre = "gv1_exp" } }
-MULTI_GV1 = { k = k, mantener = mantener, vars = vars }
+-- Variables de 4 bytes en el juego (se reutilizan si ya existen: lo elegido sobrevive a desactivar)
+local aMult = getAddressSafe("gv1_kudos_mult")
+if not aMult then
+  aMult = allocateMemory(16)
+  registerSymbol("gv1_kudos_mult", aMult, true)
+  writeInteger(aMult, 2)
+end
+local aKeep = getAddressSafe("gv1_kudos_keep")
+if not aKeep then
+  aKeep = allocateMemory(16)
+  registerSymbol("gv1_kudos_keep", aKeep, true)
+  writeInteger(aKeep, 0)
+end
+
+local function factor()
+  local k = readInteger(aMult) or 1
+  if k &lt; 1 then k = 1 end
+  if k &gt; 1024 then k = 1024 end
+  return k
+end
+
+MULTI_KUDOS = { a = nil, last = nil }
 local tm = createTimer(nil, false)
 tm.Interval = 50
 tm.OnTimer = function()
   pcall(function()
-    for _, x in ipairs(MULTI_GV1.vars) do
-      local a2 = getAddressSafe(x.nombre)
-      if not a2 then x.a = nil; x.last = nil; goto siguiente end
-      if a2 ~= x.a then x.a = a2; x.last = readInteger(a2) end
-      local v = readInteger(x.a)
-      if v and x.last then
-        if v &gt; x.last and MULTI_GV1.k &gt; 1 then
-          v = v + (v - x.last) * (MULTI_GV1.k - 1)
-          writeInteger(x.a, v)
-        elseif v &lt; x.last and MULTI_GV1.mantener and x.nombre == "gv1_kudos" then
-          writeInteger(x.a, x.last); v = x.last
-        end
+    local a = getAddressSafe("gv1_kudos")
+    if not a then MULTI_KUDOS.a = nil; MULTI_KUDOS.last = nil; return end
+    if a ~= MULTI_KUDOS.a then MULTI_KUDOS.a = a; MULTI_KUDOS.last = readInteger(a); return end
+    local v, last = readInteger(a), MULTI_KUDOS.last
+    if v and last then
+      local k = factor()
+      if v &gt; last and k &gt; 1 then
+        v = math.min(last + (v - last) * k, TOPE)
+        writeInteger(a, v)
+      elseif v &lt; last and readInteger(aKeep) == 1 then
+        writeInteger(a, last); v = last
       end
-      x.last = v
-      ::siguiente::
     end
+    MULTI_KUDOS.last = v
   end)
 end
-MULTI_GV1.timer = tm
+MULTI_KUDOS.timer = tm
 tm.Enabled = true
-showMessage(string.format("Multiplicador ×%d activo sobre el Prestigio%s.%s", k,
-  getAddressSafe("gv1_exp") and " y la EXP" or " (EXP aún sin localizar)",
-  mantener and "\nPrestigio protegido contra bajadas." or ""))
 
 {$asm}
 [DISABLE]
 {$lua}
 if syntaxcheck then return end
-if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy(); MULTI_GV1.timer = nil end
+if MULTI_KUDOS and MULTI_KUDOS.timer then MULTI_KUDOS.timer.destroy(); MULTI_KUDOS.timer = nil end
 
 if KUDOS_GV1 and KUDOS_GV1.timer then KUDOS_GV1.timer.destroy(); KUDOS_GV1.timer = nil end
 unregisterSymbol("gv1_kudos"); unregisterSymbol("gv1_kudos_vis")
@@ -349,13 +359,44 @@ unregisterSymbol("gv1_kudos"); unregisterSymbol("gv1_kudos_vis")
           <CheatEntries>
             <CheatEntry>
               <ID>13</ID>
+              <Description>"Multiplicador de Prestigio (×1 … ×1024)"</Description>
+              <Color>008000</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_kudos_mult</Address>
+              <DropDownList ReadOnly="1" DisplayValueAsItem="1">1:×1
+2:×2
+4:×4
+8:×8
+16:×16
+32:×32
+64:×64
+128:×128
+256:×256
+512:×512
+1024:×1024
+</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>14</ID>
+              <Description>"Mantener Prestigio (no baja con golpes; queda fijo al canjear)"</Description>
+              <Color>008000</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_kudos_keep</Address>
+              <DropDownList ReadOnly="1" DisplayValueAsItem="1">0:No
+1:Sí
+</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>15</ID>
               <Description>"Prestigio en pantalla (solo lectura)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>gv1_kudos_vis</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>14</ID>
+              <ID>16</ID>
               <Description>"Prestigio interno ×256 (editar este: pantalla × 256)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
@@ -364,7 +405,118 @@ unregisterSymbol("gv1_kudos"); unregisterSymbol("gv1_kudos_vis")
           </CheatEntries>
         </CheatEntry>
         <CheatEntry>
-          <ID>15</ID>
+          <ID>17</ID>
+          <Description>"EXP ×N (elegir ×N abajo; cambia en vivo)"</Description>
+          <Color>008000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- exp_mult_gv1.lua — Multiplica las GANANCIAS de EXP de GV1. Sin inyectar código: un temporizador
+-- compara la EXP con la lectura anterior y suma (ganancia × (k − 1)).
+-- EXP = Créditos+0x478 = game1.exe+7B3AE0 (verificado 2026-11-08: subió con la EXP del menú y el nivel,
+-- en +0x47C, subió 31 → 43). El juego copia la EXP en Créditos+0x438 por su cuenta.
+-- El factor se elige en la lista desplegable de la tabla, que lee/escribe:
+--   gv1_exp_mult = factor 1, 2, 4 … 1024 (por defecto 2; 4 bytes en memoria reservada; cambia en vivo).
+-- Registra gv1_exp. Tope: 2 147 483 647 (DWORD con signo).
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if MULTI_EXP and MULTI_EXP.timer then MULTI_EXP.timer.destroy() end
+local TOPE = 0x7FFFFFFF
+local b1 = getAddressSafe("game1.exe")
+if not b1 then error("Adjunta Cheat Engine a game1.exe") end
+local EXP, NIVEL = b1 + 0x7B3AE0, b1 + 0x7B3AE4
+
+-- Comprobación de forma antes de escribir (evita escribir en memoria equivocada si cambia la build)
+local nv = readSmallInteger(NIVEL)
+if not nv or nv &lt; 1 or nv &gt; 99 then
+  error(string.format("El nivel en game1.exe+7B3AE4 no tiene la forma esperada (%s). ¿Otra build?", tostring(nv)))
+end
+registerSymbol("gv1_exp", EXP, true)
+
+-- Variable de 4 bytes en el juego (se reutiliza si ya existe: el valor elegido sobrevive a desactivar)
+local aMult = getAddressSafe("gv1_exp_mult")
+if not aMult then
+  aMult = allocateMemory(16)
+  registerSymbol("gv1_exp_mult", aMult, true)
+  writeInteger(aMult, 2)
+end
+
+local function factor()
+  local k = readInteger(aMult) or 1
+  if k &lt; 1 then k = 1 end
+  if k &gt; 1024 then k = 1024 end
+  return k
+end
+
+MULTI_EXP = { last = readInteger(EXP) }
+local tm = createTimer(nil, false)
+tm.Interval = 50
+tm.OnTimer = function()
+  pcall(function()
+    local v, last = readInteger(EXP), MULTI_EXP.last
+    if v and last then
+      local k = factor()
+      if v &gt; last and k &gt; 1 then
+        v = math.min(last + (v - last) * k, TOPE)
+        writeInteger(EXP, v)
+      end
+    end
+    MULTI_EXP.last = v
+  end)
+end
+MULTI_EXP.timer = tm
+tm.Enabled = true
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if MULTI_EXP and MULTI_EXP.timer then MULTI_EXP.timer.destroy(); MULTI_EXP.timer = nil end
+unregisterSymbol("gv1_exp")
+
+{$asm}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>18</ID>
+              <Description>"Multiplicador de EXP (×1 … ×1024)"</Description>
+              <Color>008000</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_exp_mult</Address>
+              <DropDownList ReadOnly="1" DisplayValueAsItem="1">1:×1
+2:×2
+4:×4
+8:×8
+16:×16
+32:×32
+64:×64
+128:×128
+256:×256
+512:×512
+1024:×1024
+</DropDownList>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>19</ID>
+              <Description>"EXP total (Créditos+0x478)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>gv1_exp</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>20</ID>
+              <Description>"Nivel (Créditos+0x47C; solo lectura)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game1.exe+7B3AE4</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>21</ID>
           <Description>"Materiales al máximo (pide cantidad; desactivar = restaurar)"</Description>
           <Color>008000</Color>
           <VariableType>Auto Assembler Script</VariableType>
@@ -433,7 +585,7 @@ end
 </AssemblerScript>
           <CheatEntries>
             <CheatEntry>
-              <ID>16</ID>
+              <ID>22</ID>
               <Description>"¿? Créditos+0x3A8 (NO es material)"</Description>
               <Color>808080</Color>
               <ShowAsSigned>0</ShowAsSigned>
@@ -441,7 +593,7 @@ end
               <Address>game1.exe+7B3A10</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>17</ID>
+              <ID>23</ID>
               <Description>"¿? Créditos+0x3AC (NO es material)"</Description>
               <Color>808080</Color>
               <ShowAsSigned>0</ShowAsSigned>
@@ -449,196 +601,196 @@ end
               <Address>game1.exe+7B3A14</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>18</ID>
+              <ID>24</ID>
               <Description>"Microantigenerador [★★★] (Microdegenerator)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A18</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>19</ID>
+              <ID>25</ID>
               <Description>"Servocarga fotónica [★★★] (Custom Servophoton)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A1C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>20</ID>
+              <ID>26</ID>
               <Description>"Cuasicristal espinela [★★★] (Spinel Quasicrystal)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A20</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>21</ID>
+              <ID>27</ID>
               <Description>"Imán ultradenso [★★★] (Ultradense Magnet)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A24</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>22</ID>
+              <ID>28</ID>
               <Description>"Resonador genómico [★★★] (Genomic Resonator)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A28</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>23</ID>
+              <ID>29</ID>
               <Description>"Metal líquido en fase [★★★] (Phased Fluid Metal)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A2C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>24</ID>
+              <ID>30</ID>
               <Description>"Calcedonia amarilla [★★★] (Yellow Chalcedony)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A30</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>25</ID>
+              <ID>31</ID>
               <Description>"Pieza de Hihirogane [★★★] (Hihirogane Shard)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A34</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>26</ID>
+              <ID>32</ID>
               <Description>"Motor de antigravedad [único] (Antigravity Engine)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A38</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>27</ID>
+              <ID>33</ID>
               <Description>"Mecanismo de propulsión [único] (Propulsion Mechanism)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A3C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>28</ID>
+              <ID>34</ID>
               <Description>"Mineral Fénix [único] (Phoenix Ore)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A40</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>29</ID>
+              <ID>35</ID>
               <Description>"Coraza de onda corta [único] (Shock Response Plate)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A44</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>30</ID>
+              <ID>36</ID>
               <Description>"Graym de 6 milagros [único] (Six-miracle Graym)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A48</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>31</ID>
+              <ID>37</ID>
               <Description>"Apoitagara [único] (Apoitagara)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A4C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>32</ID>
+              <ID>38</ID>
               <Description>"Extracto de graym 239 [único] (Graym Extract 239)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A50</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>33</ID>
+              <ID>39</ID>
               <Description>"Graym electromotriz [único] (Electromotive Graym)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A54</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>34</ID>
+              <ID>40</ID>
               <Description>"Aleación Kripp [0★] (Kripp Alloy)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A58</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>35</ID>
+              <ID>41</ID>
               <Description>"Xiwidia [★] (Xiwidia)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A5C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>36</ID>
+              <ID>42</ID>
               <Description>"Acero bambú [★★] (Faraging Steel)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A60</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>37</ID>
+              <ID>43</ID>
               <Description>"Nanochip 98 [0★] (Nanochip 98)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A64</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>38</ID>
+              <ID>44</ID>
               <Description>"Protoinfraestructura [★] (Proto Infrastructure)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A68</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>39</ID>
+              <ID>45</ID>
               <Description>"NcGbx de alto grado [★★] (High-end NcGbx)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A6C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>40</ID>
+              <ID>46</ID>
               <Description>"Granado [0★] (Garnet)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A70</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>41</ID>
+              <ID>47</ID>
               <Description>"Cuarcita [★] (Quartzite)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A74</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>42</ID>
+              <ID>48</ID>
               <Description>"Electrum [★★] (Electrum)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A78</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>43</ID>
+              <ID>49</ID>
               <Description>"Cultivo de graym [0★] (Graym Culture)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A7C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>44</ID>
+              <ID>50</ID>
               <Description>"Polímero Gm238 [★] (Polymer Gm238)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3A80</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>45</ID>
+              <ID>51</ID>
               <Description>"Cristal de uranio 235 (?) [★★] (Uranium-235 Crystal)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
@@ -647,88 +799,161 @@ end
           </CheatEntries>
         </CheatEntry>
         <CheatEntry>
-          <ID>46</ID>
+          <ID>52</ID>
           <Description>"Valores (estáticos en game1.exe, build 2026-10-07)"</Description>
           <Options moManualExpandCollapse="1" />
           <GroupHeader>1</GroupHeader>
           <CheatEntries>
             <CheatEntry>
-              <ID>47</ID>
+              <ID>53</ID>
               <Description>"Créditos (vig) — persiste al guardar"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7B3668</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>48</ID>
-              <Description>"Nivel? (Créditos+0x474, 2 B — verificar)"</Description>
+              <ID>54</ID>
+              <Description>"Nivel (Créditos+0x47C; no modificar)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>2 Bytes</VariableType>
-              <Address>game1.exe+7B3ADC</Address>
+              <Address>game1.exe+7B3AE4</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>49</ID>
-              <Description>"Energía / PE (llena = 5000000; congelar = infinita)"</Description>
+              <ID>55</ID>
+              <Description>"EXP total (Créditos+0x478)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3AE0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>56</ID>
+              <Description>"Energía / PE (×10 000; congelar = infinita)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED64C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>50</ID>
+              <ID>57</ID>
               <Description>"Skill Points / PH (1 = 20000000; 3 = 60000000)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED650</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>51</ID>
+              <ID>58</ID>
               <Description>"Cooldown habilidad 1 (lista = 76800)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED658</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>52</ID>
+              <ID>59</ID>
               <Description>"Cooldown habilidad 2 (lista = 76800)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED65C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>53</ID>
+              <ID>60</ID>
               <Description>"Cooldown habilidad 3 (lista = 76800)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED660</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>54</ID>
+              <ID>61</ID>
               <Description>"Cooldown habilidad 4 (lista = 76800)"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED664</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>55</ID>
-              <Description>"Copia del bloque de combate (+7ED67C) — ¿cuál manda? verificar"</Description>
+              <ID>62</ID>
+              <Description>"PV máx. sin escalar (bloque de combate +0x2C; +5 por nivel)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED678</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>63</ID>
+              <Description>"Medallas del nivel (+7E10DC)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7E10DC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>64</ID>
+              <Description>"Tiempo de nivel (+7E10D4; ≈ 7660 por segundo)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7E10D4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>65</ID>
+              <Description>"Tiempo total (Créditos−0xE0; ≈ 7660 por segundo)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3588</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>66</ID>
+              <Description>"Copia del bloque de combate (+7ED67C) — no manda (¿punto de control?)"</Description>
               <Color>808080</Color>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>game1.exe+7ED67C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>67</ID>
+              <Description>"Jugador por puntero estático [game1.exe+7B3220] (válido tras recargar partida)"</Description>
+              <Options moManualExpandCollapse="1" />
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>68</ID>
+                  <Description>"HP actual (×16)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3220</Address>
+                  <Offsets>
+                    <Offset>398</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>69</ID>
+                  <Description>"HP máximo (×16)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3220</Address>
+                  <Offsets>
+                    <Offset>39C</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>70</ID>
+                  <Description>"Invencibilidad (+518)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3220</Address>
+                  <Offsets>
+                    <Offset>518</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
             </CheatEntry>
           </CheatEntries>
         </CheatEntry>
       </CheatEntries>
     </CheatEntry>
     <CheatEntry>
-      <ID>56</ID>
+      <ID>71</ID>
       <Description>"🔧 Sondas y herramientas de búsqueda"</Description>
       <Color>808080</Color>
       <Options moManualExpandCollapse="1" />
       <GroupHeader>1</GroupHeader>
       <CheatEntries>
         <CheatEntry>
-          <ID>57</ID>
+          <ID>72</ID>
           <Description>"Contador de daño (7 sitios)"</Description>
           <Color>008000</Color>
           <VariableType>Auto Assembler Script</VariableType>
@@ -924,98 +1149,98 @@ dealloc(sonda_mem)
 </AssemblerScript>
           <CheatEntries>
             <CheatEntry>
-              <ID>58</ID>
+              <ID>73</ID>
               <Description>"Sitio 0 (game1.exe+90D41) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+0</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>59</ID>
+              <ID>74</ID>
               <Description>"Sitio 0 (game1.exe+90D41) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+4</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>60</ID>
+              <ID>75</ID>
               <Description>"Sitio 1 (game1.exe+91494) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+8</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>61</ID>
+              <ID>76</ID>
               <Description>"Sitio 1 (game1.exe+91494) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>62</ID>
+              <ID>77</ID>
               <Description>"Sitio 2 (game1.exe+915FA) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+10</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>63</ID>
+              <ID>78</ID>
               <Description>"Sitio 2 (game1.exe+915FA) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+14</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>64</ID>
+              <ID>79</ID>
               <Description>"Sitio 3 (game1.exe+91899) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+18</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>65</ID>
+              <ID>80</ID>
               <Description>"Sitio 3 (game1.exe+91899) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+1C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>66</ID>
+              <ID>81</ID>
               <Description>"Sitio 4 (game1.exe+91A8E) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+20</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>67</ID>
+              <ID>82</ID>
               <Description>"Sitio 4 (game1.exe+91A8E) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+24</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>68</ID>
+              <ID>83</ID>
               <Description>"Sitio 5 (game1.exe+1A2729) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+28</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>69</ID>
+              <ID>84</ID>
               <Description>"Sitio 5 (game1.exe+1A2729) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+2C</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>70</ID>
+              <ID>85</ID>
               <Description>"Sitio 6 (game1.exe+1AAB62) — jugador"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
               <Address>cnt_tab+30</Address>
             </CheatEntry>
             <CheatEntry>
-              <ID>71</ID>
+              <ID>86</ID>
               <Description>"Sitio 6 (game1.exe+1AAB62) — total"</Description>
               <ShowAsSigned>0</ShowAsSigned>
               <VariableType>4 Bytes</VariableType>
@@ -1024,7 +1249,375 @@ dealloc(sonda_mem)
           </CheatEntries>
         </CheatEntry>
         <CheatEntry>
-          <ID>72</ID>
+          <ID>87</ID>
+          <Description>"🔎 Verificar candidatas v3: jugador, Kudos, medallas, tiempo y totales del menú (solo lectura; 5 min)"</Description>
+          <Color>FF0000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- verificar_candidatas_gv1.lua (v3) — Verificación en vivo de GV1 (build 2026-10-07), sin depurador.
+-- La v1 (2026-11-08) probó las candidatas de wepon1984 (original/trilogy.CT, otra build) con un Δ fijo:
+--   ✅ Nivel = Créditos+0x47C · EXP = Créditos+0x478 · el bloque de combate +7ED64C es el que manda.
+--   ✅ Punteros estáticos al jugador: game1.exe+7B3220, +7E02F8, +7ED630 (el candidato +7B3238 fallaba).
+--   ❌ Tiempo / Medallas / Score / Kudos con Δ fijo: esas zonas se movieron distinto → se BUSCAN aquí.
+-- La v2 (2026-11-08 03:53, otra partida cargada):
+--   ✅ Los 3 punteros al jugador siguen válidos con otro objeto · ✅ PV máx. = bloque de combate +0x2C (+5 por nivel).
+--   Pistas: Tiempo de nivel en +7E10D4 (= wepon1984 +7D80D4 + 0x9000 exacto) · Tiempo total en Créditos−0xE0
+--   (≈ 7500/s) · Kudos ×1 en +7FFEC8 / +7FFEE0 (38 → ≈2360) · copia de la EXP en Créditos+0x438.
+-- Esta v3 sigue esas pistas (sección N) además de repetir las búsquedas de la v2:
+--   A) Bloque de partida ... Créditos, Nivel, EXP.
+--   B) Jugador ............. los 3 punteros estáticos (repetir tras reiniciar el exe).
+--   C) Bloque de combate ... +7ED64C frente a la copia +7ED67C.
+--   D) Kudos estático ...... busca en game1.exe el Prestigio en pantalla ×1, ×160 y ×256 y sigue cada
+--                            coincidencia (de gv1_kudos_vis si el script de Prestigio está activo; si no,
+--                            pide el valor de la pantalla).
+--   D2) Medallas ........... pide las medallas actuales, las busca en game1.exe e informa las que suben.
+--   E) Tiempo .............. escaneo «valor desconocido» en game1.exe y «aumentó» cada 10 s.
+--   F) Totales del menú .... pide PUNTOS TOTALES y TIEMPO TOTAL (hh:mm:ss) del menú de estado y los busca
+--                            en game1.exe (tiempo en segundos, fotogramas y milisegundos).
+-- Muestreo de 5 min (una lectura por segundo). NO pausar el juego durante el muestreo.
+-- Uso: CE adjunto a game1.exe, DENTRO de un nivel. Memory View &gt; Tools &gt; Lua Engine &gt; pegar &gt; Execute
+-- (o activar «🔎 Verificar candidatas» en la tabla). Los escaneos tardan unos segundos (CE parece congelado).
+-- Resultado: ventana + portapapeles + dumps\verificar_candidatas_gv1_v3_&lt;fecha&gt;_&lt;hora&gt;.txt (no se pisan). NO escribe memoria del juego.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local MOD      = "game1.exe"
+local OUTFILE  = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\verificar_candidatas_gv1_v3_]] ..
+                 os.date("%Y-%m-%d_%H%M") .. ".txt"
+local MUESTREO = 300000                 -- ms de muestreo (5 min)
+local PASO     = 1000                   -- ms entre lecturas
+local PASO_T   = 10000                  -- ms entre pasadas «aumentó» del escaneo de Tiempo
+local CRED     = 0x7B3668               -- Créditos (verificado)
+local COMB     = 0x7ED64C               -- Energía, inicio del bloque de combate (verificado)
+local COPIA    = 0x7ED67C               -- copia del bloque de combate (no manda)
+local PJUG     = { 0x7B3220, 0x7E02F8, 0x7ED630 }   -- punteros estáticos al jugador (2026-11-08)
+
+local out = {}
+local function p(f, ...) out[#out + 1] = string.format(f, ...) end
+local base = getAddressSafe(MOD)
+if not base then showMessage("Adjunta Cheat Engine a " .. MOD .. " primero."); return end
+local size = getModuleSize(MOD)
+local function enMod(a) return a and a &gt;= base and a &lt; base + size end
+local function dir(a) return enMod(a) and string.format("%s+%X", MOD, a - base) or string.format("%X", a or 0) end
+local function valido(a) return a and a &gt; 0x10000 and a &lt; 0x7FFFFFFFFFFF end
+
+-- ---------------------------------------------------------------- valores fijos que se siguen
+-- { sección, nombre, rva, pista }  (todos DWORD salvo el Nivel, de 2 bytes)
+local C = {
+  {"A", "Créditos",                    CRED,          "debe coincidir con la pantalla"},
+  {"A", "Nivel (Créditos+0x47C, 2 B)", CRED + 0x47C,  "nivel del personaje"},
+  {"A", "EXP (Créditos+0x478)",        CRED + 0x478,  "EXP total del menú"},
+  {"C", "Energía (bloque 1)",          COMB,          "×10 000"},
+  {"C", "Energía (copia)",             COPIA,         ""},
+  {"C", "Skill Points (bloque 1)",     COMB + 4,      "1 punto = 20000000"},
+  {"C", "Skill Points (copia)",        COPIA + 4,     ""},
+  {"C", "PV máx. (bloque 1 +0x2C)",    COMB + 0x2C,   "PV máx. del menú (+5 por nivel)"},
+  {"N", "Tiempo de nivel (+7E10D4)",   0x7E10D4,      "wepon1984 +7D80D4 + 0x9000; ≈ 7100/s en v2"},
+  {"N", "Medallas (+7E10DC)",          0x7E10DC,      "Tiempo + 8 (como en wepon1984)"},
+  {"N", "Score (+8AFC68)",             0x8AFC68,      "wepon1984 +8A6C68 + 0x9000"},
+  {"N", "Kudos ×160? (+8D4E10)",       0x8D4E10,      "wepon1984 +8CBE10 + 0x9000"},
+  {"N", "Kudos ×1? (+7FFEC8)",         0x7FFEC8,      "38 → 2357 en v2"},
+  {"N", "Kudos ×1? (+7FFEE0)",         0x7FFEE0,      "38 → 2363 en v2"},
+  {"N", "Tiempo total (Créditos−0xE0)", CRED - 0xE0,  "≈ 7500/s en v2 (forma de gv1.CT)"},
+  {"N", "EXP copia? (Créditos+0x438)", CRED + 0x438,  "= EXP en v2"},
+}
+local function leer(c)
+  return c[2]:find("2 B") and readSmallInteger(base + c[3]) or readInteger(base + c[3])
+end
+local function foto()
+  local s = {}
+  for i, c in ipairs(C) do s[i] = leer(c) end
+  return s
+end
+
+local function leerVis()
+  local kv = getAddressSafe("gv1_kudos_vis")
+  return kv and readInteger(kv)
+end
+
+-- DWORD exactos dentro de game1.exe (máx. maxN direcciones)
+local function buscarEnModulo(valor, maxN)
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtDword, rtRounded, tostring(valor), "",
+               base, base + size, "", fsmAligned, "4", false, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local r, total = {}, fl.Count
+  for i = 0, math.min(total, maxN) - 1 do r[#r + 1] = tonumber(fl.Address[i], 16) end
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  return r, total
+end
+
+-- Kudos: coincidencias a seguir { a = dirección, k = 1|160|256, n = lecturas que coinciden, ini = valor inicial }
+local kudos = {}
+-- Medallas: coincidencias del valor escrito por el usuario { a = dirección, ini = valor inicial }
+local medallas = {}
+-- Tiempo: escaneo persistente y primer valor visto de cada superviviente
+local tms, tPrim, tCuenta = nil, {}, nil
+
+local ok, err = pcall(function()
+  p("== Verificación GV1 v3 (build 2026-10-07) — %s ==", os.date("%Y-%m-%d %H:%M"))
+  p("game1.exe base %X  tamaño %X", base, size)
+
+  -- ------------------------------------------------------------ A y C: lectura inmediata
+  local sec = nil
+  local TIT = { A = "A) Bloque de partida", C = "C) Bloque de combate", N = "N) Pistas de la v2 (nivel en curso y totales)" }
+  for _, c in ipairs(C) do
+    if c[1] ~= sec then sec = c[1]; p("\n== %s ==", TIT[sec]) end
+    p("  %-30s %-16s = %-12s %s", c[2], dir(base + c[3]), tostring(leer(c)), c[4])
+  end
+  local dif = {}
+  for k = 0, 0x2C, 4 do
+    local a, b = readInteger(base + COMB + k), readInteger(base + COPIA + k)
+    if a ~= b then dif[#dif + 1] = string.format("+%X (%s / %s)", k, tostring(a), tostring(b)) end
+  end
+  p("  Bloque 1 vs copia (0x30 bytes): %s", #dif == 0 and "idénticos" or ("difieren en " .. table.concat(dif, ", ")))
+
+  -- ------------------------------------------------------------ B) jugador
+  p("\n== B) Punteros estáticos al jugador ==")
+  -- forma del objeto: [P+3D8] = P+398 (componente de vida), flag jugador [P+398+18] = 1, HP ≤ máx.
+  local function forma(P)
+    if not valido(P) then return false end
+    local comp = readQword(P + 0x3D8)
+    if comp ~= P + 0x398 then return false end
+    local hp, mx = readInteger(comp), readInteger(comp + 4)
+    return readBytes(comp + 0x18, 1) == 1 and hp and mx and mx &gt; 0 and hp &lt;= mx and mx % 16 == 0
+  end
+  local cap = getAddressSafe("gv1_player")
+  local Pcap = cap and readQword(cap)
+  for _, rva in ipairs(PJUG) do
+    local P = readQword(base + rva)
+    local hp, mx = valido(P) and readInteger(P + 0x398), valido(P) and readInteger(P + 0x39C)
+    p("  [%s] = %X  forma: %-5s %s  HP %s / %s", dir(base + rva), P or 0, forma(P) and "SÍ ✅" or "no",
+      valido(Pcap) and (P == Pcap and "= gv1_player" or "≠ gv1_player") or "(sin gv1_player)",
+      tostring(hp and hp // 16), tostring(mx and mx // 16))
+  end
+
+  -- ------------------------------------------------------------ D) Kudos: búsqueda en el módulo
+  p("\n== D) Kudos estático (Prestigio en pantalla ×1 / ×160 / ×256 dentro de game1.exe) ==")
+  local vis = leerVis()
+  if vis then
+    p("  Prestigio tomado de gv1_kudos_vis = %d (se sigue en cada lectura)", vis)
+  else
+    vis = tonumber(inputQuery("Verificar GV1", "Prestigio (Kudos) que ves AHORA en pantalla\n" ..
+      "(vacío = omitir; con el script de Prestigio activo no hace falta):", "") or "")
+    if vis then p("  Prestigio escrito por el usuario = %d (sin seguimiento: se informa qué coincidencias cambiaron)", vis) end
+  end
+  if not vis then
+    p("  (omitido)")
+  elseif vis &lt; 3 then
+    p("  Prestigio = %d: demasiado bajo para buscar (habría miles de coincidencias). Gana algo y repite.", vis)
+  else
+    for _, k in ipairs({ 1, 160, 256 }) do
+      local r, total = buscarEnModulo(vis * k, 200)
+      p("  %d × %d = %d → %d coincidencia(s)%s", vis, k, vis * k, total, total &gt; #r and " (se siguen 200)" or "")
+      for _, a in ipairs(r) do kudos[#kudos + 1] = { a = a, k = k, n = 0, ini = readInteger(a) } end
+    end
+  end
+
+  -- ------------------------------------------------------------ D2) Medallas: búsqueda en el módulo
+  p("\n== D2) Medallas (valor escrito por el usuario dentro de game1.exe) ==")
+  local med = tonumber(inputQuery("Verificar GV1", "Medallas que llevas AHORA en este nivel\n" ..
+    "(vacío = omitir; luego recoge al menos 1 durante el muestreo):", "") or "")
+  if med and med &lt; 1 then
+    p("  Medallas = 0: demasiadas coincidencias. Recoge 1 primero y repite.")
+  elseif med then
+    local r, total = buscarEnModulo(med, 20000)
+    p("  %d → %d coincidencia(s)%s; se informan las que suban exactamente +1, +2 o +3", med, total,
+      total &gt; #r and " (se siguen 20000)" or "")
+    for _, a in ipairs(r) do medallas[#medallas + 1] = { a = a, ini = med } end
+  else
+    p("  (omitido)")
+  end
+
+  -- ------------------------------------------------------------ F) Totales del menú (pantalla de estado)
+  p("\n== F) Totales del menú (valores escritos por el usuario) ==")
+  local pt = tonumber(inputQuery("Verificar GV1", "PUNTOS TOTALES del menú de estado\n(vacío = omitir):", "") or "")
+  if pt then
+    local r, total = buscarEnModulo(pt, 20)
+    p("  Puntos totales %d → %d coincidencia(s) en game1.exe", pt, total)
+    for _, a in ipairs(r) do p("    %-18s  Créditos%+d (0x%X)", dir(a), a - (base + CRED), math.abs(a - (base + CRED))) end
+  else
+    p("  Puntos totales: (omitido)")
+  end
+  local tt = inputQuery("Verificar GV1", "TIEMPO TOTAL del menú de estado (hh:mm:ss)\n(vacío = omitir):", "")
+  local hh, mm, ss = (tt or ""):match("^%s*(%d+):(%d+):(%d+)%s*$")
+  if hh then
+    local seg = tonumber(hh) * 3600 + tonumber(mm) * 60 + tonumber(ss)
+    p("  Tiempo total %s = %d s. Se busca en [t, t+10 min] por si el reloj siguió corriendo:", tt, seg)
+    for _, u in ipairs({ { "segundos", 1 }, { "fotogramas (60/s)", 60 }, { "milisegundos", 1000 } }) do
+      local ms = createMemScan()
+      ms.firstScan(soValueBetween, vtDword, rtRounded, tostring(seg * u[2]), tostring((seg + 600) * u[2]),
+                   base, base + size, "", fsmAligned, "4", false, false, false, false)
+      ms.waitTillDone()
+      local fl = createFoundList(ms); fl.initialize()
+      p("    en %-18s → %d coincidencia(s)", u[1], fl.Count)
+      for i = 0, math.min(fl.Count, 10) - 1 do
+        local a = tonumber(fl.Address[i], 16)
+        p("      %-18s = %-10s Créditos%+d", dir(a), tostring(readInteger(a)), a - (base + CRED))
+      end
+      fl.deinitialize(); fl.destroy(); ms.destroy()
+    end
+    p("  gv1.CT ponía «Total Time» en Créditos−0xE0: %s = %s", dir(base + CRED - 0xE0), tostring(readInteger(base + CRED - 0xE0)))
+  else
+    p("  Tiempo total: (omitido o formato no válido)")
+  end
+
+  -- ------------------------------------------------------------ E) Tiempo: primer escaneo
+  tms = createMemScan()
+  tms.firstScan(soUnknownValue, vtDword, rtRounded, "", "", base, base + size, "+W",
+                fsmAligned, "4", false, false, false, false)
+  tms.waitTillDone()
+end)
+if not ok then p("\nERROR: %s", tostring(err)) end
+
+-- ---------------------------------------------------------------- muestreo
+local primera, ultima, cambios = nil, nil, {}
+local nLect, visIni, visFin = 0, nil, nil
+for i = 1, #C do cambios[i] = 0 end
+
+local function lectura()
+  local f = foto()
+  local vis = leerVis()
+  nLect = nLect + 1
+  if not primera then primera, visIni = f, vis end
+  for i = 1, #C do
+    if ultima and f[i] ~= ultima[i] then cambios[i] = cambios[i] + 1 end
+  end
+  if vis then
+    for _, h in ipairs(kudos) do
+      if readInteger(h.a) == vis * h.k then h.n = h.n + 1 end
+    end
+  end
+  ultima, visFin = f, vis
+end
+
+local function pasadaTiempo(seg)
+  if not tms then return end
+  tms.nextScan(soIncreasedValue, rtRounded, "", "", false, false, false, false, false)
+  tms.waitTillDone()
+  local fl = createFoundList(tms); fl.initialize()
+  tCuenta = fl.Count
+  if fl.Count &lt;= 2000 then
+    for i = 0, fl.Count - 1 do
+      local a = tonumber(fl.Address[i], 16)
+      if not tPrim[a] then tPrim[a] = { v = readInteger(a), s = seg } end
+    end
+  end
+  fl.deinitialize(); fl.destroy()
+end
+
+local function terminar(seg)
+  p("\n== Muestreo de %d s (%d lecturas) ==", seg, nLect)
+  p("  Valores fijos que cambiaron:")
+  local n = 0
+  for i, c in ipairs(C) do
+    if cambios[i] &gt; 0 then
+      p("    %-30s %s → %s  (%d cambios)", c[2], tostring(primera[i]), tostring(ultima[i]), cambios[i]); n = n + 1
+    end
+  end
+  if n == 0 then p("    (ninguno; ¿estabas en pausa o en un menú?)") end
+
+  p("\n  D) Kudos — Prestigio en pantalla: %s → %s", tostring(visIni), tostring(visFin))
+  if #kudos == 0 then
+    p("    (sin coincidencias que seguir)")
+  else
+    table.sort(kudos, function(x, y) return x.n &gt; y.n end)
+    local seguido = visIni ~= nil
+    table.sort(kudos, function(x, y)
+      if seguido then return x.n &gt; y.n end
+      return (readInteger(x.a) ~= x.ini and 1 or 0) &gt; (readInteger(y.a) ~= y.ini and 1 or 0)
+    end)
+    local m = 0
+    for _, h in ipairs(kudos) do
+      local ahora = readInteger(h.a)
+      if seguido or ahora ~= h.ini then
+        p("    %-18s ×%-3d %s  (%s → %s)", dir(h.a), h.k,
+          seguido and string.format("coincide en %3d/%d lecturas", h.n, nLect) or "cambió",
+          tostring(h.ini), tostring(ahora))
+        m = m + 1
+        if m &gt;= 15 then break end
+      end
+    end
+    if m == 0 then p("    (ninguna coincidencia cambió: el Kudos estático no está en game1.exe o no ganaste Prestigio)") end
+    p("    → El Kudos estático es la dirección que sigue al Prestigio en pantalla (con su escala ×1/×160/×256).")
+  end
+
+  p("\n  D2) Medallas — coincidencias que subieron +1…+3:")
+  local nm = 0
+  for _, h in ipairs(medallas) do
+    local ahora = readInteger(h.a)
+    if ahora and ahora &gt; h.ini and ahora &lt;= h.ini + 3 then
+      p("    %-18s %d → %d", dir(h.a), h.ini, ahora); nm = nm + 1
+      if nm &gt;= 20 then p("    …"); break end
+    end
+  end
+  if nm == 0 then p("    (ninguna: ¿recogiste una medalla durante el muestreo?)") end
+
+  p("\n  E) Tiempo — DWORD de game1.exe que aumentaron en cada pasada de %d s: %s", PASO_T // 1000, tostring(tCuenta))
+  if tms and tCuenta and tCuenta &lt;= 2000 then
+    local fl = createFoundList(tms); fl.initialize()
+    local filas = {}
+    for i = 0, fl.Count - 1 do
+      local a = tonumber(fl.Address[i], 16)
+      local v, pr = readInteger(a), tPrim[a]
+      local ritmo = (pr and v and seg &gt; pr.s) and (v - pr.v) / (seg - pr.s) or 0
+      filas[#filas + 1] = { a = a, v = v, r = ritmo }
+    end
+    fl.deinitialize(); fl.destroy()
+    table.sort(filas, function(x, y) return x.a &lt; y.a end)
+    for i = 1, math.min(#filas, 30) do
+      local f = filas[i]
+      p("    %-18s = %-12s  ritmo ≈ %.1f /s", dir(f.a), tostring(f.v), f.r)
+    end
+    if #filas &gt; 30 then p("    … y %d más", #filas - 30) end
+    p("    → Pista: un cronómetro en fotogramas sube ≈ 60/s; en milisegundos ≈ 1000/s.")
+  elseif tCuenta then
+    p("    (demasiados para listar: repite sin pausar el juego)")
+  end
+  if tms then tms.destroy(); tms = nil end
+
+  p("\nCompara con la pantalla del juego y anota qué dirección acierta.")
+  local rep = table.concat(out, "\n")
+  local fh = io.open(OUTFILE, "w"); if fh then fh:write(rep); fh:close() end
+  writeToClipboard(rep)
+  showMessage(rep .. "\n\n(Copiado al portapapeles y guardado en " .. OUTFILE .. ")")
+end
+
+showMessage(string.format("Lecturas y escaneos listos. Al cerrar este aviso empiezan %d min de muestreo:\n" ..
+  "· NO pauses el juego ni abras menús (el escaneo de Tiempo lo necesita);\n" ..
+  "· gana Prestigio (Kudos) encadenando enemigos sin recibir daño;\n" ..
+  "· recoge al menos 1 medalla;\n" ..
+  "· si puedes, termina la misión cerca del final del muestreo.\n" ..
+  "Al terminar aparece el informe (no cierres Cheat Engine).", MUESTREO // 60000))
+lectura()
+local t0, tUlt = getTickCount(), getTickCount()
+local t = createTimer(nil, false)
+t.Interval = PASO
+t.OnTimer = function(tm)
+  local ahora = getTickCount()
+  local seg = (ahora - t0) // 1000
+  local okL, errL = pcall(function()
+    lectura()
+    if ahora - tUlt &gt;= PASO_T then tUlt = ahora; pasadaTiempo(seg) end
+  end)
+  if not okL or ahora - t0 &gt;= MUESTREO then
+    tm.destroy()
+    if not okL then p("\nERROR en una lectura: %s", tostring(errL)) end
+    local okT, errT = pcall(terminar, seg)
+    if not okT then showMessage("ERROR en el muestreo: " .. tostring(errT)) end
+  end
+end
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>88</ID>
           <Description>"Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)"</Description>
           <Color>FF0000</Color>
           <VariableType>Auto Assembler Script</VariableType>
@@ -1231,7 +1824,7 @@ showMessage(report .. "\n\n(Copiado al portapapeles y guardado en " .. OUTFILE .
 </AssemblerScript>
         </CheatEntry>
         <CheatEntry>
-          <ID>73</ID>
+          <ID>89</ID>
           <Description>"Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)"</Description>
           <Color>0000FF</Color>
           <VariableType>Auto Assembler Script</VariableType>
@@ -1279,7 +1872,7 @@ end
 </AssemblerScript>
         </CheatEntry>
         <CheatEntry>
-          <ID>74</ID>
+          <ID>90</ID>
           <Description>"Sonda de invencibilidad (10 s de muestreo)"</Description>
           <Color>FF0000</Color>
           <VariableType>Auto Assembler Script</VariableType>

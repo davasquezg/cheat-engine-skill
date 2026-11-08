@@ -10,7 +10,7 @@ Repositorio: <https://github.com/davasquezg/cheat-engine-skill> · Autor: Darío
 | Carpeta | Juego | Estado |
 |---|---|---|
 | `ct-tablas/mmsf-legacy-collection/` | Mega Man Star Force Legacy Collection (Steam, build 1.0.2.0) | ✅ Publicada: tabla **v9** ES/EN + versión FearLess |
-| `ct-tablas/gulvolt-trilogy/` | Azure Striker Gunvolt Trilogy Enhanced (Steam app 3813350) | 🧪 En investigación: GV1 (`game1.exe`) con multisonda sin depurador |
+| `ct-tablas/gulvolt-trilogy/` | Azure Striker Gunvolt Trilogy Enhanced (Steam app 3813350) | 🧪 En investigación: GV1 (`game1.exe`) con multisonda sin depurador · tabla **v0.3-alpha** ES (sin publicar) |
 
 > El nombre de carpeta `gulvolt-trilogy` es histórico (el juego es *Gunvolt*). No renombrar sin actualizar las rutas absolutas de los scripts Lua (`D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\…`).
 

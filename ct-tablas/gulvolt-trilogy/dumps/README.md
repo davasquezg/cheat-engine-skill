@@ -9,6 +9,10 @@ Carpeta de trabajo donde los scripts Lua escriben sus resultados (ruta absoluta
 | `resultados_multisonda_gv1.txt` | Multisonda (bloques de partida y combate) | Sí |
 | `resultados_invencibilidad_gv1.txt` | Sonda de invencibilidad | Sí |
 | `investigar_direccion.txt` | `../sondas/investigar_direccion_gv1.lua` | Sí |
+| `verificar_candidatas_gv1_v3_<fecha>_<hora>.txt` | `../sondas/verificar_candidatas_gv1.lua` v3 (un archivo por corrida) | Sí |
+| `verificar_candidatas_gv1_v2_2026-11-08.txt` | Corrida v2 (punteros tras recargar, PV máx., pistas de Tiempo/Kudos) | Sí |
+| `verificar_candidatas_gv1_v1_2026-11-08.txt` | Corrida v1 + observaciones del usuario (ANALISIS §8.4) | Sí |
+| `verificar_candidatas_gv1_v1b_2026-11-08.txt` | Segunda corrida v1 (Prestigio 1902 → 2620) | Sí |
 | `kudos_diag.txt` | `../sondas/kudos_diag_gv1.lua` (se va agregando cada paso) | Sí |
 
 ## Regenerar el volcado de `game1.exe`

@@ -8,6 +8,7 @@
 | `gv2.CT` | GV2 v1.0 — [t=12924](https://fearlessrevolution.com/viewtopic.php?t=12924) | Shinkansen (V1001) | (`aobscan` sin módulo) | 64 bits | 2 inyecciones por AOB que **capturan punteros base**; todo lo demás es relativo a ellos |
 | `gv3.CT` | GV3 — [t=21777](https://fearlessrevolution.com/viewtopic.php?t=21777) | RTX_XXXX (Update1.1) | `game.exe` | 64 bits | 6 inyecciones por AOB (`aobscanmodule`) |
 | `A.S.G.T.E v1.1.1frf.CT` | Trilogy v1.1.1 — [t=35891](https://fearlessrevolution.com/viewtopic.php?t=35891) | ndck1 | `game1.exe` | 64 bits | 1 inyección por AOB (GV1) |
+| `trilogy.CT` | Trilogy Enhanced — [t=35866](https://fearlessrevolution.com/viewtopic.php?t=35866) | wepon1984 | `game1.exe`…`game4.exe` | 64 bits | Direcciones estáticas y punteros de 1 a 7 niveles; AOB solo en GV3 y Connect iX (ver §8) |
 
 ## 1. Hallazgo principal: el **componente de vida** se repite en los tres juegos
 
@@ -260,3 +261,112 @@ Encontrado a mano en `1FCEA9A34D4` (sesión concreta). Investigación con `inves
 - **Sin punteros estáticos** de 1 ni 2 niveles hacia la estructura (offset ≤ 0x2000).
 - Solución adoptada: **firma de memoria** — buscar en el heap el QWORD `game1.exe+234130` (en `K+0x34`) y validar `K+0x3C = game1.exe+4C470` e interno = pantalla × 256 (script 9). Se re-localiza automáticamente si deja de validar (cambio de nivel).
 - Para modificar el Prestigio hay que escribir el **interno** (`+0x4`); el de pantalla se recalcula.
+
+## 8. Tabla de la trilogía de wepon1984 (`trilogy.CT`, analizada 2026-11-08)
+
+CT v46, 382 entradas. Un grupo por ejecutable; al activarlo hace `OpenProcess("gameN.exe")`. **No trae Lua de tabla ni comentarios con la build.** Casi todo son direcciones estáticas sin AOB, así que se rompe con cada parche. Solo hay inyecciones AOB en GV3 (Health, PlayerMaxHealth, Enemy1HitKill) y en Connect iX (3 indicadores).
+
+| Ejecutable | Juego | Contenido |
+|---|---|---|
+| `game1.exe` | GV1 | Nivel, EXP, Créditos, 28 materiales, Tiempo, Medallas, HP, temporizador de invencibilidad, EP, Skill Points, 4 cooldowns, Score, Kudos |
+| `game2.exe` | GV2 | Gunvolt y Copen por separado (EXP, Créditos, Nivel, materiales en **1 byte**, 50 ranuras de equipo…); Score, Medallas, Tiempo, HP (×16), Kudos (×160) |
+| `game3.exe` | GV3 | Base `game3.exe+1E2CE98` con cadenas de punteros (EXP, Nivel, Tiempo, Score, Kudos *float*, Image Chips…) + inyección de vida (`F3 0F 11 41 08 83 49 18 01 C3 0F`) |
+| `game4.exe` | Connect iX | Bases `+190E590`, `+19279E8`, `+18223A8` (cadena de 7 niveles para la moneda) + 3 inyecciones de indicadores |
+
+### 8.1 Cruce con nuestro mapa de GV1
+
+La tabla es de **otra build** de `game1.exe`: los Créditos están en `+7AA5F0` y en la nuestra (2026-10-07) en `+7B3668` (Δ = **+0x9078**). El bloque de combate se corrió distinto (EP `+7E465C` → `+7ED64C`, Δ = **+0x8FF0**). Por eso las direcciones de abajo son solo **candidatas**: la columna «nuestra build» suma el Δ de la zona más cercana. **Ninguna está verificada.**
+
+| Dato (wepon1984) | Su build | Relación | Nuestra build (candidata) | Contraste con lo que sabemos |
+|---|---|---|---|---|
+| Credit | `+7AA5F0` | — | `+7B3668` ✅ | Verificado en vivo |
+| Materials | `+7AA9A0` | Créditos + 0x3B0 | `+7B3A18` ✅ | Coincide con §7.5 (+0x3B0, no +0x3A8) |
+| Level («no modificar», 2 B) | `+7AAA6C` | Créditos + **0x47C** | `+7B3AE4` | Confirma la sospecha de §7.5: el +8 también corre el nivel. Corregir el «¿Nivel? `+0x474`» de `CLAUDE.md` |
+| EXP | `+7A6930` | Créditos − 0x3CC0 | `+7AF9A8` (Δ 0x9078) | En gv1.CT EXP iba junto al nivel (+0x470 → aquí sería +0x478). Probar las dos |
+| **HP** | `[+7AA1C0]+398` | puntero a objeto jugador | `[+7B3238]+398` | La forma coincide: componente de vida = objeto + 0x398. Daría un **puntero estático** al jugador sin inyección |
+| Invincibility Timer (*Float*) | `[+7AA1C0]+518` | objeto + 0x518 | `[+7B3238]+518` | Coincide con nuestro `[gv1_player]+518`. Nosotros lo leímos como entero (11520); él lo declara *Float*. Revisar el tipo |
+| Energy Bar (lleno 5 000 000) | `+7E465C` | bloque de combate | `+7ED64C` ✅ | Coincide (escala y posición) |
+| Skill Point (3 = 60 000 000) | `+7E4660` | EP + 4 | `+7ED650` ✅ | Coincide |
+| Skills Cooldown 1–4 (76 800) | `+7E4668…74` | EP + 0xC… | `+7ED658…` ✅ | Coincide. Usa el **primer** bloque, no la copia en `+7ED67C` (indicio de cuál manda) |
+| Time | `+7D80D4` | — | `+7E10C4` o `+7E114C` | Δ incierto: medir |
+| Medals | `+7D80DC` | Time + 8 | Time + 8 | En gv1.CT también iban juntos (+8) |
+| Score | `+8A6C68` | — | sin Δ fiable | Lejos de las otras zonas: buscar con escaneo |
+| Kudos (máx. 1 599 840) | `+8CBE10` | — | sin Δ fiable | 1 599 840 = 9999 × **160**, no ×256 como nuestra estructura K (§7.6). Puede ser otra copia (total del nivel o HUD). Comparar en vivo |
+
+### 8.2 Qué aporta al proyecto
+
+1. **Tres pendientes resueltos sin depurador:** dónde buscar EXP, Score y Tiempo/Medallas en GV1.
+2. **Puntero estático al jugador** (`[game1.exe+7B3238]` candidato): si se confirma, la tabla final puede leer HP e invencibilidad sin la inyección de captura. Igual conviene resolverlo por AOB (la instrucción que lee esa global) para sobrevivir parches.
+3. **Indicio sobre el bloque de combate duplicado:** wepon1984 usa el primero (`+7ED64C`).
+4. **GV2, GV3 y Connect iX ya tienen un mapa de partida** para la Trilogy (antes solo teníamos las tablas de las versiones individuales). Las escalas de GV2 coinciden con §3 (HP ×16, Kudos ×160).
+5. **Defecto en el original:** 6 armas EX de Connect iX tienen `DropDownListLink` a «Anchor Nexus», que no tiene lista. La tabla alfa quita esos enlaces al portar.
+6. **Créditos de la versión FearLess:** al derivar de esta tabla, también hay que acreditar a wepon1984 (no solo a ndck1).
+
+### 8.3 Verificación (sin depurador)
+
+Implementada en `sondas/verificar_candidatas_gv1.lua` (también como «🔎 Verificar candidatas» en la multisonda y en la tabla alfa). Es un script Lua para el Lua Engine que lea cada candidata de §8.1 y muestre el valor junto a lo que se ve en pantalla. Para Time y EXP, que pruebe las dos opciones de Δ. Para el puntero al jugador, que compruebe `[[+7B3238]+398+18] == 1` (marca de jugador) y HP actual ≤ máximo.
+
+### 8.4 Resultado de la verificación v1 (2026-11-08, 2 min de muestreo)
+
+Informe: `dumps/verificar_candidatas_gv1_v1_2026-11-08.txt`. Durante el muestreo el personaje subió de nivel, recogió 1 medalla y terminó con 1902 de Prestigio en pantalla.
+
+| Dato | Resultado | Conclusión |
+|---|---|---|
+| Nivel `Créditos+0x47C` | 31 → 32 (1 cambio) | ✅ **Nivel** |
+| EXP `Créditos+0x478` | 303 450 → 312 000 (15 cambios) | ✅ **EXP** (forma de gv1.CT + 8, igual que los materiales) |
+| EXP `+7AF9A8` (Δ de wepon1984) / `Créditos+0x470` | 0, sin cambios | ❌ |
+| `Créditos+0x474` | 14, sin cambios | ❌ no es el nivel (campo desconocido) |
+| Puntero `[+7B3238]` | no apunta al jugador | ❌ (el Δ local era +0x9060, no +0x9078) |
+| Punteros al objeto jugador en `game1.exe` | **`+7B3220`**, `+7E02F8`, `+7ED630` (= `gv1_player`) | ✅ en esta sesión; falta confirmar tras reiniciar el juego |
+| Bloque de combate `+7ED64C` | Energía cambió 73 veces | ✅ **manda** |
+| Copia `+7ED67C` | sin cambios; difiere en `+1C…+24` (230 400 = 3 × 76 800) y `+2C` | ❌ no manda (¿copia del punto de control?) |
+| Energía | 6 500 000 (no 5 000 000) | el «lleno» depende de mejoras: se etiqueta solo como ×10 000 |
+| Tiempo `+7E114C` / `+7E10C4` | 0 / 79 824 036, sin cambios | ❌ |
+| Medallas (Tiempo + 8) | 0 y 0 con 1 medalla recogida | ❌ |
+| Score `+8AFCE0` / `+8AFC58` | 0xFFFFFFFF / 0 | ❌ |
+| Kudos `+8D4E88` / `+8D4E00` | 0 y 0 con 1902 en pantalla | ❌ |
+
+**Segunda corrida (03:37, misma sesión; `dumps/verificar_candidatas_gv1_v1b_2026-11-08.txt`):** repite todo. EXP +0x478 cambió 13 veces más (318 750 → 325 050). La Energía del bloque 1 bajó a 6 405 000 mientras la copia siguió en 6 500 000: confirma que la copia no manda. El Prestigio en pantalla pasó de **1902 a 2620** y las 4 candidatas de Kudos siguieron en 0: descartadas. Las Medallas pasaron de **1 a 2** y las 2 candidatas siguieron en 0: descartadas también. Los 3 punteros al jugador apuntan al mismo objeto (`1B365BE3910`), pero sin reiniciar el juego todavía no prueban que sobrevivan.
+
+**Menú de estado al terminar la misión (captura del usuario):** Nv 32 · PV 355/355 · PE 650 · PH 3 · Créditos 299 779 · Puntos totales 1 409 193 · Tiempo total 04:45:05.
+- PE 650 = 6 500 000 / 10 000 → escala de la Energía **×10 000** confirmada; PH 3 = 60 000 000 / 20 000 000 ✅.
+- **Bloque de combate `+0x2C` = 355** (350 en la primera corrida, con Nv 31): probable **PV máx. sin escalar** (`game1.exe+7ED678`; en la copia vale 0). Candidato.
+- Puntos totales y Tiempo total: la v2 del script los pide y los busca en `game1.exe` (sección F; el tiempo en s, fotogramas y ms).
+
+Lección: **los Δ entre builds no son uniformes** ni siquiera dentro de una misma zona (+0x9060 a +0x9078). Trasladar con Δ fijo solo sirve como pista; lo fiable es buscar el valor (v2 del script: Kudos ×1/×160/×256 y Medallas por valor, Tiempo por «aumentó» en `game1.exe`) o buscar punteros al objeto ya capturado.
+
+### 8.5 Resultado de la verificación v2 (2026-11-08 03:53, otra partida cargada)
+
+Informe: `dumps/verificar_candidatas_gv1_v2_2026-11-08.txt`. Se cargó una partida anterior (Nv 31, Créditos 296 939) y en 2 min el personaje subió a Nv 36.
+
+| Dato | Resultado | Conclusión |
+|---|---|---|
+| Punteros `+7B3220`, `+7E02F8`, `+7ED630` | los 3 apuntan al **nuevo** objeto jugador (`1F2A8A0E910`, antes `1B365BE3910`) | ✅ sobreviven a recargar la partida (falta reiniciar el exe) |
+| Bloque de combate `+0x2C` | 350 → 375 con 5 subidas de nivel | ✅ **PV máx. sin escalar** (+5 por nivel) |
+| Nivel / EXP | 31 → 36 / 295 350 → 398 850 | ✅ (otra vez) |
+| `Créditos+0x438` (`+7B3AA0`) | = EXP (398 850), mismo ritmo | copia de la EXP (candidato) |
+| Kudos ×1 (38 escrito a mano) | 80 coincidencias; `+7FFEC8` 38 → 2357 y `+7FFEE0` 38 → 2363 | candidatos (falta el valor final de pantalla) |
+| Kudos ×160 / ×256 | 0 / 9 coincidencias, ninguna cambió | ❌ en `game1.exe` |
+| Medallas | el usuario tenía 0 (no se buscó) | pendiente |
+| Tiempo («aumentó» cada 10 s) | 1862 supervivientes. Destacan `+7E10D4` (≈ 7100/s, valor ≈ 126 s × 7500) y `Créditos−0xE0` = `+7B3588` (≈ 7500/s) | `+7E10D4` = wepon1984 `+7D80D4` + **0x9000** exacto → **Tiempo de nivel** probable; `Créditos−0xE0` = **Tiempo total** (forma de gv1.CT), unidad por confirmar |
+
+Hipótesis: en la zona de `+7D…`/`+8…` el Δ con la build de wepon1984 es **+0x9000**, no +0x9078 ni +0x8FF0. Si se cumple, Medallas = `+7E10DC`, Score = `+8AFC68` y Kudos = `+8D4E10`. La v3 del script sigue esas direcciones durante 5 min.
+
+### 8.6 Resultado de la verificación v3 (2026-11-08 04:04, 5 min)
+
+Informe: `dumps/verificar_candidatas_gv1_v3_2026-11-08_0404.txt` (con las observaciones del usuario al final). Prestigio en pantalla 988 → 2807 · Medallas 1 → 3 · Nv 36 → 43.
+
+| Dato | Resultado | Conclusión |
+|---|---|---|
+| Medallas `+7E10DC` | 1 → 3 (2 cambios), igual que la pantalla | ✅ **Medallas del nivel**; confirma el Δ **+0x9000** de la zona |
+| Tiempo de nivel `+7E10D4` | 167 cambios en 301 s | ✅ |
+| Tiempo total `Créditos−0xE0` | 301 cambios; 113 320 832 con el menú en 04:06:38 (14 798 s) | ✅ ≈ **7660 unidades/s** (probablemente 60 × 128 = 7680; la diferencia sería el tiempo entre leer el menú y lanzar el script) |
+| PV máx. `+7ED678` | 375 → 410 con 7 niveles | ✅ (+5 por nivel) |
+| Score `+8AFC68` | 16 777 215 (0xFFFFFF), fijo | ❌ |
+| Puntos totales 1 409 193 | 0 coincidencias en `game1.exe` | ❌ no es estático |
+| Kudos `+8D4E10` (×160) | 0, fijo | ❌ |
+| `+7FFEC8` / `+7FFEE0` | 0 → 3134 / 0 → 2880 con el Prestigio 988 → 2807 | ❌ no son el Prestigio (empezaron en 0 con 988 en pantalla); contadores de combate sin identificar |
+| Prestigio ×1 / ×160 / ×256 en `game1.exe` | 12 / 0 / 0 coincidencias de 988; ninguna cambió | ❌ **no hay Kudos estático**: se mantiene la estructura K del heap (§7.6) |
+| Otras medallas | `Créditos+0x44C` (+7B3AB4), `+8C1764`, `+8C2DBC`: 1 → 2 | copias (¿medallas guardadas?) sin confirmar |
+
+Con esto el Δ con la build de wepon1984 queda así: **+0x9078** en el bloque de partida (Créditos, materiales), **+0x9060** en el puntero al jugador, **+0x8FF0** en el bloque de combate y **+0x9000** en la zona del nivel en curso (Tiempo, Medallas).

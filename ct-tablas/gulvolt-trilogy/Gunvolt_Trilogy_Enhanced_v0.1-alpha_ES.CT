@@ -1,0 +1,4839 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CheatTable CheatEngineTableVersion="45">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"##Gunvolt Trilogy Enhanced — v0.1-alpha (ES) · Skolleks · en construcción"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"##Créditos: wepon1984 · ndck1 · WarCOzes · Shinkansen · RTX_XXXX (ver Table Extras → Comments)"</Description>
+      <Color>FF0000</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"##Verde = verificado en vivo · gris = candidato · naranja = wepon1984 (otra build, sin verificar)"</Description>
+      <Color>808080</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"▶ Azure Striker Gunvolt 1 (game1.exe) — activar para adjuntar"</Description>
+      <Color>008000</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Adjunta Cheat Engine a game1.exe (patrón de wepon1984). Activar con el juego abierto. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if getCEVersion() &lt; 7.4 then showMessage("Se recomienda Cheat Engine 7.4 o superior.") end
+if (process or ""):lower() ~= "game1.exe" then openProcess("game1.exe") end
+if (process or ""):lower() ~= "game1.exe" then
+  error("game1.exe no está abierto: entra a ese juego desde el menú de la colección.")
+end
+{$asm}
+[DISABLE]
+</AssemblerScript>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"##GV1: entra a un nivel. Los trucos activan solos la «Captura jugador»."</Description>
+          <Color>FF0000</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>6</ID>
+          <Description>"▶ GV1 — Trucos"</Description>
+          <Color>008000</Color>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>7</ID>
+              <Description>"Captura jugador (base de los trucos; se activa sola)"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{ Sonda 1 — Captura del jugador (sin depurador)
+  Engancha la rutina que recalcula HP/HP máx. (la misma zona que usa ndck1, 7 bytes antes,
+  así que pueden convivir). Guarda:
+    gv1_player = objeto del personaje (rdi)   gv1_hp = su componente de vida ([rdi+3D8])
+    gv1_last   = último componente visto (cualquier personaje)
+  Solo guarda gv1_player/gv1_hp cuando el byte +18 del componente vale 1 (jugador).
+  El AOB tolera que la zona ya esté parchada (por esta sonda tras recargar la tabla, o por ndck1). }
+[ENABLE]
+aobscanmodule(gv1cap,game1.exe,F6 47 26 04 74 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 45 8B C8 44 0F 4E CD)
+alloc(gv1cap_mem,$200,gv1cap)
+label(gv1cap_ret)
+label(gv1_player)
+label(gv1_hp)
+label(gv1_last)
+registersymbol(gv1cap)
+registersymbol(gv1_player)
+registersymbol(gv1_hp)
+registersymbol(gv1_last)
+
+gv1cap_mem:
+  mov rcx,[rdi+3D8]
+  test rcx,rcx
+  je @f
+  mov [gv1_last],rcx
+  cmp byte ptr [rcx+18],1
+  jne @f
+  mov [gv1_player],rdi
+  mov [gv1_hp],rcx
+@@:
+  jmp gv1cap_ret
+align 8
+gv1_player:
+  dq 0
+gv1_hp:
+  dq 0
+gv1_last:
+  dq 0
+
+gv1cap+6:
+  jmp gv1cap_mem
+  nop 2
+gv1cap_ret:
+
+[DISABLE]
+gv1cap+6:
+  db 48 8B 8F D8 03 00 00
+unregistersymbol(gv1cap)
+unregistersymbol(gv1_player)
+unregistersymbol(gv1_hp)
+unregistersymbol(gv1_last)
+dealloc(gv1cap_mem)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>8</ID>
+                  <Description>"HP actual (×16)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_hp</Address>
+                  <Offsets>
+                    <Offset>0</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>9</ID>
+                  <Description>"HP máximo (×16)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_hp</Address>
+                  <Offsets>
+                    <Offset>4</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>10</ID>
+                  <Description>"Daño del golpe en curso (+08)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_hp</Address>
+                  <Offsets>
+                    <Offset>8</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>11</ID>
+                  <Description>"Flag jugador (+18)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>gv1_hp</Address>
+                  <Offsets>
+                    <Offset>18</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>12</ID>
+                  <Description>"Temporizador de invencibilidad (obj+518; 11520 = recién golpeado)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_player</Address>
+                  <Offsets>
+                    <Offset>518</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>13</ID>
+                  <Description>"Flag de golpe? (obj+528)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_player</Address>
+                  <Offsets>
+                    <Offset>528</Offset>
+                  </Offsets>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>14</ID>
+                  <Description>"Estado? (obj+3D0)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_player</Address>
+                  <Offsets>
+                    <Offset>3D0</Offset>
+                  </Offsets>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>15</ID>
+              <Description>"Invencibilidad (Sí/No)"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- invencible_gv1.lua — Invencibilidad de GV1 como interruptor (activar = Sí, desactivar = No).
+-- Mantiene el temporizador de invencibilidad del jugador ([gv1_player]+0x518) en 11520
+-- (valor que el juego pone tras un golpe; confirmado 2026-11-01). Requiere la sonda 1.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if INV_GV1 and INV_GV1.timer then INV_GV1.timer.destroy() end
+if not getAddressSafe("gv1_player") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_player") then
+  error("No se pudo activar 'Captura jugador'. Entra a un nivel y vuelve a intentar.")
+end
+INV_GV1 = {}
+local t = createTimer(nil, false)
+t.Interval = 50
+t.OnTimer = function()
+  pcall(function()
+    local pp = getAddressSafe("gv1_player")
+    local P = pp and readQword(pp)
+    if P and P &gt; 0x10000 then
+      local a = P + 0x518
+      local v = readInteger(a)
+      if v ~= nil and v &lt; 11520 then writeInteger(a, 11520) end
+    end
+  end)
+end
+INV_GV1.timer = t
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if INV_GV1 and INV_GV1.timer then INV_GV1.timer.destroy(); INV_GV1.timer = nil end
+
+{$asm}
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>16</ID>
+              <Description>"Prestigio y EXP ×N / mantener Prestigio (localiza el Prestigio solo)"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+KUDOS_SILENCIO = true
+local okK, errK = pcall(function()
+-- =====================================================================================
+-- kudos_gv1.lua — Localiza el Prestigio (Kudos) de GV1 en el heap por FIRMA DE MEMORIA,
+-- sin depurador ni punteros estáticos (no hay de 1-2 niveles). Hallado el 2026-11-01:
+--   K+0x0 = Prestigio en pantalla      K+0x4 = Prestigio interno ×256 (punto fijo 24.8)
+--   K+0x34, K+0x3C = punteros a código de game1.exe (+234130, +4C470) — ESTABLES entre corridas
+--   (K+0xC también apunta a código pero CAMBIA según el estado: +B2500 / +B6640; no se usa)
+-- Registra:  gv1_kudos     = K+0x4 (interno; es el que hay que modificar)
+--            gv1_kudos_vis = K+0x0 (pantalla; el juego lo recalcula desde el interno)
+-- Un temporizador re-localiza la estructura si cambia (p. ej. al cambiar de nivel).
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if KUDOS_GV1 and KUDOS_GV1.timer then KUDOS_GV1.timer.destroy() end
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local F2, F3 = base + 0x234130, base + 0x4C470
+
+local function valido(K)
+  return K and readQword(K + 0x34) == F2 and readQword(K + 0x3C) == F3
+end
+
+-- La firma (+34/+3C) la comparten ~200 objetos del mismo tipo (diagnóstico 2026-11-01: 214).
+-- Se elige el del Prestigio así: 1) campo K-0x14 = 1662 (constante en las 4 corridas observadas),
+-- 2) interno = pantalla × 256, 3) pantalla &gt; 0, 4) si aún hay dudas, el que CAMBIE (ver temporizador).
+local ID_KUDOS = 1662
+
+local function localizar()
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtQword, rtRounded, string.format("%X", F2), "", 0x10000, 0x7FFFFFFFFFFF,
+               "+W", fsmAligned, "4", true, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local cands = {}
+  for i = 0, math.min(fl.Count, 5000) - 1 do
+    local K = tonumber(fl.Address[i], 16) - 0x34
+    if valido(K) then
+      local vis, raw = readInteger(K), readInteger(K + 4)
+      if raw ~= nil and vis ~= nil and raw // 256 == vis then
+        cands[#cands + 1] = { K = K, vis = vis, id = readInteger(K - 0x14) }
+      end
+    end
+  end
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  local function primero(f) for _, c in ipairs(cands) do if f(c) then return c.K end end end
+  local K = primero(function(c) return c.id == ID_KUDOS and c.vis &gt; 0 end)
+         or primero(function(c) return c.id == ID_KUDOS end)
+         or primero(function(c) return c.vis &gt; 0 end)
+  return K, #cands, cands
+end
+
+local function registrar(K)
+  registerSymbol("gv1_kudos", K + 4, true)
+  registerSymbol("gv1_kudos_vis", K, true)
+  KUDOS_GV1.K = K
+end
+
+KUDOS_GV1 = { K = nil }
+local K, n = localizar()
+if K then registrar(K) end
+
+local t = createTimer(nil, false)
+t.Interval = 3000
+t.OnTimer = function()
+  pcall(function()
+    local K = KUDOS_GV1.K
+    if not valido(K) or (readInteger(K - 0x14) ~= ID_KUDOS and (readInteger(K) or 0) == 0) then
+      local K2 = localizar()
+      if K2 then registrar(K2) end
+    end
+  end)
+end
+KUDOS_GV1.timer = t
+t.Enabled = true
+if not KUDOS_SILENCIO then
+  if K then
+    showMessage(string.format("Prestigio localizado en %X (candidatos con la firma: %d).\n" ..
+      "gv1_kudos = interno ×256 · gv1_kudos_vis = pantalla.\nSe re-localiza solo si cambia de nivel.", K, n))
+  else
+    showMessage("Prestigio aún no localizado (¿fuera de un nivel?). Se buscará automáticamente cada 3 s.")
+  end
+end
+
+end)
+KUDOS_SILENCIO = nil
+if not okK then print('[Prestigio] ' .. tostring(errK)) end
+-- =====================================================================================
+-- multiplicador_gv1.lua — Multiplica las GANANCIAS de Prestigio (gv1_kudos) y EXP (gv1_exp)
+-- y, opcionalmente, impide que el Prestigio BAJE al recibir golpes. Sin inyectar código:
+-- un temporizador compara el valor con el anterior y suma (ganancia × (k − 1)).
+-- Requiere los símbolos registrados con el buscador (script 7). Si falta uno, se omite.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy() end
+-- EXP: Créditos+0x478 = game1.exe+7B3AE0 (verificado 2026-11-08: subió con la EXP; el nivel, en +0x47C, subió de 31 a 32)
+local b1 = getAddressSafe("game1.exe")
+if b1 and not getAddressSafe("gv1_exp") then
+  local nv = readSmallInteger(b1 + 0x7B3AE4)
+  if nv and nv &gt;= 1 and nv &lt;= 99 then registerSymbol("gv1_exp", b1 + 0x7B3AE0, true) end
+end
+local t = inputQuery("Multiplicador GV1", "Multiplicador de ganancias (1 a 10):", "2")
+if not t then error("Cancelado por el usuario") end
+local k = math.floor(tonumber(t) or 2)
+if k &lt; 1 then k = 1 end
+if k &gt; 10 then k = 10 end
+local m = inputQuery("Multiplicador GV1",
+  "Mantener el Prestigio (no dejar que baje al recibir golpes)? S/N\n" ..
+  "Ojo: el juego también lo baja a 0 al canjearlo al final del nivel; con S se quedará fijo.", "S")
+if not m then error("Cancelado por el usuario") end
+local mantener = m:upper():sub(1, 1) == "S"
+
+local vars = { { nombre = "gv1_kudos" }, { nombre = "gv1_exp" } }
+MULTI_GV1 = { k = k, mantener = mantener, vars = vars }
+local tm = createTimer(nil, false)
+tm.Interval = 50
+tm.OnTimer = function()
+  pcall(function()
+    for _, x in ipairs(MULTI_GV1.vars) do
+      local a2 = getAddressSafe(x.nombre)
+      if not a2 then x.a = nil; x.last = nil; goto siguiente end
+      if a2 ~= x.a then x.a = a2; x.last = readInteger(a2) end
+      local v = readInteger(x.a)
+      if v and x.last then
+        if v &gt; x.last and MULTI_GV1.k &gt; 1 then
+          v = v + (v - x.last) * (MULTI_GV1.k - 1)
+          writeInteger(x.a, v)
+        elseif v &lt; x.last and MULTI_GV1.mantener and x.nombre == "gv1_kudos" then
+          writeInteger(x.a, x.last); v = x.last
+        end
+      end
+      x.last = v
+      ::siguiente::
+    end
+  end)
+end
+MULTI_GV1.timer = tm
+tm.Enabled = true
+showMessage(string.format("Multiplicador ×%d activo sobre el Prestigio%s.%s", k,
+  getAddressSafe("gv1_exp") and " y la EXP" or " (EXP aún sin localizar)",
+  mantener and "\nPrestigio protegido contra bajadas." or ""))
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+if MULTI_GV1 and MULTI_GV1.timer then MULTI_GV1.timer.destroy(); MULTI_GV1.timer = nil end
+unregisterSymbol("gv1_exp")
+
+if KUDOS_GV1 and KUDOS_GV1.timer then KUDOS_GV1.timer.destroy(); KUDOS_GV1.timer = nil end
+unregisterSymbol("gv1_kudos"); unregisterSymbol("gv1_kudos_vis")
+
+{$asm}
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>17</ID>
+                  <Description>"Prestigio en pantalla (solo lectura)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_kudos_vis</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>18</ID>
+                  <Description>"Prestigio interno ×256 (editar este: pantalla × 256)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_kudos</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>19</ID>
+                  <Description>"EXP total (gv1_exp = Créditos+0x478)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>gv1_exp</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>20</ID>
+              <Description>"Materiales al máximo (pide cantidad; desactivar = restaurar)"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- materiales_max_gv1.lua — Sube los 28 materiales de GV1 (game1.exe) a una cantidad fija.
+-- Bloque de partida hallado por la multisonda: Créditos = game1.exe+7B3668 (build 2026-10-07),
+-- materiales = Créditos + 0x3B0 (gv1.CT: +0x3A8; en la Trilogy hay 2 DWORD extra antes), 28 DWORD.
+-- Al DESACTIVAR restaura las cantidades que había antes (deshacer).
+-- Usar desde el mapa / menú fuera de combate y GUARDAR la partida para que persista.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local SAVE = base + 0x7B3668
+local MAT  = SAVE + 0x3B0   -- confirmado con etiquetado (2026-11-01)
+
+-- Comprobación de forma antes de escribir (evita escribir en memoria equivocada)
+for i = 0, 27 do
+  local v = readInteger(MAT + 4 * i)
+  if v == nil or v &lt; 0 or v &gt; 9999 then
+    error(string.format("El bloque de materiales no tiene la forma esperada (slot %d = %s). ¿Otra build?", i, tostring(v)))
+  end
+end
+
+local t = inputQuery("Materiales GV1", "Cantidad para cada material (1 a 999; 99 recomendado):", "99")
+if not t then error("Cancelado por el usuario") end
+local n = math.floor(tonumber(t) or 99)
+if n &lt; 1 then n = 1 end
+if n &gt; 999 then n = 999 end
+
+local modo = inputQuery("Materiales GV1",
+  "O = solo los materiales que ya tienes (cantidad &gt; 0)\nT = los 28 (incluye únicos que aún no consigues)", "O")
+if not modo then error("Cancelado por el usuario") end
+local todos = modo:upper():sub(1, 1) == "T"
+
+MATS_GV1_BACKUP = {}
+local cambiados = 0
+for i = 0, 27 do
+  local a = MAT + 4 * i
+  local v = readInteger(a)
+  MATS_GV1_BACKUP[i] = v
+  if todos or v &gt; 0 then
+    writeInteger(a, n); cambiados = cambiados + 1
+  end
+end
+showMessage(string.format("Materiales: %d de 28 puestos en %d.\nDesactiva el script para restaurar las cantidades anteriores.", cambiados, n))
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+-- Restaura las cantidades de materiales guardadas por materiales_max_gv1.lua
+local base = getAddressSafe("game1.exe")
+if base and MATS_GV1_BACKUP then
+  local MAT = base + 0x7B3668 + 0x3B0
+  for i = 0, 27 do
+    if MATS_GV1_BACKUP[i] then writeInteger(MAT + 4 * i, MATS_GV1_BACKUP[i]) end
+  end
+  MATS_GV1_BACKUP = nil
+end
+
+{$asm}
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>21</ID>
+                  <Description>"¿? Créditos+0x3A8 (NO es material)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A10</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>22</ID>
+                  <Description>"¿? Créditos+0x3AC (NO es material)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A14</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>23</ID>
+                  <Description>"Microantigenerador [★★★] (Microdegenerator)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A18</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>24</ID>
+                  <Description>"Servocarga fotónica [★★★] (Custom Servophoton)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A1C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>25</ID>
+                  <Description>"Cuasicristal espinela [★★★] (Spinel Quasicrystal)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A20</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>26</ID>
+                  <Description>"Imán ultradenso [★★★] (Ultradense Magnet)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A24</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>27</ID>
+                  <Description>"Resonador genómico [★★★] (Genomic Resonator)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A28</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>28</ID>
+                  <Description>"Metal líquido en fase [★★★] (Phased Fluid Metal)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A2C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>29</ID>
+                  <Description>"Calcedonia amarilla [★★★] (Yellow Chalcedony)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A30</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>30</ID>
+                  <Description>"Pieza de Hihirogane [★★★] (Hihirogane Shard)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A34</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>31</ID>
+                  <Description>"Motor de antigravedad [único] (Antigravity Engine)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A38</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>32</ID>
+                  <Description>"Mecanismo de propulsión [único] (Propulsion Mechanism)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A3C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>33</ID>
+                  <Description>"Mineral Fénix [único] (Phoenix Ore)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A40</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>34</ID>
+                  <Description>"Coraza de onda corta [único] (Shock Response Plate)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A44</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>35</ID>
+                  <Description>"Graym de 6 milagros [único] (Six-miracle Graym)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A48</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>36</ID>
+                  <Description>"Apoitagara [único] (Apoitagara)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A4C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>37</ID>
+                  <Description>"Extracto de graym 239 [único] (Graym Extract 239)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A50</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>38</ID>
+                  <Description>"Graym electromotriz [único] (Electromotive Graym)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A54</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>39</ID>
+                  <Description>"Aleación Kripp [0★] (Kripp Alloy)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A58</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>40</ID>
+                  <Description>"Xiwidia [★] (Xiwidia)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A5C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>41</ID>
+                  <Description>"Acero bambú [★★] (Faraging Steel)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A60</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>42</ID>
+                  <Description>"Nanochip 98 [0★] (Nanochip 98)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A64</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>43</ID>
+                  <Description>"Protoinfraestructura [★] (Proto Infrastructure)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A68</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>44</ID>
+                  <Description>"NcGbx de alto grado [★★] (High-end NcGbx)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A6C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>45</ID>
+                  <Description>"Granado [0★] (Garnet)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A70</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>46</ID>
+                  <Description>"Cuarcita [★] (Quartzite)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A74</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>47</ID>
+                  <Description>"Electrum [★★] (Electrum)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A78</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>48</ID>
+                  <Description>"Cultivo de graym [0★] (Graym Culture)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A7C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>49</ID>
+                  <Description>"Polímero Gm238 [★] (Polymer Gm238)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A80</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>50</ID>
+                  <Description>"Cristal de uranio 235 (?) [★★] (Uranium-235 Crystal)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7B3A84</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>51</ID>
+          <Description>"Valores verificados (estáticos, build 2026-10-07)"</Description>
+          <Color>008000</Color>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>52</ID>
+              <Description>"Créditos — persiste al guardar"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3668</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>53</ID>
+              <Description>"Nivel (Créditos+0x47C; no modificar)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game1.exe+7B3AE4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>54</ID>
+              <Description>"EXP total (Créditos+0x478)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3AE0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>55</ID>
+              <Description>"Energía / PE (×10 000; congelar = infinita)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED64C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>56</ID>
+              <Description>"Skill Points / PH (1 = 20000000; 3 = 60000000)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED650</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>57</ID>
+              <Description>"Cooldown habilidad 1 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED658</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>58</ID>
+              <Description>"Cooldown habilidad 2 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED65C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>59</ID>
+              <Description>"Cooldown habilidad 3 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED660</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>60</ID>
+              <Description>"Cooldown habilidad 4 (lista = 76800)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED664</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>61</ID>
+          <Description>"Jugador por puntero estático [game1.exe+7B3220] (falta confirmar tras reiniciar)"</Description>
+          <Color>008000</Color>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>62</ID>
+              <Description>"HP actual (×16)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3220</Address>
+              <Offsets>
+                <Offset>398</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>63</ID>
+              <Description>"HP máximo (×16)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3220</Address>
+              <Offsets>
+                <Offset>39C</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>64</ID>
+              <Description>"Invencibilidad (+518, entero; 11520 = recién golpeado)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3220</Address>
+              <Offsets>
+                <Offset>518</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>65</ID>
+              <Description>"Invencibilidad (+518, float según wepon1984 — verificar tipo)"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>game1.exe+7B3220</Address>
+              <Offsets>
+                <Offset>518</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>66</ID>
+          <Description>"Candidatos sin verificar"</Description>
+          <Color>808080</Color>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>67</ID>
+              <Description>"##Tiempo, Medallas, Score y Kudos estáticos: se buscan con «🔎 Verificar candidatas» (v2)."</Description>
+              <Color>808080</Color>
+              <GroupHeader>1</GroupHeader>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>68</ID>
+              <Description>"Tiempo total? (Créditos−0xE0, forma de gv1.CT)"</Description>
+              <Color>808080</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7B3588</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>69</ID>
+              <Description>"PV máx. sin escalar? (bloque de combate +0x2C; 350 en Nv 31 → 355 en Nv 32)"</Description>
+              <Color>808080</Color>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game1.exe+7ED678</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>70</ID>
+              <Description>"Copia del bloque de combate (+7ED67C) — no manda (¿punto de control?)"</Description>
+              <Color>808080</Color>
+              <Options moManualExpandCollapse="1" />
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>71</ID>
+                  <Description>"Energía (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED67C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>72</ID>
+                  <Description>"Skill Points (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED680</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>73</ID>
+                  <Description>"Cooldown habilidad 1 (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED688</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>74</ID>
+                  <Description>"Cooldown habilidad 2 (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED68C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>75</ID>
+                  <Description>"Cooldown habilidad 3 (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED690</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>76</ID>
+                  <Description>"Cooldown habilidad 4 (copia)"</Description>
+                  <Color>808080</Color>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>game1.exe+7ED694</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>77</ID>
+          <Description>"🔧 Sondas y herramientas de búsqueda"</Description>
+          <Color>808080</Color>
+          <Options moManualExpandCollapse="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>78</ID>
+              <Description>"Contador de daño (7 sitios)"</Description>
+              <Color>008000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>{ Sonda 2 — Contador de daño: 7 sitios que restan HP. 'jugador' = víctima es [gv1_hp].
+  Activa sola la Captura jugador si hace falta. Aborta si los bytes no son los originales (build 2026-10-07) ni un jmp de una activación anterior. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if not getAddressSafe("gv1_hp") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_hp") then error("No se pudo activar 'Captura jugador'. Entra a un nivel.") end
+local base = getAddress('game1.exe')
+local SITES = {
+  {0x90D41, '4C 8B 83 D8 03 00 00'},
+  {0x91494, '4C 8B 81 D8 03 00 00'},
+  {0x915FA, '4C 8B 81 D8 03 00 00'},
+  {0x91899, '4C 8B 81 D8 03 00 00'},
+  {0x91A8E, '4C 8B 89 D8 03 00 00'},
+  {0x1A2729, '4C 8B 80 D8 03 00 00'},
+  {0x1AAB62, '4C 8B 87 D8 03 00 00'},
+}
+for _, st in ipairs(SITES) do
+  local t = readBytes(base + st[1], 7, true) or {}
+  local h = {}
+  for i = 1, #t do h[i] = string.format('%02X', t[i]) end
+  local hs = table.concat(h, ' ')
+  if hs ~= st[2] and t[1] ~= 0xE9 then
+    error(string.format('Bytes inesperados en game1.exe+%X: %s (¿otra build?)', st[1], hs))
+  end
+end
+{$asm}
+alloc(sonda_mem,$1000,game1.exe)
+label(cnt_tab)
+registersymbol(cnt_tab)
+label(hook_0)
+label(hook_1)
+label(hook_2)
+label(hook_3)
+label(hook_4)
+label(hook_5)
+label(hook_6)
+
+sonda_mem:
+hook_0:
+  mov r8,[rbx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+4]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+0]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+90D48
+
+hook_1:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+8]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+9149B
+
+hook_2:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+14]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+10]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+91601
+
+hook_3:
+  mov r8,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+1C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+18]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+918A0
+
+hook_4:
+  mov r9,[rcx+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+24]
+  mov rax,[gv1_hp]
+  cmp r9,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+20]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+91A95
+
+hook_5:
+  mov r8,[rax+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+2C]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+28]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+1A2730
+
+hook_6:
+  mov r8,[rdi+3D8]
+  pushfq
+  push rax
+  lock inc dword ptr [cnt_tab+34]
+  mov rax,[gv1_hp]
+  cmp r8,rax
+  jne @f
+  lock inc dword ptr [cnt_tab+30]
+@@:
+  pop rax
+  popfq
+  jmp game1.exe+1AAB69
+
+align 10
+cnt_tab:
+  dd 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+game1.exe+90D41:
+  jmp hook_0
+  nop 2
+
+game1.exe+91494:
+  jmp hook_1
+  nop 2
+
+game1.exe+915FA:
+  jmp hook_2
+  nop 2
+
+game1.exe+91899:
+  jmp hook_3
+  nop 2
+
+game1.exe+91A8E:
+  jmp hook_4
+  nop 2
+
+game1.exe+1A2729:
+  jmp hook_5
+  nop 2
+
+game1.exe+1AAB62:
+  jmp hook_6
+  nop 2
+
+[DISABLE]
+game1.exe+90D41:
+  db 4C 8B 83 D8 03 00 00
+game1.exe+91494:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+915FA:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+91899:
+  db 4C 8B 81 D8 03 00 00
+game1.exe+91A8E:
+  db 4C 8B 89 D8 03 00 00
+game1.exe+1A2729:
+  db 4C 8B 80 D8 03 00 00
+game1.exe+1AAB62:
+  db 4C 8B 87 D8 03 00 00
+unregistersymbol(cnt_tab)
+dealloc(sonda_mem)
+</AssemblerScript>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>79</ID>
+                  <Description>"Sitio 0 (game1.exe+90D41) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+0</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>80</ID>
+                  <Description>"Sitio 0 (game1.exe+90D41) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+4</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>81</ID>
+                  <Description>"Sitio 1 (game1.exe+91494) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+8</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>82</ID>
+                  <Description>"Sitio 1 (game1.exe+91494) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>83</ID>
+                  <Description>"Sitio 2 (game1.exe+915FA) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+10</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>84</ID>
+                  <Description>"Sitio 2 (game1.exe+915FA) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+14</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>85</ID>
+                  <Description>"Sitio 3 (game1.exe+91899) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+18</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>86</ID>
+                  <Description>"Sitio 3 (game1.exe+91899) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+1C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>87</ID>
+                  <Description>"Sitio 4 (game1.exe+91A8E) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+20</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>88</ID>
+                  <Description>"Sitio 4 (game1.exe+91A8E) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+24</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>89</ID>
+                  <Description>"Sitio 5 (game1.exe+1A2729) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+28</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>90</ID>
+                  <Description>"Sitio 5 (game1.exe+1A2729) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+2C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>91</ID>
+                  <Description>"Sitio 6 (game1.exe+1AAB62) — jugador"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+30</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>92</ID>
+                  <Description>"Sitio 6 (game1.exe+1AAB62) — total"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>4 Bytes</VariableType>
+                  <Address>cnt_tab+34</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>93</ID>
+              <Description>"🔎 Verificar candidatas v2: jugador, Kudos, medallas, tiempo y totales del menú (solo lectura; 2 min)"</Description>
+              <Color>FF0000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- verificar_candidatas_gv1.lua (v2) — Verificación en vivo de GV1 (build 2026-10-07), sin depurador.
+-- La v1 (2026-11-08) probó las candidatas de wepon1984 (original/trilogy.CT, otra build) con un Δ fijo:
+--   ✅ Nivel = Créditos+0x47C · EXP = Créditos+0x478 · el bloque de combate +7ED64C es el que manda.
+--   ✅ Punteros estáticos al jugador: game1.exe+7B3220, +7E02F8, +7ED630 (el candidato +7B3238 fallaba).
+--   ❌ Tiempo / Medallas / Score / Kudos con Δ fijo: esas zonas se movieron distinto → se BUSCAN aquí.
+-- Esta v2:
+--   A) Bloque de partida ... Créditos, Nivel, EXP (confirmar en otra sesión).
+--   B) Jugador ............. los 3 punteros estáticos: ¿siguen apuntando al jugador tras reiniciar?
+--   C) Bloque de combate ... +7ED64C frente a la copia +7ED67C.
+--   D) Kudos estático ...... busca en game1.exe el Prestigio en pantalla ×1, ×160 y ×256 y sigue cada
+--                            coincidencia (de gv1_kudos_vis si el script de Prestigio está activo; si no,
+--                            pide el valor de la pantalla).
+--   D2) Medallas ........... pide las medallas actuales, las busca en game1.exe e informa las que suben.
+--   E) Tiempo .............. escaneo «valor desconocido» en game1.exe y «aumentó» cada 10 s.
+--   F) Totales del menú .... pide PUNTOS TOTALES y TIEMPO TOTAL (hh:mm:ss) del menú de estado y los busca
+--                            en game1.exe (tiempo en segundos, fotogramas y milisegundos).
+-- Muestreo de 2 min (una lectura por segundo). NO pausar el juego durante el muestreo.
+-- Uso: CE adjunto a game1.exe, DENTRO de un nivel. Memory View &gt; Tools &gt; Lua Engine &gt; pegar &gt; Execute
+-- (o activar «🔎 Verificar candidatas» en la tabla). Los escaneos tardan unos segundos (CE parece congelado).
+-- Resultado: ventana + portapapeles + dumps\verificar_candidatas_gv1.txt. NO escribe memoria del juego.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local MOD      = "game1.exe"
+local OUTFILE  = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\verificar_candidatas_gv1.txt]]
+local MUESTREO = 120000                 -- ms de muestreo (2 min)
+local PASO     = 1000                   -- ms entre lecturas
+local PASO_T   = 10000                  -- ms entre pasadas «aumentó» del escaneo de Tiempo
+local CRED     = 0x7B3668               -- Créditos (verificado)
+local COMB     = 0x7ED64C               -- Energía, inicio del bloque de combate (verificado)
+local COPIA    = 0x7ED67C               -- copia del bloque de combate (no manda)
+local PJUG     = { 0x7B3220, 0x7E02F8, 0x7ED630 }   -- punteros estáticos al jugador (2026-11-08)
+
+local out = {}
+local function p(f, ...) out[#out + 1] = string.format(f, ...) end
+local base = getAddressSafe(MOD)
+if not base then showMessage("Adjunta Cheat Engine a " .. MOD .. " primero."); return end
+local size = getModuleSize(MOD)
+local function enMod(a) return a and a &gt;= base and a &lt; base + size end
+local function dir(a) return enMod(a) and string.format("%s+%X", MOD, a - base) or string.format("%X", a or 0) end
+local function valido(a) return a and a &gt; 0x10000 and a &lt; 0x7FFFFFFFFFFF end
+
+-- ---------------------------------------------------------------- valores fijos que se siguen
+-- { sección, nombre, rva, pista }  (todos DWORD salvo el Nivel, de 2 bytes)
+local C = {
+  {"A", "Créditos",                    CRED,          "debe coincidir con la pantalla"},
+  {"A", "Nivel (Créditos+0x47C, 2 B)", CRED + 0x47C,  "nivel del personaje"},
+  {"A", "EXP (Créditos+0x478)",        CRED + 0x478,  "EXP total del menú"},
+  {"C", "Energía (bloque 1)",          COMB,          "×10 000"},
+  {"C", "Energía (copia)",             COPIA,         ""},
+  {"C", "Skill Points (bloque 1)",     COMB + 4,      "1 punto = 20000000"},
+  {"C", "Skill Points (copia)",        COPIA + 4,     ""},
+  {"C", "PV máx.? (bloque 1 +0x2C)",   COMB + 0x2C,   "355 en pantalla con Nv 32 (350 con Nv 31)"},
+}
+local function leer(c)
+  return c[2]:find("2 B") and readSmallInteger(base + c[3]) or readInteger(base + c[3])
+end
+local function foto()
+  local s = {}
+  for i, c in ipairs(C) do s[i] = leer(c) end
+  return s
+end
+
+local function leerVis()
+  local kv = getAddressSafe("gv1_kudos_vis")
+  return kv and readInteger(kv)
+end
+
+-- DWORD exactos dentro de game1.exe (máx. maxN direcciones)
+local function buscarEnModulo(valor, maxN)
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtDword, rtRounded, tostring(valor), "",
+               base, base + size, "", fsmAligned, "4", false, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local r, total = {}, fl.Count
+  for i = 0, math.min(total, maxN) - 1 do r[#r + 1] = tonumber(fl.Address[i], 16) end
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  return r, total
+end
+
+-- Kudos: coincidencias a seguir { a = dirección, k = 1|160|256, n = lecturas que coinciden, ini = valor inicial }
+local kudos = {}
+-- Medallas: coincidencias del valor escrito por el usuario { a = dirección, ini = valor inicial }
+local medallas = {}
+-- Tiempo: escaneo persistente y primer valor visto de cada superviviente
+local tms, tPrim, tCuenta = nil, {}, nil
+
+local ok, err = pcall(function()
+  p("== Verificación GV1 v2 (build 2026-10-07) — %s ==", os.date("%Y-%m-%d %H:%M"))
+  p("game1.exe base %X  tamaño %X", base, size)
+
+  -- ------------------------------------------------------------ A y C: lectura inmediata
+  local sec = nil
+  local TIT = { A = "A) Bloque de partida", C = "C) Bloque de combate" }
+  for _, c in ipairs(C) do
+    if c[1] ~= sec then sec = c[1]; p("\n== %s ==", TIT[sec]) end
+    p("  %-30s %-16s = %-12s %s", c[2], dir(base + c[3]), tostring(leer(c)), c[4])
+  end
+  local dif = {}
+  for k = 0, 0x2C, 4 do
+    local a, b = readInteger(base + COMB + k), readInteger(base + COPIA + k)
+    if a ~= b then dif[#dif + 1] = string.format("+%X (%s / %s)", k, tostring(a), tostring(b)) end
+  end
+  p("  Bloque 1 vs copia (0x30 bytes): %s", #dif == 0 and "idénticos" or ("difieren en " .. table.concat(dif, ", ")))
+
+  -- ------------------------------------------------------------ B) jugador
+  p("\n== B) Punteros estáticos al jugador ==")
+  -- forma del objeto: [P+3D8] = P+398 (componente de vida), flag jugador [P+398+18] = 1, HP ≤ máx.
+  local function forma(P)
+    if not valido(P) then return false end
+    local comp = readQword(P + 0x3D8)
+    if comp ~= P + 0x398 then return false end
+    local hp, mx = readInteger(comp), readInteger(comp + 4)
+    return readBytes(comp + 0x18, 1) == 1 and hp and mx and mx &gt; 0 and hp &lt;= mx and mx % 16 == 0
+  end
+  local cap = getAddressSafe("gv1_player")
+  local Pcap = cap and readQword(cap)
+  for _, rva in ipairs(PJUG) do
+    local P = readQword(base + rva)
+    local hp, mx = valido(P) and readInteger(P + 0x398), valido(P) and readInteger(P + 0x39C)
+    p("  [%s] = %X  forma: %-5s %s  HP %s / %s", dir(base + rva), P or 0, forma(P) and "SÍ ✅" or "no",
+      valido(Pcap) and (P == Pcap and "= gv1_player" or "≠ gv1_player") or "(sin gv1_player)",
+      tostring(hp and hp // 16), tostring(mx and mx // 16))
+  end
+
+  -- ------------------------------------------------------------ D) Kudos: búsqueda en el módulo
+  p("\n== D) Kudos estático (Prestigio en pantalla ×1 / ×160 / ×256 dentro de game1.exe) ==")
+  local vis = leerVis()
+  if vis then
+    p("  Prestigio tomado de gv1_kudos_vis = %d (se sigue en cada lectura)", vis)
+  else
+    vis = tonumber(inputQuery("Verificar GV1", "Prestigio (Kudos) que ves AHORA en pantalla\n" ..
+      "(vacío = omitir; con el script de Prestigio activo no hace falta):", "") or "")
+    if vis then p("  Prestigio escrito por el usuario = %d (sin seguimiento: se informa qué coincidencias cambiaron)", vis) end
+  end
+  if not vis then
+    p("  (omitido)")
+  elseif vis &lt; 3 then
+    p("  Prestigio = %d: demasiado bajo para buscar (habría miles de coincidencias). Gana algo y repite.", vis)
+  else
+    for _, k in ipairs({ 1, 160, 256 }) do
+      local r, total = buscarEnModulo(vis * k, 200)
+      p("  %d × %d = %d → %d coincidencia(s)%s", vis, k, vis * k, total, total &gt; #r and " (se siguen 200)" or "")
+      for _, a in ipairs(r) do kudos[#kudos + 1] = { a = a, k = k, n = 0, ini = readInteger(a) } end
+    end
+  end
+
+  -- ------------------------------------------------------------ D2) Medallas: búsqueda en el módulo
+  p("\n== D2) Medallas (valor escrito por el usuario dentro de game1.exe) ==")
+  local med = tonumber(inputQuery("Verificar GV1", "Medallas que llevas AHORA en este nivel\n" ..
+    "(vacío = omitir; luego recoge al menos 1 durante el muestreo):", "") or "")
+  if med and med &lt; 1 then
+    p("  Medallas = 0: demasiadas coincidencias. Recoge 1 primero y repite.")
+  elseif med then
+    local r, total = buscarEnModulo(med, 20000)
+    p("  %d → %d coincidencia(s)%s; se informan las que suban exactamente +1, +2 o +3", med, total,
+      total &gt; #r and " (se siguen 20000)" or "")
+    for _, a in ipairs(r) do medallas[#medallas + 1] = { a = a, ini = med } end
+  else
+    p("  (omitido)")
+  end
+
+  -- ------------------------------------------------------------ F) Totales del menú (pantalla de estado)
+  p("\n== F) Totales del menú (valores escritos por el usuario) ==")
+  local pt = tonumber(inputQuery("Verificar GV1", "PUNTOS TOTALES del menú de estado\n(vacío = omitir):", "") or "")
+  if pt then
+    local r, total = buscarEnModulo(pt, 20)
+    p("  Puntos totales %d → %d coincidencia(s) en game1.exe", pt, total)
+    for _, a in ipairs(r) do p("    %-18s  Créditos%+d (0x%X)", dir(a), a - (base + CRED), math.abs(a - (base + CRED))) end
+  else
+    p("  Puntos totales: (omitido)")
+  end
+  local tt = inputQuery("Verificar GV1", "TIEMPO TOTAL del menú de estado (hh:mm:ss)\n(vacío = omitir):", "")
+  local hh, mm, ss = (tt or ""):match("^%s*(%d+):(%d+):(%d+)%s*$")
+  if hh then
+    local seg = tonumber(hh) * 3600 + tonumber(mm) * 60 + tonumber(ss)
+    p("  Tiempo total %s = %d s. Se busca en [t, t+10 min] por si el reloj siguió corriendo:", tt, seg)
+    for _, u in ipairs({ { "segundos", 1 }, { "fotogramas (60/s)", 60 }, { "milisegundos", 1000 } }) do
+      local ms = createMemScan()
+      ms.firstScan(soValueBetween, vtDword, rtRounded, tostring(seg * u[2]), tostring((seg + 600) * u[2]),
+                   base, base + size, "", fsmAligned, "4", false, false, false, false)
+      ms.waitTillDone()
+      local fl = createFoundList(ms); fl.initialize()
+      p("    en %-18s → %d coincidencia(s)", u[1], fl.Count)
+      for i = 0, math.min(fl.Count, 10) - 1 do
+        local a = tonumber(fl.Address[i], 16)
+        p("      %-18s = %-10s Créditos%+d", dir(a), tostring(readInteger(a)), a - (base + CRED))
+      end
+      fl.deinitialize(); fl.destroy(); ms.destroy()
+    end
+    p("  gv1.CT ponía «Total Time» en Créditos−0xE0: %s = %s", dir(base + CRED - 0xE0), tostring(readInteger(base + CRED - 0xE0)))
+  else
+    p("  Tiempo total: (omitido o formato no válido)")
+  end
+
+  -- ------------------------------------------------------------ E) Tiempo: primer escaneo
+  tms = createMemScan()
+  tms.firstScan(soUnknownValue, vtDword, rtRounded, "", "", base, base + size, "+W",
+                fsmAligned, "4", false, false, false, false)
+  tms.waitTillDone()
+end)
+if not ok then p("\nERROR: %s", tostring(err)) end
+
+-- ---------------------------------------------------------------- muestreo
+local primera, ultima, cambios = nil, nil, {}
+local nLect, visIni, visFin = 0, nil, nil
+for i = 1, #C do cambios[i] = 0 end
+
+local function lectura()
+  local f = foto()
+  local vis = leerVis()
+  nLect = nLect + 1
+  if not primera then primera, visIni = f, vis end
+  for i = 1, #C do
+    if ultima and f[i] ~= ultima[i] then cambios[i] = cambios[i] + 1 end
+  end
+  if vis then
+    for _, h in ipairs(kudos) do
+      if readInteger(h.a) == vis * h.k then h.n = h.n + 1 end
+    end
+  end
+  ultima, visFin = f, vis
+end
+
+local function pasadaTiempo(seg)
+  if not tms then return end
+  tms.nextScan(soIncreasedValue, rtRounded, "", "", false, false, false, false, false)
+  tms.waitTillDone()
+  local fl = createFoundList(tms); fl.initialize()
+  tCuenta = fl.Count
+  if fl.Count &lt;= 2000 then
+    for i = 0, fl.Count - 1 do
+      local a = tonumber(fl.Address[i], 16)
+      if not tPrim[a] then tPrim[a] = { v = readInteger(a), s = seg } end
+    end
+  end
+  fl.deinitialize(); fl.destroy()
+end
+
+local function terminar(seg)
+  p("\n== Muestreo de %d s (%d lecturas) ==", seg, nLect)
+  p("  Valores fijos que cambiaron:")
+  local n = 0
+  for i, c in ipairs(C) do
+    if cambios[i] &gt; 0 then
+      p("    %-30s %s → %s  (%d cambios)", c[2], tostring(primera[i]), tostring(ultima[i]), cambios[i]); n = n + 1
+    end
+  end
+  if n == 0 then p("    (ninguno; ¿estabas en pausa o en un menú?)") end
+
+  p("\n  D) Kudos — Prestigio en pantalla: %s → %s", tostring(visIni), tostring(visFin))
+  if #kudos == 0 then
+    p("    (sin coincidencias que seguir)")
+  else
+    table.sort(kudos, function(x, y) return x.n &gt; y.n end)
+    local seguido = visIni ~= nil
+    table.sort(kudos, function(x, y)
+      if seguido then return x.n &gt; y.n end
+      return (readInteger(x.a) ~= x.ini and 1 or 0) &gt; (readInteger(y.a) ~= y.ini and 1 or 0)
+    end)
+    local m = 0
+    for _, h in ipairs(kudos) do
+      local ahora = readInteger(h.a)
+      if seguido or ahora ~= h.ini then
+        p("    %-18s ×%-3d %s  (%s → %s)", dir(h.a), h.k,
+          seguido and string.format("coincide en %3d/%d lecturas", h.n, nLect) or "cambió",
+          tostring(h.ini), tostring(ahora))
+        m = m + 1
+        if m &gt;= 15 then break end
+      end
+    end
+    if m == 0 then p("    (ninguna coincidencia cambió: el Kudos estático no está en game1.exe o no ganaste Prestigio)") end
+    p("    → El Kudos estático es la dirección que sigue al Prestigio en pantalla (con su escala ×1/×160/×256).")
+  end
+
+  p("\n  D2) Medallas — coincidencias que subieron +1…+3:")
+  local nm = 0
+  for _, h in ipairs(medallas) do
+    local ahora = readInteger(h.a)
+    if ahora and ahora &gt; h.ini and ahora &lt;= h.ini + 3 then
+      p("    %-18s %d → %d", dir(h.a), h.ini, ahora); nm = nm + 1
+      if nm &gt;= 20 then p("    …"); break end
+    end
+  end
+  if nm == 0 then p("    (ninguna: ¿recogiste una medalla durante el muestreo?)") end
+
+  p("\n  E) Tiempo — DWORD de game1.exe que aumentaron en cada pasada de %d s: %s", PASO_T // 1000, tostring(tCuenta))
+  if tms and tCuenta and tCuenta &lt;= 2000 then
+    local fl = createFoundList(tms); fl.initialize()
+    local filas = {}
+    for i = 0, fl.Count - 1 do
+      local a = tonumber(fl.Address[i], 16)
+      local v, pr = readInteger(a), tPrim[a]
+      local ritmo = (pr and v and seg &gt; pr.s) and (v - pr.v) / (seg - pr.s) or 0
+      filas[#filas + 1] = { a = a, v = v, r = ritmo }
+    end
+    fl.deinitialize(); fl.destroy()
+    table.sort(filas, function(x, y) return x.a &lt; y.a end)
+    for i = 1, math.min(#filas, 30) do
+      local f = filas[i]
+      p("    %-18s = %-12s  ritmo ≈ %.1f /s", dir(f.a), tostring(f.v), f.r)
+    end
+    if #filas &gt; 30 then p("    … y %d más", #filas - 30) end
+    p("    → Pista: un cronómetro en fotogramas sube ≈ 60/s; en milisegundos ≈ 1000/s.")
+  elseif tCuenta then
+    p("    (demasiados para listar: repite sin pausar el juego)")
+  end
+  if tms then tms.destroy(); tms = nil end
+
+  p("\nCompara con la pantalla del juego y anota qué dirección acierta.")
+  local rep = table.concat(out, "\n")
+  local fh = io.open(OUTFILE, "w"); if fh then fh:write(rep); fh:close() end
+  writeToClipboard(rep)
+  showMessage(rep .. "\n\n(Copiado al portapapeles y guardado en " .. OUTFILE .. ")")
+end
+
+showMessage(string.format("Lecturas y escaneos listos. Al cerrar este aviso empiezan %d min de muestreo:\n" ..
+  "· NO pauses el juego ni abras menús (el escaneo de Tiempo lo necesita);\n" ..
+  "· gana Prestigio (Kudos) encadenando enemigos sin recibir daño;\n" ..
+  "· recoge al menos 1 medalla;\n" ..
+  "· si puedes, termina la misión cerca del final del muestreo.\n" ..
+  "Al terminar aparece el informe (no cierres Cheat Engine).", MUESTREO // 60000))
+lectura()
+local t0, tUlt = getTickCount(), getTickCount()
+local t = createTimer(nil, false)
+t.Interval = PASO
+t.OnTimer = function(tm)
+  local ahora = getTickCount()
+  local seg = (ahora - t0) // 1000
+  local okL, errL = pcall(function()
+    lectura()
+    if ahora - tUlt &gt;= PASO_T then tUlt = ahora; pasadaTiempo(seg) end
+  end)
+  if not okL or ahora - t0 &gt;= MUESTREO then
+    tm.destroy()
+    if not okL then p("\nERROR en una lectura: %s", tostring(errL)) end
+    local okT, errT = pcall(terminar, seg)
+    if not okT then showMessage("ERROR en el muestreo: " .. tostring(errT)) end
+  end
+end
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>94</ID>
+              <Description>"Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)"</Description>
+              <Color>FF0000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- multisonda_gv1.lua — Porta los datos de gv1.CT (WarCOzes, GV1 32 bits) a la Trilogy
+--                      (game1.exe, 64 bits) SIN usar el depurador.
+--
+-- Qué hace (en este orden):
+--   A) Bloque de PARTIDA: busca tus Créditos dentro de game1.exe y verifica la forma del bloque
+--      de gv1.CT: 28 materiales en +0x3B0 (gv1.CT: +0x3A8), EXP en +0x470, nivel (2 B) en +0x474.
+--   B) Bloque de COMBATE: busca la Energía llena (5 000 000) y verifica Skill Points en +4
+--      (múltiplo de 20 000 000) y 4 cooldowns en +0xC…+0x18 (0…76 800).
+--   C) Crea en la tabla un grupo "GV1 portado" con las entradas de gv1.CT apuntando a
+--      game1.exe+RVA (sobreviven a reinicios mientras no cambie la build).
+--   D) Informe: ventana + portapapeles + archivo resultados_multisonda_gv1.txt (carpeta dumps).
+--
+-- Requisitos: CE adjunto a game1.exe, DENTRO de un nivel, con la Energía (campo eléctrico)
+-- LLENA y sabiendo cuántos Créditos tienes (menú). No escribe memoria del juego.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local MOD     = "game1.exe"
+local OUTFILE = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\resultados_multisonda_gv1.txt]]
+
+local out = {}
+local function p(fmt, ...) out[#out + 1] = string.format(fmt, ...) end
+local function hx(n) return string.format("%X", n) end
+
+local base = getAddressSafe(MOD)
+if not base then showMessage("Adjunta Cheat Engine a " .. MOD .. " primero."); return end
+local size = getModuleSize(MOD)
+p("Módulo %s  base=%X  tamaño=%X", MOD, base, size)
+
+-- Escaneo exacto de un DWORD dentro del módulo (memoria escribible)
+local function scanDword(value, maxHits)
+  local ms = createMemScan()
+  ms.firstScan(soExactValue, vtDword, rtRounded, hx(value), "", base, base + size,
+               "+W", fsmAligned, "4", true, false, false, false)
+  ms.waitTillDone()
+  local fl = createFoundList(ms); fl.initialize()
+  local res, n = {}, math.min(fl.Count, maxHits or 5000)
+  for i = 0, n - 1 do res[#res + 1] = tonumber(fl.Address[i], 16) end
+  local total = fl.Count
+  fl.deinitialize(); fl.destroy(); ms.destroy()
+  return res, total
+end
+local function rd(a) return readInteger(a) end
+local function rw(a) return readSmallInteger(a) end
+
+-- Nombres de materiales en el orden del arreglo de gv1.CT (índice = posición, paso 4 B)
+local MATS = {
+  "Microdegenerator","Custom Servophoton","Spinel Quasicrystal","Ultradense Magnet",
+  "Genomic Resonator","Phased Fluid Metal","Yellow Chalcedony","Hihirogane Shard",
+  "Antigravity Engine","Propulsion Mechanism","Phoenix Ore","Shock Response Plate",
+  "Six-miracle Graym","Apoitagara","Graym Extract 239","Electromotive Graym",
+  "Kripp Alloy","Xiwidia","Faraging Steel","Nanochip 98","Proto Infrastructure",
+  "High-end NcGbx","Garnet","Quartzite","Electrum","Graym Culture","Polymer Gm238",
+  "Uranium-235 Crystal" }
+
+-- ---------------------------------------------------------------- A) PARTIDA
+-- Dos pasadas: la 1.ª escanea; si cambias los Créditos en el juego (gana o gasta) y vuelves a
+-- ejecutar, se FILTRA la lista anterior (como "Next Scan"). Escribe r para reiniciar.
+local credits = nil
+local txt = inputQuery("Multisonda GV1",
+  "Créditos actuales (vig).\n- 1.ª vez: escanea.\n- Siguientes: filtra la lista anterior (cambia tus Créditos entre medio).\n- r = reiniciar   - vacío = omitir", "")
+if txt == "r" then MSGV1_PREV = nil; txt = inputQuery("Multisonda GV1", "Créditos actuales (vig):", "") end
+if txt and txt ~= "" then credits = tonumber(txt) end
+local SAVE = nil
+SAVE_SOLO = nil
+
+-- Busca cerca de 'c' una racha de 28 DWORD en 0..999 (no todos 0) = arreglo de materiales
+local function buscarMateriales(c)
+  local res, d = {}, -0x1000
+  while d &lt;= 0x1000 and #res &lt; 6 do
+    local ok, nz = true, 0
+    for i = 0, 27 do
+      local v = rd(c + d + 4 * i)
+      if not v or v &lt; 0 or v &gt; 999 then ok = false; break end
+      if v &gt; 0 then nz = nz + 1 end
+    end
+    if ok and nz &gt;= 3 then
+      res[#res + 1] = string.format("%s0x%X (no-cero: %d)", d &lt; 0 and "-" or "+", math.abs(d), nz)
+      d = d + 28 * 4                      -- saltar la racha encontrada
+    else
+      d = d + 4
+    end
+  end
+  return res
+end
+
+if credits then
+  local hits, total
+  if MSGV1_PREV and #MSGV1_PREV &gt; 0 then
+    hits = {}
+    for _, a in ipairs(MSGV1_PREV) do if rd(a) == credits then hits[#hits + 1] = a end end
+    total = #hits
+    p("\n== A) Partida: FILTRO Créditos = %d -&gt; quedan %d de %d ==", credits, total, #MSGV1_PREV)
+  else
+    hits, total = scanDword(credits)
+    p("\n== A) Partida: Créditos = %d -&gt; %d coincidencias en el módulo ==", credits, total)
+  end
+  MSGV1_PREV = hits
+  for _, c in ipairs(hits) do
+    local okMats, sum = 0, 0
+    for i = 0, 27 do
+      local v = rd(c + 0x3B0 + 4 * i)
+      if v and v &gt;= 0 and v &lt;= 9999 then okMats = okMats + 1; sum = sum + v end
+    end
+    local lvl, exp = rw(c + 0x474), rd(c + 0x470)
+    if okMats == 28 and lvl and lvl &gt;= 1 and lvl &lt;= 99 and exp and exp &gt;= 0 then
+      p("  CANDIDATO (forma de gv1.CT) game1.exe+%X  materiales suma %d  EXP=%d  Nivel=%d  TotalTime=%s",
+        c - base, sum, exp, lvl, tostring(rd(c - 0xE0)))
+      if not SAVE then SAVE = c end
+    end
+  end
+  if not SAVE then
+    if #hits &lt;= 5 then
+      p("  Sin la forma exacta de gv1.CT. Análisis flexible de cada coincidencia:")
+      for _, c in ipairs(hits) do
+        local m = buscarMateriales(c)
+        p("    game1.exe+%X : posibles arreglos de materiales en %s", c - base,
+          #m &gt; 0 and table.concat(m, ", ") or "(ninguno a ±0x1000)")
+      end
+      if #hits == 1 then SAVE_SOLO = hits[1] end
+    else
+      p("  Demasiadas coincidencias: cambia tus Créditos en el juego y vuelve a ejecutar la sonda 3 (filtra).")
+      for i = 1, math.min(#hits, 10) do p("    game1.exe+%X", hits[i] - base) end
+    end
+  end
+end
+
+-- ---------------------------------------------------------------- B) COMBATE
+local BAT = nil
+do
+  local hits, total = scanDword(5000000)
+  p("\n== B) Combate: Energía llena 5000000 -&gt; %d coincidencias en el módulo ==", total)
+  for _, e in ipairs(hits) do
+    local sp = rd(e + 4)
+    local ok = sp and sp &gt;= 0 and sp &lt;= 60000000 and sp % 20000000 == 0
+    local cds = {}
+    for i = 0, 3 do
+      local v = rd(e + 0xC + 4 * i); cds[#cds + 1] = tostring(v)
+      if not v or v &lt; 0 or v &gt; 76800 then ok = false end
+    end
+    if ok then
+      p("  CANDIDATO game1.exe+%X  SP=%d (%d pts)  cooldowns=%s", e - base, sp, sp // 20000000, table.concat(cds, "/"))
+      if not BAT then BAT = e end
+    end
+  end
+  if not BAT then
+    p("  Ningún candidato. Puede que la escala cambió (p. ej. punto fijo 24.8 como GV2).")
+    for i = 1, math.min(#hits, 10) do p("    game1.exe+%X", hits[i] - base) end
+  end
+end
+
+-- ---------------------------------------------------------------- C) ENTRADAS EN LA TABLA
+local function addr(a) return string.format("%s+%X", MOD, a - base) end
+if SAVE or BAT or SAVE_SOLO then
+  local al = getAddressList()
+  local g = al.createMemoryRecord()
+  g.Description = "GV1 portado de gv1.CT (multisonda " .. os.date("%Y-%m-%d") .. ")"
+  g.IsGroupHeader = true
+  local function rec(desc, a, vt, parent)
+    local m = al.createMemoryRecord()
+    m.Description = desc; m.Address = addr(a); m.Type = vt or vtDword
+    m.appendToEntry(parent or g)
+    return m
+  end
+  local function grp(desc)
+    local m = al.createMemoryRecord(); m.Description = desc; m.IsGroupHeader = true
+    m.appendToEntry(g); return m
+  end
+  if BAT and not al.getMemoryRecordByDescription("Energy Bar / Electric Field (llena = 5000000; congelar = Inf.)") then
+    rec("Energy Bar / Electric Field (llena = 5000000; congelar = Inf.)", BAT)
+    rec("Skill Points (1 pt = 20000000; 3 = 60000000)", BAT + 4)
+    local cd = grp("[ Skills Cooldown ] (lleno = 76800; congelar = sin cooldown)")
+    for i = 0, 3 do rec(string.format("Slot %d Cooldown", i + 1), BAT + 0xC + 4 * i, vtDword, cd) end
+  end
+  if SAVE then
+    local st = grp("[ Stats ]")
+    rec("Credits (vig)", SAVE, vtDword, st)
+    rec("Total Time", SAVE - 0xE0, vtDword, st)
+    rec("Time (? -0x3CD0 — verificar)", SAVE - 0x3CD0, vtDword, st)
+    rec("Medals (? -0x3CC8 — verificar)", SAVE - 0x3CC8, vtDword, st)
+    rec("Exp", SAVE + 0x470, vtDword, st)
+    rec("Level (no modificar)", SAVE + 0x474, vtWord, st)
+    local mt = grp("[ Materials ]")
+    for i = 0, 27 do rec(MATS[i + 1], SAVE + 0x3B0 + 4 * i, vtDword, mt) end
+  end
+  if SAVE_SOLO and not SAVE then rec("Credits (vig)", SAVE_SOLO) end
+  p("\nEntradas creadas en la tabla: grupo '%s'", g.Description)
+end
+
+-- ---------------------------------------------------------------- D) INFORME
+local report = table.concat(out, "\n")
+local f = io.open(OUTFILE, "w"); if f then f:write(report); f:close() end
+writeToClipboard(report)
+showMessage(report .. "\n\n(Copiado al portapapeles y guardado en " .. OUTFILE .. ")")
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>95</ID>
+              <Description>"Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)"</Description>
+              <Color>0000FF</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+-- =====================================================================================
+-- materiales_etiquetar_gv1.lua — Pone a cada material un valor distinto para identificarlo
+-- en el inventario: slot #00 = 99, #01 = 98, … #27 = 72.  =&gt;  slot = 99 - cantidad.
+-- Al DESACTIVAR restaura las cantidades originales. NO guardes la partida con esto activo.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local base = getAddressSafe("game1.exe")
+if not base then error("Adjunta Cheat Engine a game1.exe") end
+local MAT = base + 0x7B3668 + 0x3B0
+for i = 0, 27 do
+  local v = readInteger(MAT + 4 * i)
+  if v == nil or v &lt; 0 or v &gt; 9999 then
+    error(string.format("El bloque de materiales no tiene la forma esperada (slot %d = %s).", i, tostring(v)))
+  end
+end
+MATS_GV1_ETIQ = {}
+for i = 0, 27 do
+  MATS_GV1_ETIQ[i] = readInteger(MAT + 4 * i)
+  writeInteger(MAT + 4 * i, 99 - i)
+end
+showMessage("Materiales etiquetados: slot #00 = 99 … slot #27 = 72.\n" ..
+            "En el inventario: slot = 99 − cantidad.\n" ..
+            "Anota nombre y cantidad de cada material y DESACTIVA el script antes de guardar.")
+
+{$asm}
+[DISABLE]
+{$lua}
+if syntaxcheck then return end
+local base = getAddressSafe("game1.exe")
+if base and MATS_GV1_ETIQ then
+  local MAT = base + 0x7B3668 + 0x3B0
+  for i = 0, 27 do
+    if MATS_GV1_ETIQ[i] then writeInteger(MAT + 4 * i, MATS_GV1_ETIQ[i]) end
+  end
+  MATS_GV1_ETIQ = nil
+end
+
+{$asm}
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>96</ID>
+              <Description>"Sonda de invencibilidad (10 s de muestreo)"</Description>
+              <Color>FF0000</Color>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if not getAddressSafe("gv1_hp") then
+  local r = getAddressList().getMemoryRecordByDescription("Captura jugador (base de los trucos; se activa sola)")
+  if r and not r.Active then r.Active = true end
+end
+if not getAddressSafe("gv1_hp") then error("No se pudo activar 'Captura jugador'. Entra a un nivel.") end
+-- =====================================================================================
+-- sonda_invencibilidad_gv1.lua — Busca el temporizador de invencibilidad de GV1 (game1.exe)
+-- SIN depurador: muestrea el objeto del jugador cada 50 ms durante 10 s mientras recibes
+-- golpes y busca campos que pasan de 0 a &gt;0 justo tras perder HP y luego bajan a 0.
+-- Requisito: sonda "Captura jugador" activa (símbolos gv1_player y gv1_hp).
+-- Resultado: ventana + portapapeles + archivo en la carpeta dumps. No escribe memoria.
+-- Licencia: PolyForm Noncommercial 1.0.0.
+-- =====================================================================================
+local OUTFILE = [[D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\resultados_invencibilidad_gv1.txt]]
+local SIZE, TICKS, MS = 0x800, 200, 50
+
+local pp, ph = getAddressSafe("gv1_player"), getAddressSafe("gv1_hp")
+if not pp or not ph then showMessage("Activa primero la sonda 'Captura jugador' y entra a un nivel."); return end
+local P, H = readQword(pp), readQword(ph)
+if not P or P == 0 or not H or H == 0 then
+  showMessage("Aún no se capturó el jugador: muévete o recibe un golpe y vuelve a intentar."); return
+end
+
+local snaps, hps = {}, {}
+showMessage("Al cerrar este aviso empiezan 10 s de muestreo.\nRecibe 1 o 2 golpes en ese tiempo.")
+
+local function u32(b, o) return b[o+1] + b[o+2]*256 + b[o+3]*65536 + b[o+4]*16777216 end
+
+local function analizar()
+  local hits = {}
+  for k = 2, #hps do if hps[k] &lt; hps[k-1] then hits[#hits+1] = k end end
+  local out = { string.format("Objeto jugador = %X  componente HP = %X  muestras = %d  golpes detectados = %d",
+                               P, H, #snaps, #hits) }
+  for k = 1, #hits do out[#out+1] = string.format("  golpe en t=%d ms: HP %d -&gt; %d", (hits[k]-1)*MS, hps[hits[k]-1], hps[hits[k]]) end
+  if #hits == 0 then out[#out+1] = "No se detectó pérdida de HP: repite recibiendo un golpe." end
+  local cands = {}
+  for o = 0, SIZE - 4, 4 do
+    local score, ejemplo = 0, nil
+    for _, k in ipairs(hits) do
+      local antes = u32(snaps[k-1], o)
+      local pico, kp = 0, nil
+      for j = k, math.min(k + 3, #snaps) do local v = u32(snaps[j], o); if v &gt; pico then pico, kp = v, j end end
+      if antes == 0 and pico &gt; 0 and pico &lt; 100000 then
+        local mono, vuelve = true, false
+        local prev = pico
+        for j = kp + 1, #snaps do
+          local v = u32(snaps[j], o)
+          if v &gt; prev then mono = false; break end
+          prev = v
+          if v == 0 then vuelve = true; break end
+        end
+        if mono then
+          score = score + (vuelve and 2 or 1)
+          if not ejemplo then
+            local s = {}
+            for j = k - 1, math.min(k + 12, #snaps) do s[#s+1] = tostring(u32(snaps[j], o)) end
+            ejemplo = table.concat(s, ",")
+          end
+        end
+      end
+    end
+    if score &gt; 0 then cands[#cands+1] = { o = o, s = score, e = ejemplo } end
+  end
+  table.sort(cands, function(a, b) return a.s &gt; b.s end)
+  out[#out+1] = "\nCandidatos a temporizador de invencibilidad (offset en el objeto del jugador):"
+  for i = 1, math.min(#cands, 15) do
+    out[#out+1] = string.format("  +%03X  puntaje %d  valores: %s", cands[i].o, cands[i].s, cands[i].e)
+  end
+  if #cands == 0 then out[#out+1] = "  (ninguno)" end
+  local rep = table.concat(out, "\n")
+  local f = io.open(OUTFILE, "w"); if f then f:write(rep); f:close() end
+  writeToClipboard(rep)
+  showMessage(rep .. "\n\n(Copiado al portapapeles)")
+end
+
+local t = createTimer(nil, false)
+t.Interval = MS
+t.OnTimer = function(tm)
+  local ok = pcall(function()
+    snaps[#snaps+1] = readBytes(P, SIZE, true)
+    hps[#hps+1] = readInteger(H)
+  end)
+  if not ok or #snaps &gt;= TICKS then tm.destroy(); analizar() end
+end
+t.Enabled = true
+
+{$asm}
+[DISABLE]
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>97</ID>
+      <Description>"▶ Azure Striker Gunvolt 2 (game2.exe) — activar para adjuntar"</Description>
+      <Color>0080FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Adjunta Cheat Engine a game2.exe (patrón de wepon1984). Activar con el juego abierto. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if getCEVersion() &lt; 7.4 then showMessage("Se recomienda Cheat Engine 7.4 o superior.") end
+if (process or ""):lower() ~= "game2.exe" then openProcess("game2.exe") end
+if (process or ""):lower() ~= "game2.exe" then
+  error("game2.exe no está abierto: entra a ese juego desde el menú de la colección.")
+end
+{$asm}
+[DISABLE]
+</AssemblerScript>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>98</ID>
+          <Description>"##Grupo de wepon1984 portado sin cambios (nombres originales). Sin verificar en nuestra build de game2.exe."</Description>
+          <Color>0080FF</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>99</ID>
+          <Description>"Score"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>game2.exe+B050B8</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>100</ID>
+          <Description>"Medals"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>game2.exe+9690CC</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>101</ID>
+          <Description>"Timer"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>game2.exe+9690C4</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>102</ID>
+          <Description>"HP (1 = 16)"</Description>
+          <DropDownListLink>[List] HP</DropDownListLink>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"game2.exe"+009220A8</Address>
+          <Offsets>
+            <Offset>420</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>103</ID>
+          <Description>"Invincibility Timer"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"game2.exe"+009220A8</Address>
+          <Offsets>
+            <Offset>598</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>104</ID>
+          <Description>"Kudos (1 = 160)"</Description>
+          <DropDownListLink>[List] Kudos</DropDownListLink>
+          <VariableType>4 Bytes</VariableType>
+          <Address>game2.exe+A50250</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>105</ID>
+          <Description>"Gunvolt"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>106</ID>
+              <Description>"EXP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game2.exe+923970</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>107</ID>
+              <Description>"Credit"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game2.exe+923158</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>108</ID>
+              <Description>"Level"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+923974</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>109</ID>
+              <Description>"Energy Bar"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+B32479</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>110</ID>
+              <Description>"Skill Point"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+B32491</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>111</ID>
+              <Description>"Skills Cooldown"</Description>
+              <Options moHideChildren="1" moManualExpandCollapse="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>game2.exe+B32449</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>112</ID>
+                  <Description>"Slot 1 Cooldown (Full=300)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>+0</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>113</ID>
+                  <Description>"Slot 2 Cooldown (Full=300)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>+C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>114</ID>
+                  <Description>"Slot 3 Cooldown (Full=300)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>+18</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>115</ID>
+                  <Description>"Slot 4 Cooldown (Full=300)"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>2 Bytes</VariableType>
+                  <Address>+24</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>116</ID>
+              <Description>"Materials"</Description>
+              <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>game2.exe+9237B8</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>117</ID>
+                  <Description>"Phase Fluid Metal"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+0</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>118</ID>
+                  <Description>"Microdegenerator"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+1</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>119</ID>
+                  <Description>"Ultradense Magnet"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+2</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>120</ID>
+                  <Description>"Custom Servophoton"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+3</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>121</ID>
+                  <Description>"Hihirogane Shard"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+4</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>122</ID>
+                  <Description>"Shock Response Plate"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+5</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>123</ID>
+                  <Description>"Propulsion Mechanism"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+6</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>124</ID>
+                  <Description>"Antigravity Engine"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+7</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>125</ID>
+                  <Description>"Phoenix Ore"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+8</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>126</ID>
+                  <Description>"Electromotive Graym"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+9</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>127</ID>
+                  <Description>"Kripp Alloy"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+A</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>128</ID>
+                  <Description>"Xiwidia"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+B</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>129</ID>
+                  <Description>"Foraging Steel"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>130</ID>
+                  <Description>"Nanochip 98"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+D</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>131</ID>
+                  <Description>"Proto Infrastructure"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+E</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>132</ID>
+                  <Description>"High-End NcGbx"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+F</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>133</ID>
+                  <Description>"Garnet"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+10</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>134</ID>
+                  <Description>"Quartzite"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+11</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>135</ID>
+                  <Description>"Electrum"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+12</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>136</ID>
+                  <Description>"Graym Culture"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+13</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>137</ID>
+                  <Description>"Polymer Gm238"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+14</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>138</ID>
+                  <Description>"Uranium-235 Crystal"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+15</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>139</ID>
+                  <Description>"Dummy00"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+16</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>140</ID>
+                  <Description>"Dummy00"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+17</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>141</ID>
+              <Description>"Gear"</Description>
+              <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>game2.exe+9236E8</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>142</ID>
+                  <Description>"ID"</Description>
+                  <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>143</ID>
+                      <Description>"Slot 1"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>144</ID>
+                      <Description>"Slot 2"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>145</ID>
+                      <Description>"Slot 3"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>146</ID>
+                      <Description>"Slot 4"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>147</ID>
+                      <Description>"Slot 5"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+10</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>148</ID>
+                      <Description>"Slot 6"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+14</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>149</ID>
+                      <Description>"Slot 7"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+18</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>150</ID>
+                      <Description>"Slot 8"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+1C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>151</ID>
+                      <Description>"Slot 9"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+20</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>152</ID>
+                      <Description>"Slot 10"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+24</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>153</ID>
+                      <Description>"Slot 11"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+28</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>154</ID>
+                      <Description>"Slot 12"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+2C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>155</ID>
+                      <Description>"Slot 13"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+30</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>156</ID>
+                      <Description>"Slot 14"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+34</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>157</ID>
+                      <Description>"Slot 15"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+38</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>158</ID>
+                      <Description>"Slot 16"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+3C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>159</ID>
+                      <Description>"Slot 17"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+40</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>160</ID>
+                      <Description>"Slot 18"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+44</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>161</ID>
+                      <Description>"Slot 19"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+48</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>162</ID>
+                      <Description>"Slot 20"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>163</ID>
+                      <Description>"Slot 21"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+50</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>164</ID>
+                      <Description>"Slot 22"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+54</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>165</ID>
+                      <Description>"Slot 23"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+58</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>166</ID>
+                      <Description>"Slot 24"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+5C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>167</ID>
+                      <Description>"Slot 25"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+60</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>168</ID>
+                      <Description>"Slot 26"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+64</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>169</ID>
+                      <Description>"Slot 27"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+68</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>170</ID>
+                      <Description>"Slot 28"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+6C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>171</ID>
+                      <Description>"Slot 29"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+70</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>172</ID>
+                      <Description>"Slot 30"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+74</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>173</ID>
+                      <Description>"Slot 31"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+78</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>174</ID>
+                      <Description>"Slot 32"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+7C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>175</ID>
+                      <Description>"Slot 33"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+80</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>176</ID>
+                      <Description>"Slot 34"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+84</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>177</ID>
+                      <Description>"Slot 35"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+88</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>178</ID>
+                      <Description>"Slot 36"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>179</ID>
+                      <Description>"Slot 37"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+90</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>180</ID>
+                      <Description>"Slot 38"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+94</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>181</ID>
+                      <Description>"Slot 39"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+98</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>182</ID>
+                      <Description>"Slot 40"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+9C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>183</ID>
+                      <Description>"Slot 41"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>184</ID>
+                      <Description>"Slot 42"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>185</ID>
+                      <Description>"Slot 43"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>186</ID>
+                      <Description>"Slot 44"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+AC</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>187</ID>
+                      <Description>"Slot 45"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>188</ID>
+                      <Description>"Slot 46"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>189</ID>
+                      <Description>"Slot 47"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>190</ID>
+                      <Description>"Slot 48"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+BC</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>191</ID>
+                      <Description>"Slot 49"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>192</ID>
+                      <Description>"Slot 50"</Description>
+                      <DropDownListLink>[List]GV2 Gear</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C4</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>193</ID>
+                  <Description>"EXP"</Description>
+                  <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>194</ID>
+                      <Description>"Slot 1"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>195</ID>
+                      <Description>"Slot 2"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>196</ID>
+                      <Description>"Slot 3"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>197</ID>
+                      <Description>"Slot 4"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>198</ID>
+                      <Description>"Slot 5"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+12</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>199</ID>
+                      <Description>"Slot 6"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+16</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>200</ID>
+                      <Description>"Slot 7"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+1A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>201</ID>
+                      <Description>"Slot 8"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+1E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>202</ID>
+                      <Description>"Slot 9"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+22</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>203</ID>
+                      <Description>"Slot 10"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+26</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>204</ID>
+                      <Description>"Slot 11"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+2A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>205</ID>
+                      <Description>"Slot 12"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+2E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>206</ID>
+                      <Description>"Slot 13"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+32</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>207</ID>
+                      <Description>"Slot 14"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+36</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>208</ID>
+                      <Description>"Slot 15"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+3A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>209</ID>
+                      <Description>"Slot 16"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+3E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>210</ID>
+                      <Description>"Slot 17"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+42</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>211</ID>
+                      <Description>"Slot 18"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+46</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>212</ID>
+                      <Description>"Slot 19"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+4A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>213</ID>
+                      <Description>"Slot 20"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+4E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>214</ID>
+                      <Description>"Slot 21"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+52</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>215</ID>
+                      <Description>"Slot 22"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+56</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>216</ID>
+                      <Description>"Slot 23"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+5A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>217</ID>
+                      <Description>"Slot 24"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+5E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>218</ID>
+                      <Description>"Slot 25"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+62</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>219</ID>
+                      <Description>"Slot 26"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+66</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>220</ID>
+                      <Description>"Slot 27"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+6A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>221</ID>
+                      <Description>"Slot 28"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+6E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>222</ID>
+                      <Description>"Slot 29"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+72</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>223</ID>
+                      <Description>"Slot 30"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+76</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>224</ID>
+                      <Description>"Slot 31"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+7A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>225</ID>
+                      <Description>"Slot 32"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+7E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>226</ID>
+                      <Description>"Slot 33"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+82</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>227</ID>
+                      <Description>"Slot 34"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+86</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>228</ID>
+                      <Description>"Slot 35"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+8A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>229</ID>
+                      <Description>"Slot 36"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+8E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>230</ID>
+                      <Description>"Slot 37"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+92</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>231</ID>
+                      <Description>"Slot 38"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+96</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>232</ID>
+                      <Description>"Slot 39"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+9A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>233</ID>
+                      <Description>"Slot 40"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+9E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>234</ID>
+                      <Description>"Slot 41"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+A2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>235</ID>
+                      <Description>"Slot 42"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+A6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>236</ID>
+                      <Description>"Slot 43"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+AA</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>237</ID>
+                      <Description>"Slot 44"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+AE</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>238</ID>
+                      <Description>"Slot 45"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+B2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>239</ID>
+                      <Description>"Slot 46"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+B6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>240</ID>
+                      <Description>"Slot 47"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+BA</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>241</ID>
+                      <Description>"Slot 48"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+BE</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>242</ID>
+                      <Description>"Slot 49"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+C2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>243</ID>
+                      <Description>"Slot 50"</Description>
+                      <VariableType>2 Bytes</VariableType>
+                      <Address>+C6</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>244</ID>
+          <Description>"Copen"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>245</ID>
+              <Description>"EXP"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game2.exe+9239A8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>246</ID>
+              <Description>"Credit"</Description>
+              <VariableType>4 Bytes</VariableType>
+              <Address>game2.exe+923420</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>247</ID>
+              <Description>"Level"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+9239AC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>248</ID>
+              <Description>"Max Memory"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+9239C0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>249</ID>
+              <Description>"Weapon Guage"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+B3244A</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>250</ID>
+              <Description>"Dash"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+B32472</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>251</ID>
+              <Description>"Energy Bar"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>2 Bytes</VariableType>
+              <Address>game2.exe+B32461</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>252</ID>
+              <Description>"Materials"</Description>
+              <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>game2.exe+9238A8</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>253</ID>
+                  <Description>"Phase Fluid Metal"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+0</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>254</ID>
+                  <Description>"Microdegenerator"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+1</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>255</ID>
+                  <Description>"Ultradense Magnet"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+2</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>256</ID>
+                  <Description>"Custom Servophoton"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+3</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>257</ID>
+                  <Description>"Hihirogane Shard"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+4</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>258</ID>
+                  <Description>"Shock Response Plate"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+5</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>259</ID>
+                  <Description>"Propulsion Mechanism"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+6</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>260</ID>
+                  <Description>"Antigravity Engine"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+7</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>261</ID>
+                  <Description>"Phoenix Ore"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+8</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>262</ID>
+                  <Description>"Electromotive Graym"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+9</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>263</ID>
+                  <Description>"Kripp Alloy"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+A</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>264</ID>
+                  <Description>"Xiwidia"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+B</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>265</ID>
+                  <Description>"Foraging Steel"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+C</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>266</ID>
+                  <Description>"Nanochip 98"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+D</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>267</ID>
+                  <Description>"Proto Infrastructure"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+E</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>268</ID>
+                  <Description>"High-End NcGbx"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+F</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>269</ID>
+                  <Description>"Garnet"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+10</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>270</ID>
+                  <Description>"Quartzite"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+11</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>271</ID>
+                  <Description>"Electrum"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+12</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>272</ID>
+                  <Description>"Graym Culture"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+13</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>273</ID>
+                  <Description>"Polymer Gm238"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+14</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>274</ID>
+                  <Description>"Uranium-235 Crystal"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+15</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>275</ID>
+                  <Description>"Dummy00"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+16</Address>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>276</ID>
+                  <Description>"Dummy00"</Description>
+                  <ShowAsSigned>0</ShowAsSigned>
+                  <VariableType>Byte</VariableType>
+                  <Address>+17</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>277</ID>
+              <Description>"Subroutines"</Description>
+              <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <ShowAsSigned>0</ShowAsSigned>
+              <GroupHeader>1</GroupHeader>
+              <Address>game2.exe+9237D8</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>278</ID>
+                  <Description>"ID"</Description>
+                  <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>279</ID>
+                      <Description>"Slot 1"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>280</ID>
+                      <Description>"Slot 2"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>281</ID>
+                      <Description>"Slot 3"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>282</ID>
+                      <Description>"Slot 4"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>283</ID>
+                      <Description>"Slot 5"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+10</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>284</ID>
+                      <Description>"Slot 6"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+14</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>285</ID>
+                      <Description>"Slot 7"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+18</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>286</ID>
+                      <Description>"Slot 8"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+1C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>287</ID>
+                      <Description>"Slot 9"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+20</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>288</ID>
+                      <Description>"Slot 10"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+24</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>289</ID>
+                      <Description>"Slot 11"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+28</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>290</ID>
+                      <Description>"Slot 12"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+2C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>291</ID>
+                      <Description>"Slot 13"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+30</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>292</ID>
+                      <Description>"Slot 14"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+34</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>293</ID>
+                      <Description>"Slot 15"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+38</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>294</ID>
+                      <Description>"Slot 16"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+3C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>295</ID>
+                      <Description>"Slot 17"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+40</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>296</ID>
+                      <Description>"Slot 18"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+44</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>297</ID>
+                      <Description>"Slot 19"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+48</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>298</ID>
+                      <Description>"Slot 20"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>299</ID>
+                      <Description>"Slot 21"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+50</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>300</ID>
+                      <Description>"Slot 22"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+54</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>301</ID>
+                      <Description>"Slot 23"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+58</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>302</ID>
+                      <Description>"Slot 24"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+5C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>303</ID>
+                      <Description>"Slot 25"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+60</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>304</ID>
+                      <Description>"Slot 26"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+64</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>305</ID>
+                      <Description>"Slot 27"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+68</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>306</ID>
+                      <Description>"Slot 28"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+6C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>307</ID>
+                      <Description>"Slot 29"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+70</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>308</ID>
+                      <Description>"Slot 30"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+74</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>309</ID>
+                      <Description>"Slot 31"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+78</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>310</ID>
+                      <Description>"Slot 32"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+7C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>311</ID>
+                      <Description>"Slot 33"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+80</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>312</ID>
+                      <Description>"Slot 34"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+84</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>313</ID>
+                      <Description>"Slot 35"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+88</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>314</ID>
+                      <Description>"Slot 36"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>315</ID>
+                      <Description>"Slot 37"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+90</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>316</ID>
+                      <Description>"Slot 38"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+94</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>317</ID>
+                      <Description>"Slot 39"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+98</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>318</ID>
+                      <Description>"Slot 40"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+9C</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>319</ID>
+                      <Description>"Slot 41"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>320</ID>
+                      <Description>"Slot 42"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>321</ID>
+                      <Description>"Slot 43"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>322</ID>
+                      <Description>"Slot 44"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+AC</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>323</ID>
+                      <Description>"Slot 45"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>324</ID>
+                      <Description>"Slot 46"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B4</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>325</ID>
+                      <Description>"Slot 47"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B8</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>326</ID>
+                      <Description>"Slot 48"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+BC</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>327</ID>
+                      <Description>"Slot 49"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C0</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>328</ID>
+                      <Description>"Slot 50"</Description>
+                      <DropDownListLink>[List]GV2 Subroutines</DropDownListLink>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C4</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>329</ID>
+                  <Description>"EXP"</Description>
+                  <Options moHideChildren="1" moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+                  <GroupHeader>1</GroupHeader>
+                  <CheatEntries>
+                    <CheatEntry>
+                      <ID>330</ID>
+                      <Description>"Slot 1"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>331</ID>
+                      <Description>"Slot 2"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>332</ID>
+                      <Description>"Slot 3"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>333</ID>
+                      <Description>"Slot 4"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>334</ID>
+                      <Description>"Slot 5"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+12</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>335</ID>
+                      <Description>"Slot 6"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+16</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>336</ID>
+                      <Description>"Slot 7"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+1A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>337</ID>
+                      <Description>"Slot 8"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+1E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>338</ID>
+                      <Description>"Slot 9"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+22</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>339</ID>
+                      <Description>"Slot 10"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+26</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>340</ID>
+                      <Description>"Slot 11"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+2A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>341</ID>
+                      <Description>"Slot 12"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+2E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>342</ID>
+                      <Description>"Slot 13"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+32</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>343</ID>
+                      <Description>"Slot 14"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+36</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>344</ID>
+                      <Description>"Slot 15"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+3A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>345</ID>
+                      <Description>"Slot 16"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+3E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>346</ID>
+                      <Description>"Slot 17"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+42</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>347</ID>
+                      <Description>"Slot 18"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+46</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>348</ID>
+                      <Description>"Slot 19"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>349</ID>
+                      <Description>"Slot 20"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+4E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>350</ID>
+                      <Description>"Slot 21"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+52</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>351</ID>
+                      <Description>"Slot 22"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+56</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>352</ID>
+                      <Description>"Slot 23"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+5A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>353</ID>
+                      <Description>"Slot 24"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+5E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>354</ID>
+                      <Description>"Slot 25"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+62</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>355</ID>
+                      <Description>"Slot 26"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+66</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>356</ID>
+                      <Description>"Slot 27"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+6A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>357</ID>
+                      <Description>"Slot 28"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+6E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>358</ID>
+                      <Description>"Slot 29"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+72</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>359</ID>
+                      <Description>"Slot 30"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+76</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>360</ID>
+                      <Description>"Slot 31"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+7A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>361</ID>
+                      <Description>"Slot 32"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+7E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>362</ID>
+                      <Description>"Slot 33"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+82</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>363</ID>
+                      <Description>"Slot 34"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+86</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>364</ID>
+                      <Description>"Slot 35"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>365</ID>
+                      <Description>"Slot 36"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+8E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>366</ID>
+                      <Description>"Slot 37"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+92</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>367</ID>
+                      <Description>"Slot 38"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+96</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>368</ID>
+                      <Description>"Slot 39"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+9A</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>369</ID>
+                      <Description>"Slot 40"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+9E</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>370</ID>
+                      <Description>"Slot 41"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>371</ID>
+                      <Description>"Slot 42"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+A6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>372</ID>
+                      <Description>"Slot 43"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+AA</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>373</ID>
+                      <Description>"Slot 44"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+AE</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>374</ID>
+                      <Description>"Slot 45"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>375</ID>
+                      <Description>"Slot 46"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+B6</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>376</ID>
+                      <Description>"Slot 47"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+BA</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>377</ID>
+                      <Description>"Slot 48"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+BE</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>378</ID>
+                      <Description>"Slot 49"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C2</Address>
+                    </CheatEntry>
+                    <CheatEntry>
+                      <ID>379</ID>
+                      <Description>"Slot 50"</Description>
+                      <ShowAsSigned>0</ShowAsSigned>
+                      <VariableType>Byte</VariableType>
+                      <Address>+C6</Address>
+                    </CheatEntry>
+                  </CheatEntries>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>380</ID>
+      <Description>"▶ Azure Striker Gunvolt 3 (game3.exe) — activar para adjuntar"</Description>
+      <Color>0080FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Adjunta Cheat Engine a game3.exe (patrón de wepon1984). Activar con el juego abierto. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if getCEVersion() &lt; 7.4 then showMessage("Se recomienda Cheat Engine 7.4 o superior.") end
+if (process or ""):lower() ~= "game3.exe" then openProcess("game3.exe") end
+if (process or ""):lower() ~= "game3.exe" then
+  error("game3.exe no está abierto: entra a ese juego desde el menú de la colección.")
+end
+{$asm}
+[DISABLE]
+</AssemblerScript>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>381</ID>
+          <Description>"##Grupo de wepon1984 portado sin cambios (nombres originales). Sin verificar en nuestra build de game3.exe."</Description>
+          <Color>0080FF</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>382</ID>
+          <Description>"Health"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1" />
+          <Color>408000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+
+aobscanmodule(health,game3.exe,F3 0F 11 41 08 83 49 18 01 C3 0F)
+alloc(newmem,$100,health)
+alloc(player,4)
+alloc(enemy,4)
+label(code)
+label(return)
+registersymbol(health enemy player)
+
+newmem:
+cmp [rcx+20],#1
+jne @f
+cmp [player],0
+je code
+movss xmm0,[rcx+0C]
+movss [rcx+08],xmm0
+jmp return
+
+@@:
+
+  cmp [enemy],0
+  je code
+  mov [rcx+08],00
+  jmp return
+
+code:
+  movss [rcx+08],xmm0
+  jmp return
+
+health:
+  jmp newmem
+return:
+
+player:
+dd 0
+
+enemy:
+dd 0
+
+
+[DISABLE]
+
+health:
+  db F3 0F 11 41 08
+
+unregistersymbol(*)
+dealloc(*)
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>383</ID>
+              <Description>"PlayerMaxHealth"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+player:
+dd 1
+
+ 
+ 
+[DISABLE]
+player:
+dd 0
+</AssemblerScript>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>384</ID>
+              <Description>"Enemy1HitKill"</Description>
+              <VariableType>Auto Assembler Script</VariableType>
+              <AssemblerScript>[ENABLE]
+enemy:
+dd 1
+
+ 
+ 
+[DISABLE]
+enemy:
+dd 0
+</AssemblerScript>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>385</ID>
+          <Description>"Invincibility Timer"</Description>
+          <DropDownList DisplayValueAsItem="1">17076:Max Normal
+30000:Max
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>2 Bytes</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>592</Offset>
+            <Offset>10</Offset>
+            <Offset>10</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>386</ID>
+          <Description>"Invincibility On/Off"</Description>
+          <DropDownList DisplayValueAsItem="1">255:Off
+0:On
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>2 Bytes</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>594</Offset>
+            <Offset>10</Offset>
+            <Offset>10</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>387</ID>
+          <Description>"Experience"</Description>
+          <DropDownList DescriptionOnly="1" DisplayValueAsItem="1">0:1
+800:2
+1600:3
+2400:4
+3200:5
+4000:6
+4800:7
+5600:8
+6400:9
+7200:10
+8200:11
+9200:12
+10200:13
+11200:14
+12200:15
+13200:16
+14200:17
+15200:18
+16200:19
+17200:20
+18200:21
+19200:22
+20200:23
+21200:24
+22200:25
+23200:26
+24200:27
+25200:28
+26200:29
+27200:30
+29200:31
+31200:32
+33200:33
+35200:34
+37200:35
+39200:36
+41200:37
+43200:38
+45200:39
+47200:40
+49200:41
+51200:42
+53200:43
+55200:44
+57200:45
+59200:46
+61200:47
+63200:48
+65200:49
+67200:50
+70200:51
+73200:52
+76200:53
+79200:54
+82200:55
+85200:56
+88200:57
+91200:58
+94200:59
+97200:60
+100200:61
+103200:62
+106200:63
+109200:64
+112200:65
+115200:66
+118200:67
+121200:68
+124200:69
+128200:70
+132200:71
+136200:72
+140200:73
+144200:74
+148200:75
+152200:76
+156200:77
+160200:78
+164200:79
+168200:80
+173200:81
+178200:82
+183200:83
+188200:84
+193200:85
+198200:86
+203200:87
+208200:88
+213200:89
+218200:90
+228200:91
+238200:92
+248200:93
+258200:94
+268200:95
+278200:96
+288200:97
+298200:98
+318200:99
+</DropDownList>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>2A80</Offset>
+            <Offset>110</Offset>
+            <Offset>20</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>388</ID>
+          <Description>"Level (Do Not Change)"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Byte</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>2A86</Offset>
+            <Offset>110</Offset>
+            <Offset>20</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>389</ID>
+          <Description>"Timer"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>354</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>390</ID>
+          <Description>"Score"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>44</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>391</ID>
+          <Description>"Fetters Gauge"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>478</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>392</ID>
+          <Description>"Kudos "</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>264</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>393</ID>
+          <Description>"Image Chips"</Description>
+          <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+          <ShowAsSigned>0</ShowAsSigned>
+          <GroupHeader>1</GroupHeader>
+          <Address>"game3.exe"+01E2CE98</Address>
+          <Offsets>
+            <Offset>198</Offset>
+          </Offsets>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>394</ID>
+              <Description>"# of Chips per stage"</Description>
+              <Options moManualExpandCollapse="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+              <GroupHeader>1</GroupHeader>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>395</ID>
+                  <Description>"0 Chips - World Moebius"</Description>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>396</ID>
+                  <Description>"3 Chips - Sunrise Throne"</Description>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>397</ID>
+                  <Description>"5 Chips - Futures Institute / Ballistic Missles"</Description>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+                <CheatEntry>
+                  <ID>398</ID>
+                  <Description>"7 Chips - All other Stages"</Description>
+                  <GroupHeader>1</GroupHeader>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>399</ID>
+              <Description>"1"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>0</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>400</ID>
+              <Description>"2"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>1</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>401</ID>
+              <Description>"3"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>2</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>402</ID>
+              <Description>"4"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>3</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>403</ID>
+              <Description>"5"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>4</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>404</ID>
+              <Description>"6"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>5</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>405</ID>
+              <Description>"7"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Binary</VariableType>
+              <BitStart>6</BitStart>
+              <BitLength>1</BitLength>
+              <ShowAsBinary>0</ShowAsBinary>
+              <Address>+0</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>406</ID>
+      <Description>"▶ Azure Striker Gunvolt Connect iX (game4.exe) — activar para adjuntar"</Description>
+      <Color>0080FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Adjunta Cheat Engine a game4.exe (patrón de wepon1984). Activar con el juego abierto. }
+[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if getCEVersion() &lt; 7.4 then showMessage("Se recomienda Cheat Engine 7.4 o superior.") end
+if (process or ""):lower() ~= "game4.exe" then openProcess("game4.exe") end
+if (process or ""):lower() ~= "game4.exe" then
+  error("game4.exe no está abierto: entra a ese juego desde el menú de la colección.")
+end
+{$asm}
+[DISABLE]
+</AssemblerScript>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1" />
+      <CheatEntries>
+        <CheatEntry>
+          <ID>407</ID>
+          <Description>"##Grupo de wepon1984 portado sin cambios (nombres originales). Sin verificar en nuestra build de game4.exe."</Description>
+          <Color>0080FF</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>408</ID>
+          <Description>"Gauge   [Air Dash]"</Description>
+          <Color>800080</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(air_dash,game4.exe,F3 0F 11 43 08 EB 07)
+alloc(newmem,$100,air_dash)
+label(return)
+registersymbol(air_dash)
+newmem:
+  movss [rbx+08],xmm0
+  mov [rbx+08],(float)999
+  jmp return
+air_dash:
+  jmp newmem
+return:
+[DISABLE]
+dealloc(newmem)
+unregistersymbol(air_dash)
+air_dash:
+  db F3 0F 11 43 08
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>409</ID>
+          <Description>"Gauge   [Alternate/Skill/Special Attack]"</Description>
+          <Color>C08000</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(_pBase,game4.exe,F3 0F 10 43 08 76)
+alloc(newmem,$100,_pBase)
+alloc(power,4)
+label(return)
+registersymbol(_pBase power)
+newmem:
+  mov [power],rbx
+  movss xmm0,[rbx+08]
+  jmp return
+_pBase:
+  jmp newmem
+return:
+[DISABLE]
+dealloc(*)
+unregistersymbol(*)
+_pBase:
+  db F3 0F 10 43 08
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>410</ID>
+              <Description>"Skill/Special Attack"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <Color>624200</Color>
+              <VariableType>Float</VariableType>
+              <Address>[power]+8</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>411</ID>
+          <Description>"Gauge   [Health]"</Description>
+          <Color>0000FF</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanmodule(hp,game4.exe,F3 0F 10 41 28 C3)
+alloc(newmem,$100,hp)
+label(return)
+registersymbol(hp)
+newmem:
+  movss xmm0,[rcx+28]
+  mov [rcx+28],(float)9999
+  jmp return
+hp:
+  jmp newmem
+return:
+[DISABLE]
+dealloc(newmem)
+unregistersymbol(hp)
+hp:
+  db F3 0F 10 41 28
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>412</ID>
+          <Description>"Timer"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>"game4.exe"+0190E590</Address>
+          <Offsets>
+            <Offset>31C</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>413</ID>
+          <Description>"Currency"</Description>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"game4.exe"+018223A8</Address>
+          <Offsets>
+            <Offset>10</Offset>
+            <Offset>30</Offset>
+            <Offset>30</Offset>
+            <Offset>0</Offset>
+            <Offset>70</Offset>
+            <Offset>80</Offset>
+            <Offset>28</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>414</ID>
+          <Description>"Kudos"</Description>
+          <VariableType>Float</VariableType>
+          <Address>"game4.exe"+0190E590</Address>
+          <Offsets>
+            <Offset>26C</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>415</ID>
+          <Description>"EX Weapon Gauge"</Description>
+          <Options moHideChildren="1" moRecursiveSetValue="1" moManualExpandCollapse="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1" moAllowManualCollapseAndExpand="1" />
+          <ShowAsSigned>0</ShowAsSigned>
+          <GroupHeader>1</GroupHeader>
+          <Address>"game4.exe"+0190E590</Address>
+          <Offsets>
+            <Offset>0</Offset>
+            <Offset>518</Offset>
+          </Offsets>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>416</ID>
+              <Description>"Anchor Nexus"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+78</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>417</ID>
+              <Description>"Whirling Chopper"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+A0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>418</ID>
+              <Description>"Doomsday Charge"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+C8</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>419</ID>
+              <Description>"Cryo-Flash"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+F0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>420</ID>
+              <Description>"Gatling Blitz"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+118</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>421</ID>
+              <Description>"Rolling Ripper"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+140</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>422</ID>
+              <Description>"Optic Barrier"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Float</VariableType>
+              <Address>+168</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>423</ID>
+          <Description>"Invincibility Timer"</Description>
+          <DropDownList DisplayValueAsItem="1">17076:Max Normal
+30000:Max
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>2 Bytes</VariableType>
+          <Address>"game4.exe"+019279E8</Address>
+          <Offsets>
+            <Offset>5B2</Offset>
+            <Offset>398</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>424</ID>
+          <Description>"Invincibility On/Off"</Description>
+          <DropDownList DisplayValueAsItem="1">255:Off
+0:On
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>2 Bytes</VariableType>
+          <Address>"game4.exe"+019279E8</Address>
+          <Offsets>
+            <Offset>5B4</Offset>
+            <Offset>398</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>425</ID>
+      <Description>"[List]"</Description>
+      <Options moAlwaysHideChildren="1" moAllowManualCollapseAndExpand="1" />
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>426</ID>
+          <Description>"[List]GV2 Subroutines"</Description>
+          <DropDownList DisplayValueAsItem="1">255:##Empty
+0:Hover
+1:Hover R
+2:Hover Boost
+3:Hover Boost R
+4:Aerial Stunt
+5:Aerial Stunt R
+6:Aerial Stunt X
+7:Aerial Stunt X R
+8:Prevasion
+9:Prevasion R
+10:Damage Buffer
+11:Damage Buffer S
+12:Aerial Guard
+13:Aerial Guard R
+14:Invincible Reload
+15:Invincible Reload R
+16:Impact Armor
+17:Impact Armor R
+18:Heaven or Hell
+19:Heaven or Hell R
+20:Heaven or Hell X
+21:Heaven or Hell X R
+22:Healing Aid
+23:Healing Aid R
+24:HP Converter
+25:HP Converter R
+26:Auto-Recover
+27:Auto-Recover R
+28:Credit Priority
+29:Credit Priority R
+30:EXP Priority
+31:EXP Priority R
+32:Weapon Compressor
+33:Weapon Compressor R
+34:Bullit Optimizer
+35:Bullit Optimizer R
+36:Bullit Scavenger
+37:Bullit Scavenger R
+38:Weapon Recharger
+39:Weapon Recharger R
+40:Bullit Capacity 1
+41:Bullit Capacity 1 R
+42:Bullit Capacity 2
+43:Bullit Capacity 2 R
+44:Bullit Capacity 3
+45:Bullit Capacity 3 R
+46:Aerial Sniper
+47:Aerial Sniper R
+48:Aerial Assassin
+49:Aerial Assasin R
+50:Risky Gunplay
+51:Risky Gunplay R
+52:Impact Reload
+53:Impact Reload R
+54:Deadly Aim
+55:Deadly Aim R
+56:Weapon Overclock
+57:Weapon Overclock R
+58:Lucky Prevasion
+59:Lucky Prevasion R
+60:Lucky Dash
+61:Lucky Dash R
+62:Perfection Protocol
+63:
+64:Code of Shovelry
+65:
+66:Shield Construct
+67:
+68:OD Auto-Recover
+69:OD Auto-Recover R
+70:OD Hardening
+71:OD Hardening R
+72:OD Hardening X
+73:OD Hardening X R
+74:OD Shield Optimizer
+75:OD Shield Optimizer R
+76:OD Impact Reload
+77:OD Impact Reload R
+78:OD Deadly Aim
+79:OD Deadly Aim R
+80:OD Pawn Killer
+81:OD Pawn Killer R
+82:OD King Slayer
+83:OD King Slayer R
+84:OD Risk It All
+85:OD Risk It All R
+86:OD Need for Greed
+87:OD Need for Greed R
+88:OD Avid Learner
+89:OD Avid Learner R
+90:OD Lucky Surprise
+91:OD Lucky Surprise R
+92:OD Aerial Stunt
+93:OD Aerial Stunt R
+94:OD Freebird
+95:OD Freebird R
+96:Mute
+97:Mute
+98:Infinity Drive
+99:Infinity Drive
+100:
+101:
+102:SONG_01.np3
+103:SONG_02.np3
+104:SONG_03.np3
+105:SONG_04.np3
+106:SONG_05.np3
+107:SONG_06.np3
+108:SONG_07.np3
+109:SONG_08.np3
+110:SONG_09.np3
+111:SUMERAGI_01.np3
+112:SUMERAGI_02.np3
+113:SUMERAGI_03.np3
+114:SUMERAGI_04.np3
+115:SUMERAGI_05.np3
+116:SUMERAGI_06.np3
+117:SUMERAGI_07.np3
+118:SUMERAGI_08.np3
+119:SUMERAGI_09.np3
+</DropDownList>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>427</ID>
+          <Description>"[List]GV2 Gear"</Description>
+          <DropDownList DisplayValueAsItem="1">255:##Empty
+1:Cerberus
+2:Naga
+3:Technos
+4:Orochi
+5:Vasuki
+6:Dullahan
+7:Raphael Clip
+8:Gabriel Clip
+9:Michael Clip
+10:Lucifer Clip
+11:Uriel Clip
+12:Raguel Clip
+13:Zerachiel Clip
+14:Ramiel Clip
+15:Dyaus Clip
+16:
+17:Osmotic Eye
+18:Osmotic Eye+
+19:Life Loupe
+20:Life Loupe+
+21:Revibeoptic
+22:Revibeoptic+
+23:Midas Optic
+24:Midas Optic+
+25:Attuned Optic
+26:Attuned Optic+
+27:Cooldown Lens
+28:Cooldown Lens+
+29:Recharge Lens
+30:Recharge Lens+
+31:Vigo Lens
+32:Vigor Lens+
+33:Flash Focus
+34:Flash Focus+
+35:Dynamo Eye
+36:Dynamo Eye+
+37:Seer Spec
+38:Seer Spec+
+39:Sky Sight
+40:Sky Sight+
+41:Wrathful Eye
+42:Wrathful Eye+
+43:Lover's Lens
+44:Lover's Lens+
+45:Admirer's Eye
+46:Admirer's Eye+
+47:Sweeper's Lens
+48:Sweeper's Lens+
+49:Latency Lens
+50:Latency Lens+
+51:Feral Foxus
+52:Feral Focus+
+53:Dilation Reticle
+54:Dilation Reticle+
+55:Recirculator Lens
+56:Recirculator Lens+
+57:Adrenaline Lens
+58:Adrenaline Lens+
+59:Optical Advantage
+60:Optical Advantage+
+61:Avoidance Array
+62:Avoidance Array+
+63:Dummy00
+64:Dummy01
+65:QUILL Signet
+66:QUILL Signet+
+67:Boost Bond
+68:Boost Bond+
+69:Levitation Bond
+70:Levitation Bond+
+71:Skyether Bond
+72:Skyether Bond+
+73:Ambi Annulus
+74:Ambi Annulus+
+75:Traction Ring
+76:Traction Ring+
+77:Full Traction Ring
+78:Full Traction Ring+
+79:Blue Streak Bond
+80:Blue Streak Bond+
+81:Shovel Ring
+82:Shovel Ring+
+83:Muse's Pendant
+84:Muse's Pendant+
+85:Shield Medallion
+86:Shield Medallion+
+87:Barrier Locket
+88:Barrier Locket+
+89:Stalwart Medal
+90:Stalwart Medal+
+91:Solid Medallion
+92:Solid Medallion+
+93:Solid Geist Locket
+94:Solid Geist Locket+
+95:Chargeguard Pendant
+96:Chargeguard Pendant+
+97:Awakening Pendant
+98:Awakening Pendant+
+99:Geist Locket
+100:Geist Locket+
+101:Lethal Lavaliere
+102:Lethal Lavaliere+
+103:Omega Pendant
+104:Omega Pendant+
+105:Sealing Pendant
+106:
+107:Memento Pendant
+108:Memento Pendant+
+109:Joule Audiolocket 01
+110:Joule Audiolocket 02
+111:Joule Audiolocket 03
+112:Joule Audiolocket 04
+113:Joule Audiolocket 05
+114:Joule Audiolocket 06
+115:Joule Audiolocket 07
+116:Joule Audiolocket 08
+117:Joule Audiolocket 09
+118:Lumen Audiolocket 01
+119:Lumen Audiolocket 02
+120:Lumen Audiolocket 03
+121:Lumen Audiolocket 04
+122:Lumen Audiolocket 05
+123:Lumen Audiolocket 06
+124:Lumen Audiolocket 07
+125:Lumen Audiolocket 08
+126:Lumen Audiolocket 09
+</DropDownList>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>428</ID>
+          <Description>"[List] Kudos"</Description>
+          <DropDownList DisplayValueAsItem="1">159824:998
+159984:999
+160144:1000
+1599840:9999
+</DropDownList>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>429</ID>
+          <Description>"[List] HP"</Description>
+          <DropDownList DisplayValueAsItem="1">15984:999
+</DropDownList>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <Comments>Azure Striker Gunvolt Trilogy Enhanced — tabla v0.1-alpha (ES), en construcción.
+Proyecto: https://github.com/davasquezg/cheat-engine-skill (Skolleks).
+
+Créditos:
+- wepon1984 (FearLess t=35866): tabla de la trilogía; grupos de GV2, GV3 y Connect iX portados tal cual,
+  direcciones de GV1 usadas como candidatas y patrón de «activar grupo = adjuntar al exe».
+- ndck1 (FearLess t=35891): zona AOB del editor de vida de GV1, base de la «Captura jugador».
+- WarCOzes (t=1929), Shinkansen (t=12924), RTX_XXXX (t=21777): formas de datos y escalas de GV1/GV2/GV3.
+
+Colores: verde = verificado en vivo (build 2026-10-07) · gris = candidato sin verificar · naranja = wepon1984 (otra build).
+Editar valores desde el mapa, sin menús abiertos. Desactivar los scripts antes de recargar la tabla.</Comments>
+</CheatTable>

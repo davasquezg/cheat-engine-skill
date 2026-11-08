@@ -1,0 +1,111 @@
+== Verificación GV1 v3 (build 2026-10-07) — 2026-11-08 04:04 ==
+game1.exe base 7FF688230000  tamaño 1149000
+
+== A) Bloque de partida ==
+  Créditos                      game1.exe+7B3668 = 298239       debe coincidir con la pantalla
+  Nivel (Créditos+0x47C, 2 B)   game1.exe+7B3AE4 = 36           nivel del personaje
+  EXP (Créditos+0x478)          game1.exe+7B3AE0 = 398850       EXP total del menú
+
+== C) Bloque de combate ==
+  Energía (bloque 1)            game1.exe+7ED64C = 6500000      ×10 000
+  Energía (copia)               game1.exe+7ED67C = 6500000      
+  Skill Points (bloque 1)        game1.exe+7ED650 = 60000000     1 punto = 20000000
+  Skill Points (copia)           game1.exe+7ED680 = 60000000     
+  PV máx. (bloque 1 +0x2C)      game1.exe+7ED678 = 375          PV máx. del menú (+5 por nivel)
+
+== N) Pistas de la v2 (nivel en curso y totales) ==
+  Tiempo de nivel (+7E10D4)      game1.exe+7E10D4 = 1071872      wepon1984 +7D80D4 + 0x9000; ≈ 7100/s en v2
+  Medallas (+7E10DC)             game1.exe+7E10DC = 1            Tiempo + 8 (como en wepon1984)
+  Score (+8AFC68)                game1.exe+8AFC68 = 16777215     wepon1984 +8A6C68 + 0x9000
+  Kudos ×160? (+8D4E10)         game1.exe+8D4E10 = 0            wepon1984 +8CBE10 + 0x9000
+  Kudos ×1? (+7FFEC8)           game1.exe+7FFEC8 = 0            38 → 2357 en v2
+  Kudos ×1? (+7FFEE0)           game1.exe+7FFEE0 = 0            38 → 2363 en v2
+  Tiempo total (Créditos−0xE0) game1.exe+7B3588 = 113320832    ≈ 7500/s en v2 (forma de gv1.CT)
+  EXP copia? (Créditos+0x438)   game1.exe+7B3AA0 = 398850       = EXP en v2
+  Bloque 1 vs copia (0x30 bytes): difieren en +1C (0 / 230400), +20 (0 / 230400), +24 (0 / 230400), +2C (375 / 0)
+
+== B) Punteros estáticos al jugador ==
+  [game1.exe+7B3220] = 1F2A8A0E910  forma: SÍ ✅ = gv1_player  HP 375 / 375
+  [game1.exe+7E02F8] = 1F2A8A0E910  forma: SÍ ✅ = gv1_player  HP 375 / 375
+  [game1.exe+7ED630] = 1F2A8A0E910  forma: SÍ ✅ = gv1_player  HP 375 / 375
+
+== D) Kudos estático (Prestigio en pantalla ×1 / ×160 / ×256 dentro de game1.exe) ==
+  Prestigio escrito por el usuario = 988 (sin seguimiento: se informa qué coincidencias cambiaron)
+  988 × 1 = 988 → 12 coincidencia(s)
+  988 × 160 = 158080 → 0 coincidencia(s)
+  988 × 256 = 252928 → 0 coincidencia(s)
+
+== D2) Medallas (valor escrito por el usuario dentro de game1.exe) ==
+  1 → 13991 coincidencia(s); se informan las que suban exactamente +1, +2 o +3
+
+== F) Totales del menú (valores escritos por el usuario) ==
+  Puntos totales 1409193 → 0 coincidencia(s) en game1.exe
+  Tiempo total 04:06:38 = 14798 s. Se busca en [t, t+10 min] por si el reloj siguió corriendo:
+    en segundos           → 536 coincidencia(s)
+      game1.exe+26990    = 14968      Créditos-7916760
+      game1.exe+26A5C    = 15080      Créditos-7916556
+      game1.exe+26AE8    = 15176      Créditos-7916416
+      game1.exe+26B00    = 15208      Créditos-7916392
+      game1.exe+26BA4    = 15336      Créditos-7916228
+      game1.exe+369E8    = 15192      Créditos-7851136
+      game1.exe+36A10    = 15256      Créditos-7851096
+      game1.exe+37E34    = 14856      Créditos-7845940
+      game1.exe+37E54    = 15304      Créditos-7845908
+      game1.exe+37E74    = 15368      Créditos-7845876
+    en fotogramas (60/s)  → 1265 coincidencia(s)
+      game1.exe+C740     = 896000     Créditos-8023848
+      game1.exe+CACC     = 918680     Créditos-8022940
+      game1.exe+17A5C    = 915696     Créditos-7977996
+      game1.exe+2159C    = 905204     Créditos-7938252
+      game1.exe+2943C    = 891120     Créditos-7905836
+      game1.exe+2C034    = 891120     Créditos-7894580
+      game1.exe+2C0B8    = 915696     Créditos-7894448
+      game1.exe+2E088    = 895476     Créditos-7886304
+      game1.exe+2E12C    = 891380     Créditos-7886140
+      game1.exe+2E3E0    = 909556     Créditos-7885448
+    en milisegundos       → 1366 coincidencia(s)
+      game1.exe+D898     = 14812457   Créditos-8019408
+      game1.exe+EF68     = 14987333   Créditos-8013568
+      game1.exe+1127C    = 14857285   Créditos-8004588
+      game1.exe+11554    = 14852165   Créditos-8003860
+      game1.exe+13448    = 14987333   Créditos-7995936
+      game1.exe+14F34    = 14852165   Créditos-7989044
+      game1.exe+46F5C    = 15331304   Créditos-7784204
+      game1.exe+470AC    = 15245288   Créditos-7783868
+      game1.exe+4734C    = 15073256   Créditos-7783196
+      game1.exe+4749C    = 14987240   Créditos-7782860
+  gv1.CT ponía «Total Time» en Créditos−0xE0: game1.exe+7B3588 = 113680512
+
+== Muestreo de 301 s (302 lecturas) ==
+  Valores fijos que cambiaron:
+    Créditos                      298239 → 299019  (9 cambios)
+    Nivel (Créditos+0x47C, 2 B)   36 → 43  (6 cambios)
+    EXP (Créditos+0x478)          398850 → 551850  (23 cambios)
+    Energía (bloque 1)            6500000 → 6500000  (120 cambios)
+    PV máx. (bloque 1 +0x2C)      375 → 410  (6 cambios)
+    Tiempo de nivel (+7E10D4)      1071872 → 2270848  (167 cambios)
+    Medallas (+7E10DC)             1 → 3  (2 cambios)
+    Kudos ×1? (+7FFEC8)           0 → 3134  (30 cambios)
+    Kudos ×1? (+7FFEE0)           0 → 2880  (21 cambios)
+    Tiempo total (Créditos−0xE0) 113694976 → 115609344  (301 cambios)
+    EXP copia? (Créditos+0x438)   398850 → 551850  (23 cambios)
+
+  D) Kudos — Prestigio en pantalla: nil → 0
+    (ninguna coincidencia cambió: el Kudos estático no está en game1.exe o no ganaste Prestigio)
+    → El Kudos estático es la dirección que sigue al Prestigio en pantalla (con su escala ×1/×160/×256).
+
+  D2) Medallas — coincidencias que subieron +1…+3:
+    game1.exe+7B3AB4   1 → 2
+    game1.exe+7E10DC   1 → 3
+    game1.exe+8C1764   1 → 2
+    game1.exe+8C2DBC   1 → 2
+
+  E) Tiempo — DWORD de game1.exe que aumentaron en cada pasada de 10 s: 3139
+    (demasiados para listar: repite sin pausar el juego)
+
+Compara con la pantalla del juego y anota qué dirección acierta.
+
+== Observaciones del usuario (al terminar) ==
+  Prestigio en pantalla: 988 al inicio → 2807 al final.
+  Medallas en pantalla: 1 al inicio → 3 al final.
+  Menú de estado antes de la corrida: Puntos totales 1 409 193 · Tiempo total 04:06:38.

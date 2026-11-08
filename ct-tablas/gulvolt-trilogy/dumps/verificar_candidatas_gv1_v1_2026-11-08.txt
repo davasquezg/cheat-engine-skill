@@ -1,0 +1,52 @@
+== Verificación de candidatas GV1 (build 2026-10-07) — 2026-11-08 03:37 ==
+game1.exe base 7FF688230000  tamaño 1149000
+
+== A) Bloque de partida ==
+  Créditos (verificado)                       game1.exe+7B3668 = 299169       debe coincidir con la pantalla
+  Nivel  Créditos+0x47C (wepon1984)           game1.exe+7B3AE4 = 32           nivel del personaje
+  Nivel  Créditos+0x474 (suposición vieja)   game1.exe+7B3ADC = 14           
+  EXP A  +7A6930+Δpartida (wepon1984)         game1.exe+7AF9A8 = 0            EXP total del menú
+  EXP B  Créditos+0x478 (gv1.CT +8)           game1.exe+7B3AE0 = 318750       
+  EXP C  Créditos+0x470 (gv1.CT)              game1.exe+7B3AD8 = 0            
+
+== C) Bloque de combate ==
+  Energía (bloque 1)                          game1.exe+7ED64C = 6405000      llena = 5000000
+  Energía (copia)                             game1.exe+7ED67C = 6500000      
+  Skill Points (bloque 1)                      game1.exe+7ED650 = 60000000     1 punto = 20000000
+  Skill Points (copia)                         game1.exe+7ED680 = 60000000     
+
+== D) Tiempo / Medallas / Score / Kudos ==
+  Tiempo A  +7D80D4+Δpartida                  game1.exe+7E114C = 0            sube durante el nivel
+  Tiempo B  +7D80D4+Δcombate                  game1.exe+7E10C4 = 79824036     sube durante el nivel
+  Medallas A  (Tiempo A + 8)                   game1.exe+7E1154 = 0            medallas del nivel
+  Medallas B  (Tiempo B + 8)                   game1.exe+7E10CC = 0            
+  Score A  +8A6C68+Δpartida                   game1.exe+8AFCE0 = 4294967295   puntuación del nivel
+  Score B  +8A6C68+Δcombate                   game1.exe+8AFC58 = 0            
+  Kudos A  +8CBE10+Δpartida                   game1.exe+8D4E88 = 0            Prestigio × 160 (máx. 1599840)
+  Kudos B  +8CBE10+Δcombate                   game1.exe+8D4E00 = 0            
+  Bloque 1 vs copia (0x30 bytes): difieren en +0 (6405000 / 6500000), +1C (0 / 230400), +20 (0 / 230400), +24 (0 / 230400), +2C (355 / 0)
+  (gv1_kudos_vis no registrado: activa el script de Prestigio para comparar Kudos)
+
+== B) Objeto jugador ==
+  Candidato [game1.exe+7B3238] = 100000401010005  → forma de jugador: no
+  Capturado por la sonda (gv1_player) = 1B365BE3910  → NO coincide con el candidato
+  Barrido game1.exe+7B3238 ±0x400 (QWORD con forma de jugador):
+    game1.exe+7B3220 (-24)
+  Punteros estáticos en game1.exe hacia 1B365BE3910: 3
+    game1.exe+7B3220
+    game1.exe+7E02F8
+    game1.exe+7ED630
+
+== E) Muestreo de 120 s (121 lecturas): candidatas que cambiaron ==
+  Créditos (verificado)                       299169 → 299679  (8 cambios)
+  EXP B  Créditos+0x478 (gv1.CT +8)           318750 → 325050  (13 cambios)
+  Energía (bloque 1)                          6405000 → 6500000  (55 cambios)
+
+  (gv1_kudos_vis no registrado: sin comparación de Kudos con la pantalla)
+
+Compara cada valor con la pantalla del juego y anota cuál candidata acierta.
+
+== Observaciones del usuario (después del muestreo) ==
+  Prestigio en pantalla: 1902 (leído un poco después del corte, no en el instante exacto).
+  Medallas: recogió 1 durante los 2 min → ninguna candidata de Medallas cambió (A y B siempre 0).
+  El script de Prestigio no estaba activo (sin gv1_kudos_vis).

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """build_multisonda.py — Genera multisonda_gv1.CT (sondas de diagnóstico para GV1 en la Trilogy).
-Incrusta multisonda_gv1.lua y sonda_invencibilidad_gv1.lua en scripts de la tabla.
+Incrusta los .lua de esta carpeta en scripts de la tabla. gv1_trucos() y gv1_sondas() se reutilizan en ../build_trilogia_alpha.py.
 Licencia: PolyForm Noncommercial 1.0.0."""
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -190,6 +190,18 @@ def dword(parent, desc, addr, color=None, vt="4 Bytes"):
     return e
 
 
+MULT = [(2 ** i, f"×{2 ** i}") for i in range(11)]        # 1, 2, 4 … 1024
+SINO = [(0, "No"), (1, "Sí")]
+
+
+def lista(parent, desc, addr, items, color="008000"):
+    """Entrada de 4 bytes con lista desplegable (solo se puede elegir un valor de la lista)."""
+    e = dword(parent, desc, addr, color)
+    ET.SubElement(e, "DropDownList", {"ReadOnly": "1", "DisplayValueAsItem": "1"}).text = \
+        "".join(f"{v}:{t}\n" for v, t in items)
+    return e
+
+
 MATS = [("Microantigenerador", "Microdegenerator", 3), ("Servocarga fotónica", "Custom Servophoton", 3),
         ("Cuasicristal espinela", "Spinel Quasicrystal", 3), ("Imán ultradenso", "Ultradense Magnet", 3),
         ("Resonador genómico", "Genomic Resonator", 3), ("Metal líquido en fase", "Phased Fluid Metal", 3),
@@ -205,66 +217,101 @@ MATS = [("Microantigenerador", "Microdegenerator", 3), ("Servocarga fotónica", 
         ("Cristal de uranio 235 (?)", "Uranium-235 Crystal", 2)]
 
 
-root = ET.Element("CheatTable", {"CheatEngineTableVersion": "45"})
-top = ET.SubElement(root, "CheatEntries")
-note = new(top, "##GV1 (game1.exe) — los trucos activan solos lo que necesitan. Entra a un nivel antes.", "0000FF")
-ET.SubElement(note, "GroupHeader").text = "1"
-
 # ================================ TRUCOS ================================
-T = group(top, "▶ GV1 — Trucos", "008000")
+def gv1_trucos(top, con_valores=True):
+    """Grupo «▶ GV1 — Trucos» (lo verificado en vivo). Lo reutiliza ../build_trilogia_alpha.py."""
+    T = group(top, "▶ GV1 — Trucos", "008000")
 
-s1 = script(T, CAP, CAPTURA)
-ch = ET.SubElement(s1, "CheatEntries")
-ptr(ch, "HP actual (×16)", "gv1_hp", 0)
-ptr(ch, "HP máximo (×16)", "gv1_hp", 4)
-ptr(ch, "Daño del golpe en curso (+08)", "gv1_hp", 8)
-ptr(ch, "Flag jugador (+18)", "gv1_hp", 0x18, "Byte")
-ptr(ch, "Temporizador de invencibilidad (obj+518; 11520 = recién golpeado)", "gv1_player", 0x518)
-ptr(ch, "Flag de golpe? (obj+528)", "gv1_player", 0x528)
-ptr(ch, "Estado? (obj+3D0)", "gv1_player", 0x3D0)
+    s1 = script(T, CAP, CAPTURA)
+    ch = ET.SubElement(s1, "CheatEntries")
+    ptr(ch, "HP actual (×16)", "gv1_hp", 0)
+    ptr(ch, "HP máximo (×16)", "gv1_hp", 4)
+    ptr(ch, "Daño del golpe en curso (+08)", "gv1_hp", 8)
+    ptr(ch, "Flag jugador (+18)", "gv1_hp", 0x18, "Byte")
+    ptr(ch, "Temporizador de invencibilidad (obj+518; 11520 = recién golpeado)", "gv1_player", 0x518)
+    ptr(ch, "Flag de golpe? (obj+528)", "gv1_player", 0x528)
+    ptr(ch, "Estado? (obj+3D0)", "gv1_player", 0x3D0)
 
-script(T, "Invencibilidad (Sí/No)", lua_onoff(rd("invencible_gv1.lua"), rd("invencible_off_gv1.lua")), "008000")
+    script(T, "Invencibilidad (Sí/No)", lua_onoff(rd("invencible_gv1.lua"), rd("invencible_off_gv1.lua")), "008000")
 
-combo_on = ("KUDOS_SILENCIO = true\nlocal okK, errK = pcall(function()\n" + rd("kudos_gv1.lua") +
-            "\nend)\nKUDOS_SILENCIO = nil\nif not okK then print('[Prestigio] ' .. tostring(errK)) end\n" +
-            rd("multiplicador_gv1.lua"))
-combo_off = rd("multiplicador_off_gv1.lua") + "\n" + rd("kudos_off_gv1.lua")
-kd = script(T, "Prestigio y EXP ×N / mantener Prestigio (localiza el Prestigio solo)", lua_onoff(combo_on, combo_off), "008000")
-kch = ET.SubElement(kd, "CheatEntries")
-dword(kch, "Prestigio en pantalla (solo lectura)", "gv1_kudos_vis")
-dword(kch, "Prestigio interno ×256 (editar este: pantalla × 256)", "gv1_kudos")
+    combo_on = ("KUDOS_SILENCIO = true\nlocal okK, errK = pcall(function()\n" + rd("kudos_gv1.lua") +
+                "\nend)\nKUDOS_SILENCIO = nil\nif not okK then print('[Prestigio] ' .. tostring(errK)) end\n" +
+                rd("prestigio_mult_gv1.lua"))
+    combo_off = rd("prestigio_mult_off_gv1.lua") + "\n" + rd("kudos_off_gv1.lua")
+    kd = script(T, "Prestigio ×N / mantener (localiza el Prestigio solo; elegir ×N abajo)", lua_onoff(combo_on, combo_off), "008000")
+    kch = ET.SubElement(kd, "CheatEntries")
+    lista(kch, "Multiplicador de Prestigio (×1 … ×1024)", "gv1_kudos_mult", MULT)
+    lista(kch, "Mantener Prestigio (no baja con golpes; queda fijo al canjear)", "gv1_kudos_keep", SINO)
+    dword(kch, "Prestigio en pantalla (solo lectura)", "gv1_kudos_vis")
+    dword(kch, "Prestigio interno ×256 (editar este: pantalla × 256)", "gv1_kudos")
 
-mm = script(T, "Materiales al máximo (pide cantidad; desactivar = restaurar)",
-            lua_onoff(rd("materiales_max_gv1.lua"), rd("materiales_restaurar_gv1.lua")), "008000")
-mch = ET.SubElement(mm, "CheatEntries")
-for nm, o in (("¿? Créditos+0x3A8 (NO es material)", 0), ("¿? Créditos+0x3AC (NO es material)", 4)):
-    dword(mch, nm, f"game1.exe+{0x7B3668 + 0x3A8 + o:X}", "808080")
-for i, (es, en, st) in enumerate(MATS):
-    tag = "único" if st is None else ("★" * st if st else "0★")
-    dword(mch, f"{es} [{tag}] ({en})", f"game1.exe+{0x7B3668 + 0x3B0 + 4*i:X}")
+    xp = script(T, "EXP ×N (elegir ×N abajo; cambia en vivo)",
+                lua_onoff(rd("exp_mult_gv1.lua"), rd("exp_mult_off_gv1.lua")), "008000")
+    xch = ET.SubElement(xp, "CheatEntries")
+    lista(xch, "Multiplicador de EXP (×1 … ×1024)", "gv1_exp_mult", MULT)
+    dword(xch, "EXP total (Créditos+0x478)", "gv1_exp")
+    dword(xch, "Nivel (Créditos+0x47C; solo lectura)", "game1.exe+7B3AE4", None, "2 Bytes")
 
-V = group(T, "Valores (estáticos en game1.exe, build 2026-10-07)")
-dword(V, "Créditos (vig) — persiste al guardar", "game1.exe+7B3668")
-dword(V, "Nivel? (Créditos+0x474, 2 B — verificar)", "game1.exe+7B3ADC", None, "2 Bytes")
-dword(V, "Energía / PE (llena = 5000000; congelar = infinita)", "game1.exe+7ED64C")
-dword(V, "Skill Points / PH (1 = 20000000; 3 = 60000000)", "game1.exe+7ED650")
-for i in range(4):
-    dword(V, f"Cooldown habilidad {i+1} (lista = 76800)", f"game1.exe+{0x7ED658 + 4*i:X}")
-dword(V, "Copia del bloque de combate (+7ED67C) — ¿cuál manda? verificar", "game1.exe+7ED67C", "808080")
+    mm = script(T, "Materiales al máximo (pide cantidad; desactivar = restaurar)",
+                lua_onoff(rd("materiales_max_gv1.lua"), rd("materiales_restaurar_gv1.lua")), "008000")
+    mch = ET.SubElement(mm, "CheatEntries")
+    for nm, o in (("¿? Créditos+0x3A8 (NO es material)", 0), ("¿? Créditos+0x3AC (NO es material)", 4)):
+        dword(mch, nm, f"game1.exe+{0x7B3668 + 0x3A8 + o:X}", "808080")
+    for i, (es, en, st) in enumerate(MATS):
+        tag = "único" if st is None else ("★" * st if st else "0★")
+        dword(mch, f"{es} [{tag}] ({en})", f"game1.exe+{0x7B3668 + 0x3B0 + 4*i:X}")
+
+    if con_valores:
+        V = group(T, "Valores (estáticos en game1.exe, build 2026-10-07)")
+        dword(V, "Créditos (vig) — persiste al guardar", "game1.exe+7B3668")
+        dword(V, "Nivel (Créditos+0x47C; no modificar)", "game1.exe+7B3AE4", None, "2 Bytes")
+        dword(V, "EXP total (Créditos+0x478)", "game1.exe+7B3AE0")
+        dword(V, "Energía / PE (×10 000; congelar = infinita)", "game1.exe+7ED64C")
+        dword(V, "Skill Points / PH (1 = 20000000; 3 = 60000000)", "game1.exe+7ED650")
+        for i in range(4):
+            dword(V, f"Cooldown habilidad {i+1} (lista = 76800)", f"game1.exe+{0x7ED658 + 4*i:X}")
+        dword(V, "PV máx. sin escalar (bloque de combate +0x2C; +5 por nivel)", "game1.exe+7ED678")
+        dword(V, "Medallas del nivel (+7E10DC)", "game1.exe+7E10DC")
+        dword(V, "Tiempo de nivel (+7E10D4; ≈ 7660 por segundo)", "game1.exe+7E10D4")
+        dword(V, "Tiempo total (Créditos−0xE0; ≈ 7660 por segundo)", "game1.exe+7B3588")
+        dword(V, "Copia del bloque de combate (+7ED67C) — no manda (¿punto de control?)", "game1.exe+7ED67C", "808080")
+        G = group(V, "Jugador por puntero estático [game1.exe+7B3220] (válido tras recargar partida)")
+        ptr(G, "HP actual (×16)", "game1.exe+7B3220", 0x398)
+        ptr(G, "HP máximo (×16)", "game1.exe+7B3220", 0x39C)
+        ptr(G, "Invencibilidad (+518)", "game1.exe+7B3220", 0x518)
+    return T
+
 
 # ================================ HERRAMIENTAS ================================
-H = group(top, "🔧 Sondas y herramientas de búsqueda", "808080")
-s2 = script(H, "Contador de daño (7 sitios)", contador())
-ch2 = ET.SubElement(s2, "CheatEntries")
-for i, (sa, *_r) in enumerate(SITES):
-    for k, lbl in ((0, "jugador"), (4, "total")):
-        dword(ch2, f"Sitio {i} (game1.exe+{sa:X}) — {lbl}", f"cnt_tab+{i*8+k:X}")
-script(H, "Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)", lua_wrap(HERE / "multisonda_gv1.lua"), "FF0000")
-script(H, "Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)",
-       lua_onoff(rd("materiales_etiquetar_gv1.lua"), rd("materiales_etiquetar_restaurar_gv1.lua")), "0000FF")
-script(H, "Sonda de invencibilidad (10 s de muestreo)", "[ENABLE]\n{$lua}\nif syntaxcheck then return end\n" + ENSURE + rd("sonda_invencibilidad_gv1.lua") + "\n{$asm}\n[DISABLE]\n", "FF0000")
+def gv1_sondas(top):
+    """Grupo «🔧 Sondas y herramientas de búsqueda». Lo reutiliza ../build_trilogia_alpha.py."""
+    H = group(top, "🔧 Sondas y herramientas de búsqueda", "808080")
+    s2 = script(H, "Contador de daño (7 sitios)", contador())
+    ch2 = ET.SubElement(s2, "CheatEntries")
+    for i, (sa, *_r) in enumerate(SITES):
+        for k, lbl in ((0, "jugador"), (4, "total")):
+            dword(ch2, f"Sitio {i} (game1.exe+{sa:X}) — {lbl}", f"cnt_tab+{i*8+k:X}")
+    script(H, "🔎 Verificar candidatas v3: jugador, Kudos, medallas, tiempo y totales del menú (solo lectura; 5 min)",
+           lua_wrap(HERE / "verificar_candidatas_gv1.lua"), "FF0000")
+    script(H, "Multisonda: bloques de partida y combate (pide Créditos; Energía LLENA)", lua_wrap(HERE / "multisonda_gv1.lua"), "FF0000")
+    script(H, "Etiquetar materiales (99…72; desactivar = restaurar; NO guardar)",
+           lua_onoff(rd("materiales_etiquetar_gv1.lua"), rd("materiales_etiquetar_restaurar_gv1.lua")), "0000FF")
+    script(H, "Sonda de invencibilidad (10 s de muestreo)", "[ENABLE]\n{$lua}\nif syntaxcheck then return end\n" + ENSURE + rd("sonda_invencibilidad_gv1.lua") + "\n{$asm}\n[DISABLE]\n", "FF0000")
+    return H
 
-ET.indent(root)
-out = HERE / "multisonda_gv1.CT"
-ET.ElementTree(root).write(out, encoding="utf-8", xml_declaration=True)
-print("Generado:", out)
+
+def main():
+    root = ET.Element("CheatTable", {"CheatEngineTableVersion": "45"})
+    top = ET.SubElement(root, "CheatEntries")
+    note = new(top, "##GV1 (game1.exe) — los trucos activan solos lo que necesitan. Entra a un nivel antes.", "0000FF")
+    ET.SubElement(note, "GroupHeader").text = "1"
+    gv1_trucos(top)
+    gv1_sondas(top)
+    ET.indent(root)
+    out = HERE / "multisonda_gv1.CT"
+    ET.ElementTree(root).write(out, encoding="utf-8", xml_declaration=True)
+    print("Generado:", out)
+
+
+if __name__ == "__main__":
+    main()

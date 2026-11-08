@@ -1,0 +1,37 @@
+== Verificación de candidatas GV1 (build 2026-10-07) — 2026-11-08 03:37 ==  (segunda corrida de la v1, misma sesión)
+game1.exe base 7FF688230000  tamaño 1149000
+
+== A) Bloque de partida ==
+  Créditos (verificado)                       game1.exe+7B3668 = 299169
+  Nivel  Créditos+0x47C (wepon1984)           game1.exe+7B3AE4 = 32
+  Nivel  Créditos+0x474 (suposición vieja)    game1.exe+7B3ADC = 14
+  EXP A  +7A6930+Δpartida (wepon1984)         game1.exe+7AF9A8 = 0
+  EXP B  Créditos+0x478 (gv1.CT +8)           game1.exe+7B3AE0 = 318750
+  EXP C  Créditos+0x470 (gv1.CT)              game1.exe+7B3AD8 = 0
+
+== C) Bloque de combate ==
+  Energía (bloque 1)                          game1.exe+7ED64C = 6405000
+  Energía (copia)                             game1.exe+7ED67C = 6500000
+  Skill Points (bloque 1)                     game1.exe+7ED650 = 60000000
+  Skill Points (copia)                        game1.exe+7ED680 = 60000000
+
+== D) Tiempo / Medallas / Score / Kudos ==
+  Tiempo A  game1.exe+7E114C = 0          Tiempo B  game1.exe+7E10C4 = 79824036
+  Medallas A game1.exe+7E1154 = 0         Medallas B game1.exe+7E10CC = 0
+  Score A   game1.exe+8AFCE0 = 4294967295 Score B   game1.exe+8AFC58 = 0
+  Kudos A   game1.exe+8D4E88 = 0          Kudos B   game1.exe+8D4E00 = 0
+  Bloque 1 vs copia (0x30 bytes): difieren en +0 (6405000 / 6500000), +1C (0 / 230400), +20 (0 / 230400), +24 (0 / 230400), +2C (355 / 0)
+
+== B) Objeto jugador ==
+  Candidato [game1.exe+7B3238] = 100000401010005  → forma de jugador: no
+  Capturado por la sonda (gv1_player) = 1B365BE3910
+  Punteros estáticos en game1.exe hacia 1B365BE3910: game1.exe+7B3220, +7E02F8, +7ED630
+
+== E) Muestreo de 120 s (121 lecturas): candidatas que cambiaron ==
+  Créditos (verificado)                       299169 → 299679  (8 cambios)
+  EXP B  Créditos+0x478 (gv1.CT +8)           318750 → 325050  (13 cambios)
+  Energía (bloque 1)                          6405000 → 6500000  (55 cambios)
+
+== Observaciones del usuario ==
+  Prestigio en pantalla: 1902 al inicio → 2620 al final. Las 4 candidatas de Kudos siguieron en 0.
+  Medallas en pantalla: 1 al inicio → 2 al final. Las 2 candidatas de Medallas siguieron en 0.
