@@ -28,6 +28,16 @@ Versiones: cada vez que cambia el contenido se sube VERSION y el .CT anterior se
   v0.7-alpha (2026-11-08) Kudos bloqueados confirmado: [B]+0x2FC es FLOAT (680,26 = −680 en pantalla).
   v0.8-alpha (2026-11-08) Notas y sondas en celeste claro (el azul no se veía con tema oscuro). GV3: EXP ×N
                           marcado como no funcional (la EXP de wepon1984 no decide el nivel); sonda de EXP real.
+  v0.9-alpha (2026-11-08) GV3: Kudos bloqueados probado; «Health» de wepon1984 marcado como no funcional;
+                          cámara lenta = float en jugador+0x590; sonda de invencibilidad y vida v2.
+  v0.10-alpha (2026-11-08) Sonda de invencibilidad y vida v3 (marca de golpe = parpadeo; gancho de
+                          registro aunque «Health» esté activo; HP del componente del jugador).
+  v0.11-alpha (2026-11-08) GV3: «Vida: infinita / One Hit Kill» propio (listas Sí/No) en lugar del «Health»
+                          de wepon1984; sonda de invencibilidad v4 sobre el componente de vida.
+  v0.12-alpha (2026-11-08) «Vida» marcado como no funcional; sonda de invencibilidad v5 (busca la entidad
+                          dueña del componente de vida y mide en línea, sin guardar muestras).
+  v0.13-alpha (2026-11-08) Autoacople: al cargar la tabla detecta el juego abierto (game1…game4.exe), acopla CE
+                          y activa su grupo; si cambias de juego se re-acopla solo. Estado en el título de CE.
 
 Uso:  python build_trilogia_alpha.py [original/trilogy.CT] [-o salida.CT] [--force]
 Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz).
@@ -46,7 +56,7 @@ import gv3 as gv3m  # noqa: E402  (gv3_trucos, gv3_sondas)
 
 # SHA-256 de la tabla de wepon1984 analizada (original/FUENTES.md)
 ORIGINAL_SHA256 = "395928fcaeaf2241b414dc706a7d9d7e8d926af0f59f6cdf3d6898a0c3bab0fd"
-VERSION = "v0.8-alpha"
+VERSION = "v0.13-alpha"
 SALIDA = HERE / f"Gunvolt_Trilogy_Enhanced_{VERSION}_ES.CT"
 
 VERDE, GRIS, NARANJA, AZUL = "008000", "808080", "0080FF", bm.CELESTE   # CE usa BGR; «AZUL» = celeste claro
@@ -67,6 +77,14 @@ Créditos:
 
 Colores: verde = verificado en vivo (build 2026-10-07) · gris = candidato sin verificar · naranja = wepon1984 (otra build).
 Editar valores desde el mapa, sin menús abiertos. Desactivar los scripts antes de recargar la tabla.""".format(v=VERSION)
+
+
+AUTOACOPLE = "🔌 Autoacople: detecta el juego abierto y se acopla (se activa al cargar la tabla)"
+LUA_TABLA = f"""-- Gunvolt Trilogy Enhanced ({VERSION}) — Skolleks. Al cargar la tabla, activa el autoacople:
+-- detecta qué juego de la colección está abierto (game1…game4.exe), acopla CE y activa su grupo.
+local r = getAddressList().getMemoryRecordByDescription("{AUTOACOPLE}")
+if r and not r.Active then r.Active = true end
+"""
 
 
 def nota(parent, texto, color=AZUL):
@@ -158,19 +176,10 @@ def gv1(top):
 
 # ================================ GV3 ================================
 def gv3(top, por_id, listas):
-    """GV3: trucos propios con la base de wepon1984 hallada en la build 2026-10-13 + su script de vida
-    (AOB verificada única en game3.exe+8B5B62). Las demás entradas de wepon1984 usaban la base vieja (+1E2CE98)."""
+    """GV3: trucos propios con la base de wepon1984 hallada en la build 2026-10-13. Su «Health» se reemplaza por
+    «Vida» (sondas/gv3.py: misma AOB y lógica, con listas Sí/No); sus demás entradas usaban la base vieja (+1E2CE98)."""
     G = adjuntar(top, "▶ Azure Striker Gunvolt 3 (game3.exe) — activar para adjuntar", "game3.exe", VERDE)
-    nota(G, "GV3: entra a un nivel. «Health» = vida máx. del jugador / 1HK a enemigos (wepon1984 / RTX_XXXX).")
-    vida = renumerar(copy.deepcopy(por_id["6"]))
-    vida.find("Description").text = '"Health (wepon1984 / RTX_XXXX; AOB verificada) — activar y elegir abajo"'
-    G.append(vida)
-    for x in vida.iter("CheatEntry"):
-        d = (x.findtext("Description") or "").strip('"')
-        if d == "PlayerMaxHealth":
-            x.find("Description").text = '"Vida del jugador siempre al máximo"'
-        elif d == "Enemy1HitKill":
-            x.find("Description").text = '"One Hit Kill (enemigos con 0 HP al recibir daño)"'
+    nota(G, "GV3: entra a un nivel. Vida infinita / 1HK = lógica del «Health» de wepon1984 / RTX_XXXX (misma AOB).")
     gv3m.gv3_trucos(G)
     gv3m.gv3_sondas(G)
 
@@ -206,6 +215,7 @@ def main() -> None:
     nota(top, f"Gunvolt Trilogy Enhanced — {VERSION} (ES) · Skolleks · en construcción")
     nota(top, "Créditos: wepon1984 · ndck1 · WarCOzes · Shinkansen · RTX_XXXX (ver Table Extras → Comments)")
     nota(top, "Verde = verificado en vivo · gris = candidato · naranja = wepon1984 (otra build, sin verificar)", GRIS)
+    bm.script(top, AUTOACOPLE, bm.lua_onoff(bm.rd("autoacople.lua"), bm.rd("autoacople_off.lua")), AZUL)
 
     gv1(top)
     for wid, desc, exe in JUEGOS:
@@ -220,6 +230,16 @@ def main() -> None:
     # Listas desplegables de wepon1984: las entradas las enlazan por su Description, que se conserva
     top.append(renumerar(copy.deepcopy(por_id["116253"])))
 
+    # Los grupos que busca el autoacople tienen que existir con esa descripción exacta
+    descs = {(e.findtext("Description") or "").strip('"') for e in root.iter("CheatEntry")}
+    for exe in ("game1.exe", "game2.exe", "game3.exe", "game4.exe"):
+        assert any(d.startswith("▶ Azure Striker Gunvolt") and f"({exe})" in d for d in descs), exe
+    for linea in bm.rd("autoacople.lua").splitlines():
+        if 'grupo = "' in linea:
+            g = linea.split('grupo = "')[1].split('"')[0]
+            assert g in descs, f"autoacople.lua busca un grupo que no existe: {g}"
+
+    ET.SubElement(root, "LuaScript").text = LUA_TABLA
     ET.SubElement(root, "Comments").text = CREDITOS
     ET.indent(root)
     out = Path(a.output)

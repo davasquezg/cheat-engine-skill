@@ -10,7 +10,7 @@ Repositorio: <https://github.com/davasquezg/cheat-engine-skill> · Autor: Darío
 | Carpeta | Juego | Estado |
 |---|---|---|
 | `ct-tablas/mmsf-legacy-collection/` | Mega Man Star Force Legacy Collection (Steam, build 1.0.2.0) | ✅ Publicada: tabla **v9** ES/EN + versión FearLess |
-| `ct-tablas/gulvolt-trilogy/` | Azure Striker Gunvolt Trilogy Enhanced (Steam app 3813350) | 🧪 En investigación: GV1 (`game1.exe`) con multisonda sin depurador · tabla **v0.8-alpha** ES (sin publicar; GV1 verificado, GV3 en curso) |
+| `ct-tablas/gulvolt-trilogy/` | Azure Striker Gunvolt Trilogy Enhanced (Steam app 3813350) | 🧪 En investigación: GV1 (`game1.exe`) con multisonda sin depurador · tabla **v0.13-alpha** ES (sin publicar; GV1 verificado, GV3 en curso) |
 
 > El nombre de carpeta `gulvolt-trilogy` es histórico (el juego es *Gunvolt*). No renombrar sin actualizar las rutas absolutas de los scripts Lua (`D:\SCM\cheat-engine-skill\ct-tablas\gulvolt-trilogy\dumps\…`).
 
@@ -68,3 +68,5 @@ Revisar sintaxis de Lua antes de entregar: `luac5.3 -p archivo.lua` (CE usa Lua 
 - Valores en memoria a menudo escalados: ×16 (HP GV1), ×256 (punto fijo 24.8: Prestigio GV1, EP GV2), ×10 000 (PE GV1), ×160 (HP/Kudos GV2), float (GV3).
 - Estructuras en el heap sin punteros estáticos: localizar por **firma de memoria** (punteros a código de `game.exe` dentro del objeto) + validación de campos; re-localizar con un temporizador.
 - Al recargar una tabla, CE **no deshace** las inyecciones activas: desactivar los scripts antes de recargar, o escribir AOB tolerantes a la zona ya parchada.
+- Colecciones que lanzan cada juego como **proceso aparte** (Gunvolt: `game.exe` menú → `game1…game4.exe`): un **autoacople** en Lua (temporizador + `getProcessList()` + `openProcess(pid)` + activar el grupo del juego por su descripción, arrancado por el `LuaScript` de la tabla) evita adjuntar a mano. Ver `ct-tablas/gulvolt-trilogy/sondas/autoacople.lua`.
+- Notas `##` y entradas de color: Cheat Engine usa **BGR**; con tema oscuro, evitar azul puro (`FF0000`) y usar celeste claro (`FFCC66`).

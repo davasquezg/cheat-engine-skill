@@ -1,6 +1,6 @@
 # CLAUDE.md — Azure Striker Gunvolt Trilogy Enhanced
 
-Estado: 🧪 **investigación de GV1** (`game1.exe`). Tabla **alfa** `Gunvolt_Trilogy_Enhanced_v0.8-alpha_ES.CT` (no publicada; las anteriores quedan como referencia). GV3 en curso: grupo propio desde la v0.4: GV1 rescatado de la multisonda + candidatas, y GV2/GV3/Connect iX portados de wepon1984. La herramienta de investigación sigue siendo `sondas/multisonda_gv1.CT`.
+Estado: 🧪 **investigación de GV1** (`game1.exe`). Tabla **alfa** `Gunvolt_Trilogy_Enhanced_v0.13-alpha_ES.CT` (no publicada; las anteriores quedan como referencia). GV3 en curso: grupo propio desde la v0.4: GV1 rescatado de la multisonda + candidatas, y GV2/GV3/Connect iX portados de wepon1984. La herramienta de investigación sigue siendo `sondas/multisonda_gv1.CT`.
 
 - Tabla de partida: **ndck1** ([FearLess t=35891](https://fearlessrevolution.com/viewtopic.php?t=35891), v1.1.1 / build 19353876): solo "Health Editor" de GV1. Su AOB `8B ?? 41 3B ?? 45 8B ?? 44 0F` **sigue funcionando** en la build actual.
 - Referencias analizadas (en `original/`, local, fuera de git): `gv1.CT` (GV1 32 bits, WarCOzes, t=1929), `gv2.CT` (Shinkansen, t=12924), `gv3.CT` (RTX_XXXX, t=21777) y `trilogy.CT` (**wepon1984**, t=35866, los 4 exe; otra build: ver `ANALISIS_tablas_referencia.md` §8). Falta volver a bajar la de ndck1.
@@ -40,7 +40,8 @@ Estado: 🧪 **investigación de GV1** (`game1.exe`). Tabla **alfa** `Gunvolt_Tr
 | Archivo | Rol |
 |---|---|
 | `diag_asgte.lua` | Diagnóstico inicial: procesos, AOB de ndck1, volcado del módulo a `dumps/` |
-| `build_trilogia_alpha.py` | **Genera `Gunvolt_Trilogy_Enhanced_<VERSION>_ES.CT`** (hoy v0.8-alpha). **Cada regeneración con cambios sube `VERSION`** y se conserva el `.CT` anterior; historial en el docstring: reutiliza `gv1_trucos()`/`gv1_sondas()` de la multisonda, agrega las candidatas de GV1 y porta GV2/GV3/Connect iX desde `original/trilogy.CT` (verifica su SHA-256). Un grupo por exe: activarlo adjunta CE a ese exe. Verde = verificado, gris = candidato, naranja = wepon1984 |
+| `build_trilogia_alpha.py` | **Genera `Gunvolt_Trilogy_Enhanced_<VERSION>_ES.CT`** (hoy v0.13-alpha). **Cada regeneración con cambios sube `VERSION`** y se conserva el `.CT` anterior; historial en el docstring: reutiliza `gv1_trucos()`/`gv1_sondas()` de la multisonda, agrega las candidatas de GV1 y porta GV2/GV3/Connect iX desde `original/trilogy.CT` (verifica su SHA-256). Un grupo por exe: activarlo adjunta CE a ese exe. Verde = verificado, gris = candidato, naranja = wepon1984 |
+| `sondas/autoacople.lua` | **Autoacople** (lo activa el LuaScript de la tabla): detecta `game1…game4.exe`, acopla CE y activa el grupo del juego; se re-acopla al cambiar de juego. Las descripciones de grupo que busca se comprueban al generar la tabla |
 | `sondas/gv3.py` · `*_gv3.lua` | Grupo de GV3 de la alfa (`gv3_trucos()`/`gv3_sondas()`): base `game3.exe+1F02FE8`, cámara lenta (`jugador+0x592`, NO es invencibilidad), EXP ×N ❌ (dirección no real; `sonda_exp_gv3.lua`), Prestigio ×N ✅, Kudos bloqueados `[B]+0x2FC` (*float* ✅), Image Chips. Sondas: `sonda_invencibilidad_gv3.lua`, `sonda_kudos_bloqueados_gv3.lua` |
 | `sondas/diag_gv3.lua` | **GV3**, primer diagnóstico (solo lectura): build, unicidad de las AOB de RTX_XXXX/wepon1984, cadenas desde la base de wepon1984, barrido de bases con Nivel/Prestigio de pantalla y 5 min de muestreo → `dumps/diag_gv3_<fecha>_<hora>.txt` |
 | `sondas/verificar_candidatas_gv1.lua` | Verificación de solo lectura de las candidatas de wepon1984 (§8.1): bloque de partida, puntero estático al jugador, bloque de combate y su copia, Tiempo/Medallas/Score/Kudos con los dos Δ y 2 min de muestreo (EXP y Kudos frente a la pantalla) |
@@ -62,7 +63,7 @@ python build_multisonda.py
 python ../../../cheat-engine-tables/scripts/ct_tool.py validate multisonda_gv1.CT
 cd ..
 python build_trilogia_alpha.py          # requiere original/trilogy.CT
-python ../../cheat-engine-tables/scripts/ct_tool.py validate Gunvolt_Trilogy_Enhanced_v0.8-alpha_ES.CT
+python ../../cheat-engine-tables/scripts/ct_tool.py validate Gunvolt_Trilogy_Enhanced_v0.13-alpha_ES.CT
 ```
 
 ## Próximos pasos

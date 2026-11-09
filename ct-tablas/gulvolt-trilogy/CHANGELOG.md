@@ -3,6 +3,32 @@
 Tabla en desarrollo: `Gunvolt_Trilogy_Enhanced_<versión>_ES.CT`, generada por `build_trilogia_alpha.py` (no se edita a mano). Cada versión anterior se conserva en esta carpeta como referencia.
 Build del juego: `game1.exe` del 2026-10-07 (SHA-256 `8502cad08098…`). Leyenda de la tabla: 🟢 verificado en vivo · ⚪ candidato · 🟠 portado de wepon1984 sin verificar.
 
+## [v0.13-alpha] — 2026-11-09
+
+- **Agregado — 🔌 Autoacople:** al cargar la tabla (LuaScript de la tabla) se activa solo y, cada 1,5 s, detecta cuál de los juegos de la colección está abierto (`game1.exe` GV1, `game2.exe` GV2, `game3.exe` GV3, `game4.exe` Connect iX), **acopla Cheat Engine a ese proceso y activa su grupo** (los de los otros juegos se desactivan). Si vuelves al menú y abres otro juego, se suelta y se re-acopla solo. El estado aparece en el título de la ventana de CE («acoplado a GV3 …» / «esperando un juego…»). Desactivar la entrada = dejar de vigilar; los grupos siguen sirviendo para acoplar a mano.
+
+## [v0.12-alpha] — 2026-11-08
+
+- **No funciona ❌:** «Vida: infinita / One Hit Kill» (el usuario no ve efecto). Igual que el «Health» de wepon1984: la instrucción enganchada escribe un HP que baja con los golpes, pero forzarlo no protege → probablemente es la barra de la interfaz, no el HP real.
+- **Sonda de invencibilidad v5:** el objeto `[[[B]+10]+10]` resultó ser **visual** (parpadeo, cámara lenta). La v5 busca la **entidad** que es dueña del componente de vida (QWORD que apuntan a él en toda la memoria), sigue componente, dueños y objeto visual durante 30 s y puntúa los campos que cambian al recibir el golpe y vuelven al terminar el parpadeo. Calcula en línea, sin guardar las muestras.
+
+## [v0.11-alpha] — 2026-11-08
+
+- **Agregado (🧪): «Vida: infinita / One Hit Kill»** propio para GV3, con listas Sí/No. Usa la misma AOB y la misma lógica que el «Health» de wepon1984 / RTX_XXXX: la sonda v3 confirmó que esa instrucción solo ve al jugador al recibir daño, con `[+20] = 1` y HP *float* 200/380. Además captura el componente de vida (`gv3_hp`) y muestra HP, HP máx. y la marca de jugador.
+- **Quitado:** el «Health» de wepon1984 del grupo de GV3 (sigue acreditado): parchaba la misma instrucción y no se podían usar los dos a la vez.
+- **Sonda de invencibilidad v4:** busca los *i-frames* en el **componente de vida** (en la v3 ningún campo del objeto jugador duraba lo mismo que el parpadeo) y punteros del jugador al componente.
+
+## [v0.10-alpha] — 2026-11-08
+
+- **Sonda de invencibilidad y vida v3:** la v2 confundía los golpes que das con los que recibes (la cámara lenta salta en ambos). Ahora la marca de golpe es el **parpadeo** del jugador; cada golpe se mide hasta el fin del parpadeo; el registro del hook de vida funciona aunque «Health» esté activo (guarda su parche y lo restaura) y sigue el HP del componente del jugador.
+
+## [v0.9-alpha] — 2026-11-08
+
+- **Probado ✅:** Kudos bloqueados quitar ×N / anular («funciona perfecto»).
+- **No funciona ❌:** el script «Health» de wepon1984 (vida máx. / One Hit Kill) en esta build, aunque su AOB es única. Se marca en la tabla y se investiga.
+- **Corregido:** la cámara lenta es un *float* en `jugador+0x590` (wepon1984 leía su mitad alta en `+0x592`).
+- **Sonda de invencibilidad y vida v2:** mide cuánto dura cada campo candidato tras cada golpe frente al parpadeo, registra qué objetos pasan por el hook de vida (y su `[+20]`), y ya no da falsos temporizadores por floats desnormales.
+
 ## [v0.8-alpha] — 2026-11-08
 
 - **Cambiado:** las notas `##` y las sondas pasan de azul a **celeste claro** (`FFCC66` en BGR); con la interfaz oscura de Cheat Engine el azul no se leía.

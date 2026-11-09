@@ -456,3 +456,42 @@ Pantalla al final: HP ~60 %, Prestigio 14 556, Nivel 37. Cadenas: EXP 371 228 �
 - **EXP ×N ❌:** entre la corrida de 05:36 (EXP 40 313, Nv 36) y esta (EXP 371 228, Nv 37) el multiplicador infló la EXP de la cadena, pero el nivel casi no se movió → `[[[B]+20]+110]+2A80` es una copia o un acumulador, **no** la EXP que decide el nivel. Siguiente paso: `sonda_exp_gv3.lua` (EXP del menú buscada en toda la memoria + muestreo).
 - El objeto jugador cambió 2 veces durante el muestreo (cambio de fase): los trucos que lo usan deben volver a resolverlo en cada lectura (ya lo hacen).
 - En el objeto base, `[B]+0x2AC` (0 → 1, 97 cambios) y `[B]+0x5E0` (0 → 15, 53 cambios) son nuevos candidatos sin significado aún.
+
+### 9.7 Sonda de invencibilidad v1 (2026-11-08 07:07 y 07:08; 12 golpes) y pruebas
+
+- Usuario: **Kudos bloqueados ×N / anular ✅**; **«Health» de wepon1984 ❌** (vida máx. / 1HK no hacen efecto en esta build, aunque la AOB es única).
+- La «cámara lenta» de la v1 tomaba 2 bytes en `+0x592` (17 000–17 076): es la **mitad alta de un float en `jugador+0x590`** (0 → 57,0 → 0 en cada golpe).
+- Los «temporizadores» de la v1 eran ruido: floats desnormales (punteros leídos como float) redondeados a 0,00. Corregido en la v2.
+- **Banderas** que se repiten en las dos corridas (objeto jugador):
+
+| Campo | Tras el golpe | Lectura |
+|---|---|---|
+| `+0x21C`, `+0x22C`, `+0x3A8` | float 1,0 → 0,7 → 1,0 | transparencia del **parpadeo** (marca la ventana de invulnerabilidad) |
+| `+0x274` | 524 287 → 458 751 → 524 287 | máscara de color/visibilidad del parpadeo |
+| **`+0x74C`** | float 0 → 1,25 / 0,31 → 0 | **candidato a temporizador de invencibilidad** |
+| **`+0x4D8`** | 0 → 1 / 2 → 0 | **candidato a estado de herido / invulnerable** |
+| `+0x748`, `+0x360` | 0 → float −2,0 → 0 | ¿retroceso del golpe? |
+| `+0x594` / `+0x598` | 255 → 3 → 255 / 1 → 2 → 1 | estado del golpe |
+| objeto base `+0x2AC` | 0 → 1 → 0 | bandera en el objeto base |
+
+La v2 de la sonda mide la duración de cada uno frente al parpadeo y registra los objetos que pasan por el hook de vida (para arreglar «Health»).
+
+### 9.8 Sonda de invencibilidad v2 (2026-11-08 07:12; `dumps/sonda_invencibilidad_gv3_v2_2026-11-08_0711.txt`)
+
+- 10 «golpes» en 20 s detectados por la cámara lenta (`+0x590` llega a 90): **la cámara lenta también salta cuando el jugador golpea**, así que la marca estaba contaminada y las ventanas de 4 s se solaparon (casi todo dura ~4000 ms).
+- Reinterpretación de candidatos: `+0x74C`, `+0x748` y `+0x360` oscilan entre ±3 y 3,75 → **movimiento / retroceso**, no invencibilidad; `+0x598` sube 1 → 9 → **contador de golpes**; `+0x4D8` (0/1/2 intermitente), `+0x698` y `+0x69C` siguen como candidatos; `+0x8EC` pasa a 1 y queda.
+- El gancho de vida no se instaló (seguía activo «Health»).
+- v3: marca de golpe = parpadeo (`+0x21C` 1,0 → 0,7), medición hasta el fin del parpadeo, gancho que toma prestada la zona aunque esté parchada, y HP del componente del jugador. Si el componente queda identificado, una **vida infinita propia** (HP = máx.) cubre el objetivo aunque no se encuentren los *i-frames*.
+
+### 9.9 Sonda de invencibilidad v3 (2026-11-08 07:16)
+
+- Golpes por parpadeo: 3 (parpadeo de 2000, 2500 y 9900 ms; el último con golpes encadenados).
+- **Hook de vida (`game3.exe+8B5B62`) ✅:** en 30 s pasó **un único objeto**, `1EC085C3748`, 7 veces (solo al recibir daño): `[+20] = 1`, `[+18] = 0`, **HP 200 / 380** (float). Es el componente de vida del jugador y está a **+0x1314D18** del objeto jugador (otro bloque del heap; la parte C de la v3 lo buscaba a ±0x4000). La lógica del «Health» de wepon1984 es correcta para esta build; probablemente faltó activar sus hijos (PlayerMaxHealth / Enemy1HitKill). Se reemplaza por «Vida» con listas Sí/No.
+- Ningún campo candidato del objeto jugador dura lo mismo que el parpadeo salvo `+0x274` (máscara visual del parpadeo) → los *i-frames* no están ahí. La v4 mapea el componente de vida.
+
+### 9.10 «Vida» no protege → nueva hipótesis (2026-11-08)
+
+- El usuario: «Vida infinita» no tiene efecto (y le importa más la invencibilidad que la vida).
+- Hipótesis: el componente que ve el hook de `game3.exe+8B5B62` (`[+20] = 1`, HP float que baja con los golpes) es la **barra de vida de la interfaz**; el HP real está en otro sitio. Explica también por qué falló el «Health» de wepon1984.
+- El objeto `[[[B]+10]+10]` contiene parpadeo (`+0x21C`) y cámara lenta (`+0x590`): es **visual**, no la entidad de juego. RTX_XXXX tenía la invencibilidad en `+0x510` de otro objeto (`rsi`), y ahí `+0x510` nunca cambió.
+- v5: dueños del componente (QWORD que apuntan a él) como candidatos a entidad; seguimiento en línea de componente, dueños y objeto visual; puntúa campos que cambian ≤300 ms tras el golpe y vuelven ±400 ms del fin del parpadeo; informa `+0x510` de cada dueño.
