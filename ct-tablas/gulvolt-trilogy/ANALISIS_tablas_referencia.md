@@ -495,3 +495,23 @@ La v2 de la sonda mide la duración de cada uno frente al parpadeo y registra lo
 - Hipótesis: el componente que ve el hook de `game3.exe+8B5B62` (`[+20] = 1`, HP float que baja con los golpes) es la **barra de vida de la interfaz**; el HP real está en otro sitio. Explica también por qué falló el «Health» de wepon1984.
 - El objeto `[[[B]+10]+10]` contiene parpadeo (`+0x21C`) y cámara lenta (`+0x590`): es **visual**, no la entidad de juego. RTX_XXXX tenía la invencibilidad en `+0x510` de otro objeto (`rsi`), y ahí `+0x510` nunca cambió.
 - v5: dueños del componente (QWORD que apuntan a él) como candidatos a entidad; seguimiento en línea de componente, dueños y objeto visual; puntúa campos que cambian ≤300 ms tras el golpe y vuelven ±400 ms del fin del parpadeo; informa `+0x510` de cada dueño.
+
+### 9.11 Sonda de invencibilidad v5 (2026-11-09 01:35; 6 golpes, parpadeo de 1200–2900 ms)
+
+- Componente de vida `C` capturado (HP 360/380). Su único «dueño» exacto (`7FF7B5300048`) era el **propio registro del gancho** (memoria reservada junto al módulo), no un objeto del juego → la v6 busca punteros al objeto que contiene a `C` (rango `[C−0x2000, C]`) y excluye el registro.
+- Ni el componente ni ese «dueño» tienen campos que acompañen al parpadeo.
+- En el objeto `[[[B]+10]+10]`, **6/6 golpes**: `+0x050` (low dword de un puntero que cambia: ¿estado de animación?), **`+0x060` (1 en reposo)** y los campos visuales del parpadeo (`+0x21C`, `+0x22C`, `+0x274`, `+0x3A8`).
+- Hipótesis: `+0x060` es el **estado** del personaje (1 = normal; otro = golpeado/invulnerable). Prueba directa: «🧪 Invencibilidad EXPERIMENTAL» (aprende el valor durante el parpadeo y lo mantiene). La v6 imprime la secuencia de `+0x060` y `+0x050` en cada golpe.
+
+### 9.12 Sonda de invencibilidad v6 (2026-11-09 01:43; 6 golpes, parpadeo 1200 ms; el usuario usó un curativo entre medio)
+
+- **Secuencia de `+0x060`** en cada golpe: `8 → 6` (golpes 2–5) o `8 → 6 → 7 → 8 → 9 → 10 → 9…` (golpes 1 y 6) → es el **estado de animación** (8 = herido, 6 = reposo, otros = moverse/saltar). `+0x050` (low dword de un puntero) sigue al mismo estado. El reposo de la v5 (1) era otra postura. No sirve como invencibilidad por sí solo.
+- **Dueños del componente por rango:** 226 punteros a `[C−0x2000, C]` (60 sin el registro propio). Los tres objetos mapeados (C = objeto+0xAA8, +0x108, +0x98) no tienen campos que sigan al parpadeo. El componente de vida y sus dueños son solo vida.
+- **Único campo no visual que dura lo mismo que el parpadeo en v5 y v6 (12/12): `jugador+0x274`**, `0x7FFFF → 0x6FFFF` (se apaga el bit `0x10000`). Hipótesis: máscara de colisión (*hurtbox*). Prueba: modo 1 de la invencibilidad experimental (mantener ese bit apagado).
+
+### 9.13 Tres corridas de la v6 (2026-11-09 01:49 sin truco · 01:52 modo 1 · 01:54 modo 2)
+
+- **Los dos modos fallan:** en ambos se reciben golpes (5 y 7). Con el modo 1 la máscara `V+0x274` vuelve a `0x7FFFF` en reposo y sigue variando 5/5 → el juego la **recalcula cada fotograma** desde el estado real; con el modo 2 la animación pelea (10 → 8 → 6 → 8). Máscara, parpadeo y animación son **salidas** de la invulnerabilidad.
+- **Dos personajes:** en dos corridas el estado de animación en reposo es 1 y al herir 3 (HP máx. 230); en otra, reposo 6 y herido 8 (HP máx. 380 en sesiones anteriores). Probablemente Kirin y Gunvolt.
+- Componentes de vida y sus ~60 dueños: nada sigue al parpadeo. Lo que no se ha mapeado: el objeto intermedio `I = [[B]+10]` y los objetos que apuntan al visual `V` → sonda v7.
+- «Vida infinita» se probó cuando el «Health» de wepon1984 seguía parchando la instrucción → hay que reprobarla con la zona limpia.

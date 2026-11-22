@@ -3,6 +3,32 @@
 Tabla en desarrollo: `Gunvolt_Trilogy_Enhanced_<versión>_ES.CT`, generada por `build_trilogia_alpha.py` (no se edita a mano). Cada versión anterior se conserva en esta carpeta como referencia.
 Build del juego: `game1.exe` del 2026-10-07 (SHA-256 `8502cad08098…`). Leyenda de la tabla: 🟢 verificado en vivo · ⚪ candidato · 🟠 portado de wepon1984 sin verificar.
 
+## [v0.17-alpha] — 2026-11-22
+
+- **Cambiado — orden por estado:** dentro de cada juego, los trucos quedan en cuatro grupos:
+  - **✅ Confirmados** (probados en el juego). GV1: captura del jugador, invencibilidad, valores verificados y puntero al jugador. GV3: Prestigio ×N, Kudos bloqueados ×N, cámara lenta y valores.
+  - **🧪 Por confirmar** (datos verificados sin probar como truco, o candidatos). GV1: Prestigio ×N, EXP ×N, materiales al máximo, ¿medallas guardadas? GV3: vida infinita / 1HK (reprobar), Image Chips, tiempo de nivel y copias. GV2 y Connect iX: todo lo portado de wepon1984.
+  - **🔧 Sondas.**
+  - **🗑 Archivo** (inútiles o descartados, no usar). GV1: copias de la EXP y del bloque de combate, contadores desconocidos. GV3: invencibilidad experimental y EXP ×N.
+- **Cambiado — versiones:** en la carpeta solo se conservan las **dos últimas alfas**; el generador borra las anteriores al crear una nueva (siguen en el historial de git).
+
+## [v0.16-alpha] — 2026-11-09
+
+- **No funciona ❌: invencibilidad experimental** (modos 1 y 2). Con el truco activo se siguieron recibiendo golpes, y la sonda mostró la máscara `+0x274` otra vez en `0x7FFFF` en reposo: el juego **reescribe la máscara y la animación en cada fotograma**. Son consecuencia del estado de invulnerabilidad, no su causa.
+- **Cambiado:** «Vida: infinita / One Hit Kill» pasa a **reprobar**. Cuando se probó, el «Health» de wepon1984 aún parchaba la misma instrucción (las sondas de entonces decían «zona ya parchada»), así que probablemente no llegó a activarse.
+- **Sonda de invencibilidad v7:** sin gancho; mapea el objeto intermedio `[[B]+10]`, la base `[B]` y los objetos que apuntan al visual (la entidad de juego que lo alimenta) y marca los campos que suben con el golpe.
+
+## [v0.15-alpha] — 2026-11-09
+
+- **Cambiado (🧪): invencibilidad experimental de GV3.** La sonda v6 mostró que `+0x060` es el estado de **animación** (8 → 6 → 7 → 8 → 9 → 10…: 8 = herido, 6 = reposo), no la invulnerabilidad; además el reposo no siempre es 1, así que la versión anterior del truco no servía. Ahora tiene dos modos:
+  - **1 (por defecto): máscara de colisión.** `jugador+0x274` pasa de `0x7FFFF` a `0x6FFFF` (se apaga solo el bit `0x10000`) exactamente mientras dura el parpadeo, 6/6 golpes en las sondas v5 y v6; el truco mantiene ese bit apagado. Al desactivar, lo vuelve a encender.
+  - **2: estado de animación fijo** (por defecto 8 = herido), por si el modo 1 no basta.
+
+## [v0.14-alpha] — 2026-11-09
+
+- **Agregado (🧪 experimental): invencibilidad de GV3.** La sonda v5 vio que el estado del jugador (`[[[B]+10]+10]+0x060`, 1 en reposo) cambia al recibir el golpe y vuelve a 1 justo al terminar el parpadeo en los 6 golpes. El script aprende el valor «golpeado» tras el primer golpe (pitido) y lo mantiene; sin inyectar código. Si causa algo raro, se desactiva y el juego retoma su estado.
+- **Sonda de invencibilidad v6:** en la v5 el único «dueño» exacto del componente de vida era el propio registro del gancho; ahora busca punteros al objeto que lo contiene (rango `[C−0x2000, C]`) y anota la secuencia de valores del estado `+0x060` y de `+0x050` en cada golpe.
+
 ## [v0.13-alpha] — 2026-11-09
 
 - **Agregado — 🔌 Autoacople:** al cargar la tabla (LuaScript de la tabla) se activa solo y, cada 1,5 s, detecta cuál de los juegos de la colección está abierto (`game1.exe` GV1, `game2.exe` GV2, `game3.exe` GV3, `game4.exe` Connect iX), **acopla Cheat Engine a ese proceso y activa su grupo** (los de los otros juegos se desactivan). Si vuelves al menú y abres otro juego, se suelta y se re-acopla solo. El estado aparece en el título de la ventana de CE («acoplado a GV3 …» / «esperando un juego…»). Desactivar la entrada = dejar de vigilar; los grupos siguen sirviendo para acoplar a mano.

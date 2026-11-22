@@ -90,7 +90,7 @@ def gv3_trucos(G):
     La invencibilidad aún no está: jugador+0x592 resultó ser la cámara lenta (se busca con la sonda)."""
     T = bm.group(G, "▶ GV3 — Trucos (build 2026-10-13)", VERDE)
 
-    vida = bm.script(T, "Vida: infinita / One Hit Kill — ❌ no protege (¿HP de la interfaz?; ver ANALISIS §9.10)",
+    vida = bm.script(T, "Vida: infinita / One Hit Kill — 🔁 reprobar (antes chocaba con el «Health» de wepon1984; recibe 1 golpe para capturar)",
                      VIDA, VERDE)
     vch = ET.SubElement(vida, "CheatEntries")
     bm.lista(vch, "Vida infinita (el HP vuelve al máximo al recibir daño)", "gv3_god", bm.SINO)
@@ -98,6 +98,17 @@ def gv3_trucos(G):
     bm.ptr(vch, "HP del jugador (float)", "gv3_hp", 8, "Float")
     bm.ptr(vch, "HP máximo (float)", "gv3_hp", 0xC, "Float")
     bm.ptr(vch, "Marca de jugador [+20] (1 = jugador)", "gv3_hp", 0x20)
+
+    inv = bm.script(T, "🧪 Invencibilidad EXPERIMENTAL — ❌ ningún modo protege (el juego reescribe máscara y estado; §9.13)",
+                    bm.lua_onoff(bm.rd("invencible_exp_gv3.lua"), bm.rd("invencible_exp_off_gv3.lua")), VERDE)
+    ich = ET.SubElement(inv, "CheatEntries")
+    bm.lista(ich, "Modo", "gv3_inv_modo",
+             [(1, "1 = máscara +0x274 sin el bit 0x10000"), (2, "2 = estado de animación +0x060 fijo")])
+    mk = cadena(ich, "Máscara +0x274 (0x7FFFF normal · 0x6FFFF durante el parpadeo)", [0x10, 0x10, 0x274])
+    ET.SubElement(mk, "ShowAsHex").text = "1"
+    bm.dword(ich, "Modo 2: estado a mantener (8 = herido)", "gv3_inv_estado")
+    cadena(ich, "Estado de animación actual (+0x060; 6 = reposo, 8 = herido)", [0x10, 0x10, 0x60], "4 Bytes", GRIS)
+    cadena(ich, "Parpadeo (+0x21C; 1,0 = sin parpadeo)", [0x10, 0x10, 0x21C], "Float", GRIS)
 
     lenta = bm.script(T, "Cámara lenta (Sí/No) — efecto del golpe; NO es invencibilidad",
                       bm.lua_onoff(bm.rd("camara_lenta_gv3.lua"), bm.rd("camara_lenta_off_gv3.lua")), VERDE)
@@ -142,7 +153,7 @@ def gv3_trucos(G):
 
 def gv3_sondas(G):
     H = bm.group(G, "🔧 Sondas de GV3", GRIS)
-    bm.script(H, "Sonda de invencibilidad v5 (dueños del componente de vida; 30 s, NO atacar)",
+    bm.script(H, "Sonda de invencibilidad v7 (objeto intermedio, base y dueños del visual; 30 s, NO atacar)",
               bm.lua_wrap(bm.HERE / "sonda_invencibilidad_gv3.lua"), bm.CELESTE)
     bm.script(H, "Sonda de EXP real (pide EXP y Nivel del menú; 5 min)",
               bm.lua_wrap(bm.HERE / "sonda_exp_gv3.lua"), bm.CELESTE)

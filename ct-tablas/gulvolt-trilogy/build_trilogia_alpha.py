@@ -9,7 +9,8 @@ Junta en una sola tabla, un grupo por ejecutable (activar el grupo = adjuntar CE
     original/trilogy.CT (otra build: sin verificar en la nuestra).
 Colores: verde = verificado en vivo · gris = candidato sin verificar · naranja = dato de wepon1984.
 
-Versiones: cada vez que cambia el contenido se sube VERSION y el .CT anterior se conserva como referencia.
+Versiones: cada vez que cambia el contenido se sube VERSION. Solo se conservan las DOS últimas alfas: al generar,
+el script borra las anteriores (siguen en el historial de git).
   v0.1-alpha (2026-11-08) GV1 de la multisonda + candidatas de wepon1984; GV2/GV3/Connect iX portados.
   v0.2-alpha (2026-11-08) Verificación v1/v2: Nivel, EXP, PV máx. y puntero al jugador [+7B3220] en verde;
                           fuera las candidatas fallidas; nuevas pistas (Δ 0x9000, Kudos ×1, Tiempo total);
@@ -38,6 +39,14 @@ Versiones: cada vez que cambia el contenido se sube VERSION y el .CT anterior se
                           dueña del componente de vida y mide en línea, sin guardar muestras).
   v0.13-alpha (2026-11-08) Autoacople: al cargar la tabla detecta el juego abierto (game1…game4.exe), acopla CE
                           y activa su grupo; si cambias de juego se re-acopla solo. Estado en el título de CE.
+  v0.14-alpha (2026-11-09) GV3: invencibilidad EXPERIMENTAL (estado +0x060 del jugador, aprendido tras un golpe);
+                          sonda de invencibilidad v6 (dueños por rango + secuencia del estado).
+  v0.15-alpha (2026-11-09) GV3: invencibilidad experimental con modo 1 = máscara de colisión (+0x274 sin el bit
+                          0x10000, el único campo no visual que dura lo mismo que el parpadeo) y modo 2 = estado.
+  v0.16-alpha (2026-11-09) GV3: invencibilidad experimental marcada como no funcional; «Vida» a reprobar
+                          (antes chocaba con el «Health» de wepon1984); sonda de invencibilidad v7 (entidad).
+  v0.17-alpha (2026-11-22) Orden: cada juego agrupa sus trucos en ✅ Confirmados, 🧪 Por confirmar, 🔧 Sondas y
+                          🗑 Archivo (inútiles o descartados). Solo quedan las dos últimas alfas en la carpeta.
 
 Uso:  python build_trilogia_alpha.py [original/trilogy.CT] [-o salida.CT] [--force]
 Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz).
@@ -45,6 +54,7 @@ Licencia de este archivo: PolyForm Noncommercial 1.0.0 (ver LICENSE en la raíz)
 import argparse
 import copy
 import hashlib
+import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -56,10 +66,11 @@ import gv3 as gv3m  # noqa: E402  (gv3_trucos, gv3_sondas)
 
 # SHA-256 de la tabla de wepon1984 analizada (original/FUENTES.md)
 ORIGINAL_SHA256 = "395928fcaeaf2241b414dc706a7d9d7e8d926af0f59f6cdf3d6898a0c3bab0fd"
-VERSION = "v0.13-alpha"
+VERSION = "v0.17-alpha"
 SALIDA = HERE / f"Gunvolt_Trilogy_Enhanced_{VERSION}_ES.CT"
 
 VERDE, GRIS, NARANJA, AZUL = "008000", "808080", "0080FF", bm.CELESTE   # CE usa BGR; «AZUL» = celeste claro
+AMARILLO = "00D7FF"   # dorado (BGR), legible con tema oscuro
 
 CRED = 0x7B3668        # Créditos GV1 (verificado)
 COMB = 0x7ED64C        # Energía, inicio del bloque de combate GV1 (verificado)
@@ -75,7 +86,8 @@ Créditos:
 - ndck1 (FearLess t=35891): zona AOB del editor de vida de GV1, base de la «Captura jugador».
 - WarCOzes (t=1929), Shinkansen (t=12924), RTX_XXXX (t=21777): formas de datos y escalas de GV1/GV2/GV3.
 
-Colores: verde = verificado en vivo (build 2026-10-07) · gris = candidato sin verificar · naranja = wepon1984 (otra build).
+Cada juego: ✅ Confirmados (probados en el juego) · 🧪 Por confirmar · 🔧 Sondas · 🗑 Archivo (inútiles o descartados).
+Naranja = portado de wepon1984 (otra build, sin verificar).
 Editar valores desde el mapa, sin menús abiertos. Desactivar los scripts antes de recargar la tabla.""".format(v=VERSION)
 
 
@@ -134,6 +146,119 @@ def portar(dest, origen, listas):
         dest.append(c)
 
 
+# ================================ ORDEN POR ESTADO ================================
+CATEGORIAS = {
+    "ok":     ("✅ Confirmados — probados en el juego", VERDE),
+    "dud":    ("🧪 Por confirmar — datos verificados sin probar como truco, o candidatos", AMARILLO),
+    "basura": ("🗑 Archivo — inútiles o descartados (no usar; quedan como registro)", GRIS),
+    "wepon":  ("🧪 Por confirmar — portado de wepon1984 (otra build, sin verificar en la nuestra)", NARANJA),
+}
+
+
+def _desc(e):
+    return (e.findtext("Description") or "").strip('"')
+
+
+def _es_nota(e):
+    return _desc(e).startswith("##")
+
+
+def ordenar(G, reglas):
+    """Mueve cada entrada (con todo lo que cuelga de ella) a su categoría. reglas = [(prefijo, «ok»|«dud»|«basura»)].
+    Luego borra los grupos que quedaron vacíos y ordena: notas, ✅, 🧪, 🔧 Sondas, resto, 🗑."""
+    cats = {}
+    for prefijo, cat in reglas:
+        padres = {c: pa for pa in G.iter() for c in pa}
+        e = next((x for x in G.iter("CheatEntry") if _desc(x).startswith(prefijo)), None)
+        assert e is not None, f"ordenar: no existe una entrada que empiece por «{prefijo}»"
+        padres[e].remove(e)
+        if cat not in cats:
+            cats[cat] = bm.group(G, *CATEGORIAS[cat])
+        cats[cat].append(e)
+    titulos = {t for t, _ in CATEGORIAS.values()}
+    cambio = True
+    while cambio:                                   # grupos que solo conservan notas → fuera
+        cambio = False
+        padres = {c: pa for pa in G.iter() for c in pa}
+        for x in list(G.iter("CheatEntry")):
+            ce = x.find("CheatEntries")
+            if (ce is not None and x.find("GroupHeader") is not None and _desc(x) not in titulos
+                    and all(_es_nota(h) for h in ce.findall("CheatEntry"))):
+                padres[x].remove(x)
+                cambio = True
+                break
+
+    def rango(x):
+        d = _desc(x)
+        if _es_nota(x):
+            return 0
+        for k, i in (("ok", 1), ("dud", 2), ("wepon", 2)):
+            if d == CATEGORIAS[k][0]:
+                return i
+        if d.startswith("🔧"):
+            return 3
+        if d == CATEGORIAS["basura"][0]:
+            return 5
+        return 4
+    hijos = list(G)
+    for h in hijos:
+        G.remove(h)
+    for h in sorted(hijos, key=rango):             # sorted es estable: conserva el orden dentro de cada rango
+        G.append(h)
+
+
+def envolver(G, cat):
+    """Mete todas las entradas (menos las notas) de G en la categoría cat."""
+    dest = bm.group(G, *CATEGORIAS[cat])
+    destino = None
+    for h in list(G):
+        if _desc(h) == CATEGORIAS[cat][0]:
+            destino = h
+            continue
+        if not _es_nota(h):
+            G.remove(h)
+            dest.append(h)
+    return destino
+
+
+REGLAS_GV1 = [
+    ("Captura jugador (base de los trucos", "ok"),
+    ("Invencibilidad (Sí/No)", "ok"),
+    ("Valores verificados", "ok"),
+    ("Jugador por puntero estático", "ok"),
+    ("Prestigio ×N / mantener (localiza", "dud"),
+    ("EXP ×N (elegir", "dud"),
+    ("Materiales al máximo", "dud"),
+    ("Medallas guardadas?", "dud"),
+    ("Copia de la EXP", "basura"),
+    ("Contador desconocido (+7FFEC8", "basura"),
+    ("Contador desconocido (+7FFEE0", "basura"),
+    ("Copia del bloque de combate", "basura"),
+]
+REGLAS_GV3 = [
+    ("Score (float, copia)", "dud"),
+    ("Tiempo de nivel (float", "dud"),
+    ("Image Chips (copia", "dud"),
+    ("Vida: infinita", "dud"),
+    ("Image Chips del nivel", "dud"),
+    ("Prestigio ×N / mantener (elegir", "ok"),
+    ("Kudos bloqueados:", "ok"),
+    ("Cámara lenta (Sí/No)", "ok"),
+    ("Valores (cadenas", "ok"),
+    ("🧪 Invencibilidad EXPERIMENTAL", "basura"),
+    ("EXP ×N — ❌", "basura"),
+]
+
+
+def podar(carpeta, conservar=2):
+    """Borra las alfas viejas de la carpeta; deja las `conservar` más recientes (siguen en git)."""
+    patron = re.compile(r"Gunvolt_Trilogy_Enhanced_v(\d+)\.(\d+)-alpha_ES\.CT$")
+    alfas = sorted((tuple(map(int, m.groups())), f) for f in carpeta.iterdir() if (m := patron.match(f.name)))
+    for _, f in alfas[:-conservar]:
+        f.unlink()
+        print("Borrada (versión no vigente):", f.name)
+
+
 # ================================ GV1 ================================
 def gv1(top):
     G = adjuntar(top, "▶ Azure Striker Gunvolt 1 (game1.exe) — activar para adjuntar", "game1.exe", VERDE)
@@ -172,6 +297,7 @@ def gv1(top):
         bm.dword(K, f"Cooldown habilidad {i+1} (copia)", f"game1.exe+{COPIA + 0xC + 4*i:X}", GRIS)
 
     bm.gv1_sondas(G)
+    ordenar(G, REGLAS_GV1)
 
 
 # ================================ GV3 ================================
@@ -182,6 +308,7 @@ def gv3(top, por_id, listas):
     nota(G, "GV3: entra a un nivel. Vida infinita / 1HK = lógica del «Health» de wepon1984 / RTX_XXXX (misma AOB).")
     gv3m.gv3_trucos(G)
     gv3m.gv3_sondas(G)
+    ordenar(G, REGLAS_GV3)
 
 
 # ================================ GV2 / Connect iX ================================
@@ -214,7 +341,7 @@ def main() -> None:
     top = ET.SubElement(root, "CheatEntries")
     nota(top, f"Gunvolt Trilogy Enhanced — {VERSION} (ES) · Skolleks · en construcción")
     nota(top, "Créditos: wepon1984 · ndck1 · WarCOzes · Shinkansen · RTX_XXXX (ver Table Extras → Comments)")
-    nota(top, "Verde = verificado en vivo · gris = candidato · naranja = wepon1984 (otra build, sin verificar)", GRIS)
+    nota(top, "Cada juego: ✅ Confirmados · 🧪 Por confirmar · 🔧 Sondas · 🗑 Archivo (no usar) · naranja = wepon1984", GRIS)
     bm.script(top, AUTOACOPLE, bm.lua_onoff(bm.rd("autoacople.lua"), bm.rd("autoacople_off.lua")), AZUL)
 
     gv1(top)
@@ -226,6 +353,7 @@ def main() -> None:
         nota(G, f"Grupo de wepon1984 portado sin cambios (nombres originales). Sin verificar en nuestra build de {exe}.",
              NARANJA)
         portar(G, por_id[wid], listas)
+        envolver(G, "wepon")
 
     # Listas desplegables de wepon1984: las entradas las enlazan por su Description, que se conserva
     top.append(renumerar(copy.deepcopy(por_id["116253"])))
@@ -245,6 +373,8 @@ def main() -> None:
     out = Path(a.output)
     ET.ElementTree(root).write(out, encoding="utf-8", xml_declaration=True)
     print("Generado:", out)
+    if out.resolve() == SALIDA.resolve():
+        podar(HERE)
 
 
 if __name__ == "__main__":

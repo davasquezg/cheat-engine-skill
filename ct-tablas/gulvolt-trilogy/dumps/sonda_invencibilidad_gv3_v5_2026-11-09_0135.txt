@@ -1,0 +1,29 @@
+== Sonda de invencibilidad GV3 v5 — 2026-11-09 01:35 ==
+gancho de registro en game3.exe+8B5B62
+componente C = 1E2AAD17D08  HP 360.0 / 380.0 · objeto visual 1E2B3E59A40 (C FFFFFFFFF6EBE2C8)
+Dueños de C (QWORD que apuntan a C): 1
+  7FF7B5300048  · [+0x510 desde el QWORD] int 0 / float 0.0
+
+Golpes medidos: 6 · parpadeo (ms): 1200, 1200, 1200, 2900, 1200, 1250
+
+== componente C: cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== dueño 1 (7FF7B5300048): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto visual (1E2B3E59A40): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  +0x050  6/6 golpes  4076599616 → … → 4076599616
+  +0x060  6/6 golpes  1 → … → 1
+  +0x21C  6/6 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x22C  6/6 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x274  6/6 golpes  524287 → … → 524287
+  +0x3A8  6/6 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x01C  1/6 golpes  482 → … → 482
+  +0x0B0  1/6 golpes  22 → … → 22
+  +0x4D8  1/6 golpes  0 → … → 0
+  +0x638  1/6 golpes  3018124096 → … → 3018124096
+  +0x63C  1/6 golpes  482 → … → 482
+  +0x698  1/6 golpes  0 → … → 0
+  +0x69C  1/6 golpes  0 → … → 0
+  +0x710  1/6 golpes  0 → … → 0

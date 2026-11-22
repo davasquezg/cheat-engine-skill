@@ -1,0 +1,55 @@
+== Sonda de invencibilidad GV3 v6 — 2026-11-09 01:49 ==
+gancho de registro en game3.exe+8B5B62
+componente C = 1F1DEB995F8  HP 200.0 / 230.0 · objeto visual 1F1DE7597E0 (C 43FE18)
+Punteros al objeto que contiene C (valor en [C−0x2000, C]): 238 (sin el registro propio: 60)
+  1F180257DB0 → objeto 1F1DEB97960 (C = objeto+0x1C98) · objeto+0x510: int 0 / float 0.0
+  1F180483D40 → objeto 1F1DEB98A00 (C = objeto+0xBF8) · objeto+0x510: int 0 / float 0.0
+  1F1974D3DA0 → objeto 1F1DEB97960 (C = objeto+0x1C98) · objeto+0x510: int 0 / float 0.0
+  1F1C7B51EA0 → objeto 1F1DEB98920 (C = objeto+0xCD8) · objeto+0x510: int 0 / float 0.0
+  1F1C7B51F10 → objeto 1F1DEB97F80 (C = objeto+0x1678) · objeto+0x510: int 1818317600 / float 1.0896034245087e+27
+  1F1DE0BAA88 → objeto 1F1DEB97B70 (C = objeto+0x1A88) · objeto+0x510: int 1 / float 1.4012984643248e-45
+  1F1DE681378 → objeto 1F1DEB97FF0 (C = objeto+0x1608) · objeto+0x510: int 64 / float 8.9683101716788e-44
+  1F1DE683AA8 → objeto 1F1DEB97F10 (C = objeto+0x16E8) · objeto+0x510: int 0 / float 0.0
+  1F1DE683E38 → objeto 1F1DEB98060 (C = objeto+0x1598) · objeto+0x510: int 1816469562 / float 9.5324228841076e+26
+  1F1DE6F6810 → objeto 1F1DEB978F0 (C = objeto+0x1D08) · objeto+0x510: int 0 / float 0.0
+  1F1DE6F6890 → objeto 1F1DEB981B0 (C = objeto+0x1448) · objeto+0x510: int 0 / float 0.0
+  1F1DE6F6AF0 → objeto 1F1DEB98AE0 (C = objeto+0xB18) · objeto+0x510: int 0 / float 0.0
+  1F1DE6F6E50 → objeto 1F1DEB97C00 (C = objeto+0x19F8) · objeto+0x510: int 3934193136 / float -7.7076030763181e+25
+  1F1DE71EC50 → objeto 1F1DEB97A40 (C = objeto+0x1BB8) · objeto+0x510: int 3731248704 / float -4.1493809613662e+18
+  1F1DE71ECB0 → objeto 1F1DEB97D50 (C = objeto+0x18A8) · objeto+0x510: int 1047423329 / float 0.23282386362553
+
+Golpes medidos: 7 · parpadeo (ms): 1200, 1200, 1200, 1200, 1200, 1200, 1200
+
+== Secuencia de visual+0x060 (estado) y +0x050 (low dword) en cada golpe ==
+  golpe 1: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+  golpe 2: +0x060 3 → 1   ·   +0x050 CCFCEE10 → CCFC8E70
+  golpe 3: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+  golpe 4: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+  golpe 5: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+  golpe 6: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+  golpe 7: +0x060 3 → 1   ·   +0x050 CCFCD8D0 → CCFC8E70
+
+== componente C: cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 1 (1F1DEB97960; C = +0x1C98): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 2 (1F1DEB98A00; C = +0xBF8): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 3 (1F1DEB98920; C = +0xCD8): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto visual (1F1DE7597E0): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  +0x050  7/7 golpes  3439103600 → … → 3439103600
+  +0x060  7/7 golpes  1 → … → 1
+  +0x21C  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x22C  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x274  7/7 golpes  524287 → … → 524287
+  +0x3A8  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x698  1/7 golpes  0 → … → 0
+  +0x69C  1/7 golpes  0 → … → 0
+
+== Observación del usuario ==
+  Corrida sin ningún truco activo (línea base).

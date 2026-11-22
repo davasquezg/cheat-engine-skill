@@ -1,0 +1,54 @@
+== Sonda de invencibilidad GV3 v6 — 2026-11-09 01:54 ==
+gancho de registro en game3.exe+8B5B62
+componente C = 1F1FD77A498  HP 200.0 / 230.0 · objeto visual 1F180C96C00 (C 7CAE3898)
+Punteros al objeto que contiene C (valor en [C−0x2000, C]): 131 (sin el registro propio: 60)
+  1F180BE5B28 → objeto 1F1FD778F40 (C = objeto+0x1558) · objeto+0x510: int 4252472392 / float -2.0568077201714e+37
+  1F180C97318 → objeto 1F1FD779520 (C = objeto+0xF78) · objeto+0x510: int 4252476288 / float -2.0573015968453e+37
+  1F1CCFC90C8 → objeto 1F1FD77A010 (C = objeto+0x488) · objeto+0x510: int 3057269600 / float -2.7750720619224e-06
+  1F1DE6660F8 → objeto 1F1FD779F30 (C = objeto+0x568) · objeto+0x510: int 0 / float 0.0
+  1F1DE67E8B8 → objeto 1F1FD779E50 (C = objeto+0x648) · objeto+0x510: int 3934158816 / float -7.6917757699028e+25
+  1F1DE685398 → objeto 1F1FD779980 (C = objeto+0xB18) · objeto+0x510: int 162592144 / float 4.2601384641738e-33
+  1F1DE723410 → objeto 1F1FD77A470 (C = objeto+0x28) · objeto+0x510: int 0 / float 0.0
+  1F1EAD7A2B8 → objeto 1F1FD779210 (C = objeto+0x1288) · objeto+0x510: int 4252475728 / float -2.0572306084117e+37
+  1F1EB4E5468 → objeto 1F1FD7794B0 (C = objeto+0xFE8) · objeto+0x510: int 3439119904 / float -132542720.0
+  1F1EB4E6638 → objeto 1F1FD779C90 (C = objeto+0x808) · objeto+0x510: int 2159583600 / float -1.6955644156004e-38
+  1F1EB4E69C8 → objeto 1F1FD77A2B0 (C = objeto+0x1E8) · objeto+0x510: int 3934193336 / float -7.7076953100384e+25
+  1F1EB4E7808 → objeto 1F1FD7796E0 (C = objeto+0xDB8) · objeto+0x510: int 4252478416 / float -2.057571352893e+37
+  1F1EB4E7B98 → objeto 1F1FD779BB0 (C = objeto+0x8E8) · objeto+0x510: int 0 / float 0.0
+  1F1EB4E7F28 → objeto 1F1FD779D70 (C = objeto+0x728) · objeto+0x510: int 2159592560 / float -1.6968199790244e-38
+  1F1EB4E8290 → objeto 1F1FD779A60 (C = objeto+0xA38) · objeto+0x510: int 0 / float 0.0
+
+Golpes medidos: 7 · parpadeo (ms): 1200, 1200, 1200, 1200, 1200, 1200, 1200
+
+== Secuencia de visual+0x060 (estado) y +0x050 (low dword) en cada golpe ==
+  golpe 1: +0x060 8 → 6 → 8   ·   +0x050 FE329370 → CCFC8E70
+  golpe 2: +0x060 10 → 8 → 6 → 8   ·   +0x050 FE32C890 → CCFC8E70
+  golpe 3: +0x060 8   ·   +0x050 FE32B8A0 → CCFC8E70
+  golpe 4: +0x060 10 → 8 → 6 → 8   ·   +0x050 FE329E10 → CCFC8E70
+  golpe 5: +0x060 10 → 8 → 6 → 8   ·   +0x050 FE32AE00 → CCFC8E70
+  golpe 6: +0x060 10 → 8   ·   +0x050 FE329E10 → CCFC8E70
+  golpe 7: +0x060 8   ·   +0x050 FE32AE00 → CCFC8E70
+
+== componente C: cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 1 (1F1FD778F40; C = +0x1558): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 2 (1F1FD779520; C = +0xF78): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto dueño 3 (1F1FD77A010; C = +0x488): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  (ninguno)
+
+== objeto visual (1F180C96C00): cambian al recibir el golpe y vuelven al terminar el parpadeo ==
+  +0x050  7/7 golpes  3439103600 → … → 3439103600
+  +0x21C  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x22C  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x274  7/7 golpes  524287 → … → 524287
+  +0x3A8  7/7 golpes  1065353216|1.00 → … → 1065353216|1.00
+  +0x060  3/7 golpes  8 → … → 8
+  +0x08C  1/7 golpes  497 → … → 497
+
+== Observación del usuario ==
+  Corrida con la invencibilidad experimental en MODO 2 (estado 8): se siguieron recibiendo golpes.
